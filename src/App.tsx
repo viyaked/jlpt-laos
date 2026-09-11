@@ -1,0 +1,305 @@
+import { useState, useEffect, useCallback } from 'react';
+import type { Language, LevelStat, ExamRoom, AdminUser, JLPTLevel } from './types';
+import { initialLevelStats, initialExamRooms } from './data/mockData';
+import { translations } from './i18n';
+import { api, getAuthToken, subscribeToSSE } from './api';
+import { Navbar } from './components/Navbar';
+import { PublicView } from './components/PublicView';
+import { AdminView } from './components/AdminView';
+import { LoginModal } from './components/LoginModal';
+
+const STORAGE_KEY_LANG = 'jlpt_lang_v1';
+const STORAGE_KEY_AUTH = 'jlpt_admin_auth_v1';
+
+export function App() {
+  // 1. Language state (defaults to 'lo')
+  const [lang, setLang] = useState<Language>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY_LANG);
+    return saved === 'en' ? 'en' : 'lo';
+  });
+
+  // Sync html lang attribute for Lao font rendering rules
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    localStorage.setItem(STORAGE_KEY_LANG, lang);
+  }, [lang]);
+
+  // 2. View Mode ('public' | 'admin')
+  const [viewMode, setViewMode] = useState<'public' | 'admin'>('public');
+
+  // 3. Admin Authentication state
+  const [adminUser, setAdminUser] = useState<AdminUser>(() => {
+    const token = getAuthToken();
+    const saved = localStorage.getItem(STORAGE_KEY_AUTH);
+    if (token && saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return { ...parsed, isAuthenticated: true };
+      } catch {
+        // ignore
+      }
+    }
+    return { isAuthenticated: false, username: '', role: 'guest' };
+  });
+
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  // 4. Data states loaded from persistent database
+  const [levelStats, setLevelStats] = useState<LevelStat[]>(initialLevelStats);
+  const [examRooms, setExamRooms] = useState<ExamRoom[]>(initialExamRooms);
+  const [isDbConnected, setIsDbConnected] = useState(false);
+
+  // Fetch live data from backend
+  const fetchLevels = useCallback(async () => {
+    try {
+      const data = await api.getLevels();
+      setLevelStats(data);
+      setIsDbConnected(true);
+    } catch {
+      // Keep existing
+    }
+  }, []);
+
+  const fetchRooms = useCallback(async () => {
+    try {
+      const data = await api.getRooms();
+      setExamRooms(data);
+      setIsDbConnected(true);
+    } catch {
+      // Keep existing
+    }
+  }, []);
+
+  const refreshAll = useCallback(() => {
+    fetchLevels();
+    fetchRooms();
+  }, [fetchLevels, fetchRooms]);
+
+  // Initial load
+  useEffect(() => {
+    refreshAll();
+  }, [refreshAll]);
+
+  // Subscribe to real-time Server-Sent Events (SSE)
+  useEffect(() => {
+    const unsubscribe = subscribeToSSE((event) => {
+      if (event === 'levels_updated') {
+        fetchLevels();
+      } else if (event === 'rooms_updated' || event === 'applicants_updated') {
+        fetchRooms();
+        fetchLevels();
+      }
+    });
+
+    // Fallback polling every 12 seconds for multi-user reliability
+    const interval = setInterval(refreshAll, 12000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(interval);
+    };
+  }, [fetchLevels, fetchRooms, refreshAll]);
+
+  // Auth Handlers
+  const handleLogin = (username: string) => {
+    const user: AdminUser = {
+      isAuthenticated: true,
+      username,
+      role: 'Examiner Admin',
+    };
+    setAdminUser(user);
+    localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(user));
+    setIsLoginModalOpen(false);
+  };
+
+  const handleLogout = () => {
+    api.logout();
+    setAdminUser({ isAuthenticated: false, username: '', role: 'guest' });
+    localStorage.removeItem(STORAGE_KEY_AUTH);
+    setViewMode('public');
+  };
+
+  // Level stats handlers (Admin)
+  const handleIncrementRegistered = async (level: JLPTLevel) => {
+    try {
+      await api.incrementLevel(level);
+      await fetchLevels();
+    } catch (err: any) {
+      alert(err.message || 'Failed to increment');
+    }
+  };
+
+  const handleUpdateLevelQuota = async (
+    level: string,
+    registered: number,
+    quota: number
+  ) => {
+    try {
+      await api.updateLevel(level, registered, quota);
+      await fetchLevels();
+    } catch (err: any) {
+      alert(err.message || 'Failed to update quota');
+    }
+  };
+
+  // Exam rooms handlers (Admin)
+  const handleSaveRoom = async (
+    roomData: Omit<ExamRoom, 'id' | 'examinees'> & { id?: string }
+  ) => {
+    try {
+      if (roomData.id) {
+        await api.updateRoom(roomData.id, {
+          code: roomData.code,
+          building: roomData.building,
+          floor: roomData.floor,
+          level: roomData.level,
+          capacity: roomData.capacity,
+        });
+      } else {
+        await api.createRoom({
+          code: roomData.code,
+          building: roomData.building,
+          floor: roomData.floor,
+          level: roomData.level,
+          capacity: roomData.capacity,
+        });
+      }
+      await fetchRooms();
+    } catch (err: any) {
+      alert(err.message || 'Failed to save room');
+    }
+  };
+
+  const handleDeleteRoom = async (roomId: string) => {
+    try {
+      await api.deleteRoom(roomId);
+      await fetchRooms();
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete room');
+    }
+  };
+
+  const handleAddExamineeToRoom = async (
+    roomId: string,
+    firstName: string,
+    lastName: string
+  ) => {
+    try {
+      await api.addApplicant(roomId, firstName, lastName);
+      await fetchRooms();
+    } catch (err: any) {
+      alert(err.message || 'Failed to add examinee');
+    }
+  };
+
+  const handleBatchAddExaminees = async (
+    roomId: string,
+    examinees: { firstName: string; lastName: string }[]
+  ) => {
+    try {
+      await api.batchAddApplicants(roomId, examinees);
+      await fetchRooms();
+    } catch (err: any) {
+      alert(err.message || 'Failed to batch add examinees');
+    }
+  };
+
+  const handleRemoveExamineeFromRoom = async (
+    _roomId: string,
+    examineeId: string
+  ) => {
+    try {
+      await api.deleteApplicant(examineeId);
+      await fetchRooms();
+    } catch (err: any) {
+      alert(err.message || 'Failed to remove examinee');
+    }
+  };
+
+  const handleResetData = async () => {
+    try {
+      await api.resetDemo();
+      await refreshAll();
+    } catch (err: any) {
+      alert(err.message || 'Failed to reset demo data');
+    }
+  };
+
+  const t = translations[lang];
+
+  return (
+    <div className={`min-h-screen flex flex-col bg-slate-50 text-slate-900 ${lang === 'lo' ? 'lao-text' : ''}`}>
+      {/* Navigation Bar */}
+      <Navbar
+        lang={lang}
+        onLanguageChange={setLang}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        adminUser={adminUser}
+        onLogout={handleLogout}
+        onOpenLogin={() => setIsLoginModalOpen(true)}
+      />
+
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+        {viewMode === 'public' ? (
+          <PublicView
+            levelStats={levelStats}
+            examRooms={examRooms}
+            lang={lang}
+          />
+        ) : (
+          <AdminView
+            levelStats={levelStats}
+            examRooms={examRooms}
+            adminUser={adminUser}
+            onLogin={handleLogin}
+            onLogout={handleLogout}
+            onIncrementRegistered={handleIncrementRegistered}
+            onUpdateLevelQuota={handleUpdateLevelQuota}
+            onSaveRoom={handleSaveRoom}
+            onDeleteRoom={handleDeleteRoom}
+            onAddExamineeToRoom={handleAddExamineeToRoom}
+            onBatchAddExaminees={handleBatchAddExaminees}
+            onRemoveExamineeFromRoom={handleRemoveExamineeFromRoom}
+            onResetData={handleResetData}
+            lang={lang}
+          />
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-slate-400 py-6 sm:py-8 border-t border-slate-800 text-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
+          <div>
+            <p className="font-semibold text-slate-300">
+              {t.instituteName} &bull; {t.annualExamShort}
+            </p>
+            <p className="text-slate-400 mt-1">
+              {t.footerText}
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-800/60">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>{isDbConnected ? t.liveConnected : t.connecting}</span>
+            </span>
+            <span className="text-slate-400">
+              Language: <strong className="text-slate-200">{lang === 'lo' ? 'ລາວ (Lao)' : 'English'}</strong>
+            </span>
+          </div>
+        </div>
+      </footer>
+
+      {/* Login Modal for navbar trigger */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLoginSuccess={handleLogin}
+        lang={lang}
+      />
+    </div>
+  );
+}
+
+export default App;

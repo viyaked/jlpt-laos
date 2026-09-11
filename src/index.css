@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+:root {
+  --font-lao: 'Phetsarath OT', 'Noto Sans Lao', system-ui, -apple-system, sans-serif;
+}
+
+html {
+  font-family: 'Phetsarath OT', 'Noto Sans Lao', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color-scheme: light;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* User Rule: Lao script instructions:
+   - Mark Lao content lang="lo"
+   - Never use word-break: break-all
+   - line-height >= 1.8 so stacked vowels/tones don't clip
+*/
+[lang="lo"], .lao-text {
+  font-family: 'Phetsarath OT', 'Noto Sans Lao', sans-serif;
+  line-height: 1.85 !important;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
