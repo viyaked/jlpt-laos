@@ -8,6 +8,7 @@ import { EditExamYearModal } from './EditExamYearModal';
 import { AddEditRoomModal } from './AddEditRoomModal';
 import { ManageRoomExamineesModal } from './ManageRoomExamineesModal';
 import { LoginModal } from './LoginModal';
+import { ChangeAdminPasswordModal } from './ChangeAdminPasswordModal';
 import {
   Plus,
   Edit2,
@@ -21,6 +22,7 @@ import {
   Sliders,
   Calendar,
   Loader2,
+  KeyRound,
 } from 'lucide-react';
 
 interface AdminViewProps {
@@ -73,6 +75,7 @@ export const AdminView: FC<AdminViewProps> = ({
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isGlobalQuotaModalOpen, setIsGlobalQuotaModalOpen] = useState(false);
   const [isExamYearModalOpen, setIsExamYearModalOpen] = useState(false);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [editingStat, setEditingStat] = useState<LevelStat | null>(null);
   const [roomModalData, setRoomModalData] = useState<{ isOpen: boolean; room: ExamRoom | null }>({
     isOpen: false,
@@ -231,6 +234,15 @@ export const AdminView: FC<AdminViewProps> = ({
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>{t.editExamScheduleBtn} ({formattedExamDate.shortDate})</span>
+          </button>
+
+          <button
+            onClick={() => setIsChangePasswordModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors border border-slate-800"
+            title={t.adminSettingsBtn}
+          >
+            <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+            <span>{t.adminSettingsBtn}</span>
           </button>
 
           <button
@@ -661,6 +673,18 @@ export const AdminView: FC<AdminViewProps> = ({
           await onRemoveExamineeFromRoom(roomId, examineeId);
           await refreshRoomExaminees(roomId);
           triggerToast('Examinee removed');
+        }}
+        lang={lang}
+      />
+
+      {/* Change Admin Password / Credentials Modal */}
+      <ChangeAdminPasswordModal
+        isOpen={isChangePasswordModalOpen}
+        onClose={() => setIsChangePasswordModalOpen(false)}
+        currentUsername={adminUser.username}
+        onSuccess={(newUsername) => {
+          onLogin(newUsername);
+          triggerToast(t.credentialsUpdateSuccess);
         }}
         lang={lang}
       />

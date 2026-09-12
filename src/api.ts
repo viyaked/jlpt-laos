@@ -92,6 +92,30 @@ export const api = {
     setAuthToken(null);
   },
 
+  async changeAdminCredentials(params: {
+    currentPassword: string;
+    newUsername?: string;
+    newPassword?: string;
+  }): Promise<{ success: boolean; token: string; user: any }> {
+    const res = await fetch('/api/auth/change-credentials', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify(params),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update credentials');
+    }
+    const data = await res.json();
+    if (data.token) {
+      setAuthToken(data.token);
+    }
+    return data;
+  },
+
   // Admin Level Actions
   async incrementLevel(level: JLPTLevel) {
     const res = await fetch(`/api/levels/${level}/increment`, {

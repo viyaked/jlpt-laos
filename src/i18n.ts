@@ -201,6 +201,17 @@ export const translations = {
     loginError: "ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ (ລະຫັດທົດລອງ: admin / jlpt2026)",
     loginHint: "ຂໍ້ມູນທົດລອງ: ຊື່ admin / ລະຫັດ jlpt2026",
 
+    // Admin Account Settings
+    adminSettingsBtn: "ຕັ້ງຄ່າບັນຊີ Admin",
+    changePasswordModalTitle: "ຕັ້ງຄ່າບັນຊີ ແລະ ລະຫັດຜ່ານ Admin",
+    changePasswordModalDesc: "ປ່ຽນຊື່ຜູ້ໃຊ້ງານ ແລະ ລະຫັດຜ່ານສຳລັບເຂົ້າສູ່ລະບົບເຈົ້າໜ້າທີ່",
+    currentPasswordLabel: "ລະຫັດຜ່ານປັດຈຸບັນ (Current Password)",
+    newUsernameLabel: "ຊື່ຜູ້ໃຊ້ໃໝ່ (New Username)",
+    newPasswordLabel: "ລະຫັດຜ່ານໃໝ່ (New Password)",
+    confirmNewPasswordLabel: "ຢືນຢັນລະຫັດຜ່ານໃໝ່ (Confirm New Password)",
+    passwordMismatchError: "ລະຫັດຜ່ານໃໝ່ ແລະ ຢືນຢັນລະຫັດຜ່ານບໍ່ກົງກັນ",
+    credentialsUpdateSuccess: "ປ່ຽນແປງຂໍ້ມູນບັນຊີ Admin ສຳເລັດແລ້ວ!",
+
     // Reset Data
     resetToDefaultBtn: "ຣີເຊັດຂໍ້ມູນຕົວຢ່າງ",
     resetSuccess: "ຣີເຊັດຂໍ້ມູນເປັນຄ່າເລີ່ມຕົ້ນຮຽບຮ້ອຍແລ້ວ!",
@@ -358,6 +369,17 @@ export const translations = {
     demoLoginBtn: "Demo 1-Click Login",
     loginError: "Invalid username or password (Demo credentials: admin / jlpt2026)",
     loginHint: "Demo credentials: Username admin / Password jlpt2026",
+
+    // Admin Account Settings
+    adminSettingsBtn: "Admin Settings",
+    changePasswordModalTitle: "Admin Account & Password Settings",
+    changePasswordModalDesc: "Change administrator username and password for staff portal",
+    currentPasswordLabel: "Current Password",
+    newUsernameLabel: "New Username",
+    newPasswordLabel: "New Password",
+    confirmNewPasswordLabel: "Confirm New Password",
+    passwordMismatchError: "New password and confirmation do not match",
+    credentialsUpdateSuccess: "Admin account credentials updated successfully!",
 
     // Reset Data
     resetToDefaultBtn: "Reset Demo Data",
