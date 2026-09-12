@@ -1,7 +1,7 @@
 export const translations = {
   lo: {
     // Header & Meta
-    instituteName: "ສະຖາບັນພາສາຍີ່ປຸ່ນ",
+    instituteName: "ສະຖາບັນລາວ-ຍີ່ປຸ່ນ",
     instituteSubtitle: "ສູນສອບເສັງມາດຕະຖານສາກົນ",
     annualExamTitle: "ການສອບເສັງວັດລະດັບພາສາຍີ່ປຸ່ນ JLPT ປະຈຳປີ 2026",
     annualExamShort: "JLPT ປະຈຳປີ 2026",
@@ -134,11 +134,11 @@ export const translations = {
     resetSuccess: "ຣີເຊັດຂໍ້ມູນເປັນຄ່າເລີ່ມຕົ້ນຮຽບຮ້ອຍແລ້ວ!",
     saveSuccess: "ບັນທຶກຂໍ້ມູນສຳເລັດແລ້ວ!",
     quotaWarning: "ຈຳນວນຜູ້ສະໝັກບໍ່ສາມາດເກີນໂຄຕ້າໄດ້",
-    footerText: "ສະຖາບັນພາສາຍີ່ປຸ່ນ © 2026. ລະບົບຄຸ້ມຄອງການສອບເສັງວັດລະດັບພາສາຍີ່ປຸ່ນ (JLPT) ປະຈຳປີ."
+    footerText: "ສະຖາບັນລາວ-ຍີ່ປຸ່ນ © 2026. ລະບົບຄຸ້ມຄອງການສອບເສັງວັດລະດັບພາສາຍີ່ປຸ່ນ (JLPT) ປະຈຳປີ."
   },
   en: {
     // Header & Meta
-    instituteName: "Japanese Language Institute",
+    instituteName: "Lao-Japan Institute",
     instituteSubtitle: "International Examination Center",
     annualExamTitle: "Annual Japanese Language Proficiency Test (JLPT) 2026",
     annualExamShort: "Annual JLPT 2026",
@@ -259,7 +259,7 @@ export const translations = {
 
     // Login Modal
     loginTitle: "Staff Portal Login",
-    loginSubtitle: "Authorized Japanese Language Institute personnel only",
+    loginSubtitle: "Authorized Lao-Japan Institute personnel only",
     usernameLabel: "Username",
     passwordLabel: "Password",
     loginSubmitBtn: "Log In",
@@ -272,6 +272,6 @@ export const translations = {
     resetSuccess: "Demo data has been reset to defaults!",
     saveSuccess: "Changes saved successfully!",
     quotaWarning: "Registered count cannot exceed total quota",
-    footerText: "Japanese Language Institute © 2026. Annual Japanese Language Proficiency Test (JLPT) Management System."
+    footerText: "Lao-Japan Institute © 2026. Annual Japanese Language Proficiency Test (JLPT) Management System."
   }
 };
