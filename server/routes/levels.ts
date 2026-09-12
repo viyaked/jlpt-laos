@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear, getExamDate, setExamDate } from '../db';
+import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear, getExamDate, setExamDate, getFormsSold, setFormsSold } from '../db';
 import { requireAdminAuth } from '../auth';
 import { broadcastEvent } from '../events';
 
@@ -111,14 +111,47 @@ router.put('/year', requireAdminAuth, (req, res) => {
   });
 });
 
-// Admin: Update Global Form Quota (Unified across all levels)
+// Admin: Update Global Form Quota and/or Forms Sold
 router.put('/quota', requireAdminAuth, (req, res) => {
-  const { totalQuota } = req.body;
-  if (typeof totalQuota !== 'number' || totalQuota < 1) {
-    return res.status(400).json({ error: 'totalQuota must be a positive number' });
+  const { totalQuota, formsSold } = req.body;
+
+  if (totalQuota !== undefined) {
+    if (typeof totalQuota !== 'number' || totalQuota < 1) {
+      return res.status(400).json({ error: 'totalQuota must be a positive number' });
+    }
+    setSystemSetting('total_form_quota', String(totalQuota));
   }
 
-  setSystemSetting('total_form_quota', String(totalQuota));
+  if (formsSold !== undefined) {
+    if (typeof formsSold !== 'number' || formsSold < 0) {
+      return res.status(400).json({ error: 'formsSold must be a non-negative number' });
+    }
+    setFormsSold(formsSold);
+  }
+
+  const formQuota = getTotalFormQuota();
+
+  broadcastEvent('levels_updated', { formQuota });
+
+  res.json({
+    success: true,
+    formQuota: {
+      totalQuota: formQuota.totalQuota,
+      totalRegistered: formQuota.totalRegistered,
+      remaining: formQuota.remaining,
+      isFull: formQuota.remaining <= 0,
+    },
+  });
+});
+
+// Admin: Update Forms Sold directly
+router.put('/sold', requireAdminAuth, (req, res) => {
+  const { formsSold } = req.body;
+  if (typeof formsSold !== 'number' || formsSold < 0) {
+    return res.status(400).json({ error: 'formsSold must be a non-negative number' });
+  }
+
+  setFormsSold(formsSold);
   const formQuota = getTotalFormQuota();
 
   broadcastEvent('levels_updated', { formQuota });
@@ -155,6 +188,9 @@ router.post('/:level/increment', requireAdminAuth, (req, res) => {
     WHERE level = ?
   `).run(newRegistered, level);
 
+  const currentSold = getFormsSold();
+  setFormsSold(currentSold + 1);
+
   const updatedFormQuota = getTotalFormQuota();
   broadcastEvent('levels_updated', { level, registeredCount: newRegistered, formQuota: updatedFormQuota });
 
@@ -179,11 +215,16 @@ router.put('/:level', requireAdminAuth, (req, res) => {
     return res.status(404).json({ error: 'Exam level not found' });
   }
 
+  const diff = registeredCount - current.registered_count;
+
   db.prepare(`
     UPDATE exam_levels 
     SET registered_count = ?, updated_at = CURRENT_TIMESTAMP 
     WHERE level = ?
   `).run(registeredCount, level);
+
+  const currentSold = getFormsSold();
+  setFormsSold(Math.max(0, currentSold + diff));
 
   const updatedFormQuota = getTotalFormQuota();
   broadcastEvent('levels_updated', { level, registeredCount, formQuota: updatedFormQuota });

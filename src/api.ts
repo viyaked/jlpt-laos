@@ -108,18 +108,34 @@ export const api = {
     return res.json();
   },
 
-  async updateGlobalQuota(totalQuota: number): Promise<{ formQuota: FormQuotaStat }> {
+  async updateGlobalQuota(totalQuota: number, formsSold?: number): Promise<{ formQuota: FormQuotaStat }> {
     const res = await fetch('/api/levels/quota', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         ...authHeaders(),
       },
-      body: JSON.stringify({ totalQuota }),
+      body: JSON.stringify({ totalQuota, formsSold }),
     });
     if (!res.ok) {
       const err = await res.json();
       throw new Error(err.error || 'Failed to update total form quota');
+    }
+    return res.json();
+  },
+
+  async updateFormsSold(formsSold: number): Promise<{ formQuota: FormQuotaStat }> {
+    const res = await fetch('/api/levels/sold', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify({ formsSold }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update forms sold');
     }
     return res.json();
   },

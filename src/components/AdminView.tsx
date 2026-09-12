@@ -30,7 +30,7 @@ interface AdminViewProps {
   onLogin: (username: string) => void;
   onLogout: () => void;
   onIncrementRegistered: (level: JLPTLevel) => void;
-  onUpdateGlobalQuota: (totalQuota: number) => void;
+  onUpdateGlobalQuota: (totalQuota: number, formsSold?: number) => void;
   onUpdateExamSchedule: (newYear: string, newDate: string) => void;
   onUpdateLevelRegistered: (level: string, registered: number) => void;
   onSaveRoom: (roomData: Omit<ExamRoom, 'id' | 'examinees'> & { id?: string }) => void;
@@ -313,31 +313,57 @@ export const AdminView: FC<AdminViewProps> = ({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
-            <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
-              <span className="text-[11px] font-semibold text-slate-600 block">
-                {t.totalFormsLabel}
-              </span>
-              <div className="flex items-baseline gap-1 mt-1">
-                <span className="text-2xl font-black text-slate-900">
-                  {formQuota.totalQuota}
-                </span>
-                <span className="text-xs text-slate-500 font-medium">
-                  {t.formUnit}
-                </span>
+            <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-semibold text-slate-600 block">
+                    {t.totalFormsLabel}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setIsGlobalQuotaModalOpen(true)}
+                    className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-700 hover:text-slate-900 bg-slate-200/70 hover:bg-slate-200 px-2 py-0.5 rounded transition-colors"
+                    title={t.editDirectlyBtn}
+                  >
+                    <Edit2 className="w-3 h-3" />
+                    <span>{t.editDirectlyBtn}</span>
+                  </button>
+                </div>
+                <div className="flex items-baseline gap-1 mt-1">
+                  <span className="text-2xl font-black text-slate-900">
+                    {formQuota.totalQuota}
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium">
+                    {t.formUnit}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="bg-blue-50/70 border border-blue-100 p-3.5 rounded-xl">
-              <span className="text-[11px] font-semibold text-blue-900 block">
-                {t.usedFormsLabel}
-              </span>
-              <div className="flex items-baseline gap-1 mt-1">
-                <span className="text-2xl font-black text-blue-800">
-                  {formQuota.totalRegistered}
-                </span>
-                <span className="text-xs text-blue-600 font-medium">
-                  {t.formUnit}
-                </span>
+            <div className="bg-blue-50/70 border border-blue-100 p-3.5 rounded-xl flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-semibold text-blue-900 block">
+                    {t.usedFormsLabel}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setIsGlobalQuotaModalOpen(true)}
+                    className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-700 hover:text-blue-900 bg-blue-100 hover:bg-blue-200/80 px-2 py-0.5 rounded transition-colors"
+                    title={t.editDirectlyBtn}
+                  >
+                    <Edit2 className="w-3 h-3" />
+                    <span>{t.editDirectlyBtn}</span>
+                  </button>
+                </div>
+                <div className="flex items-baseline gap-1 mt-1">
+                  <span className="text-2xl font-black text-blue-800">
+                    {formQuota.totalRegistered}
+                  </span>
+                  <span className="text-xs text-blue-600 font-medium">
+                    {t.formUnit}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -556,8 +582,8 @@ export const AdminView: FC<AdminViewProps> = ({
         onClose={() => setIsGlobalQuotaModalOpen(false)}
         currentTotalQuota={formQuota.totalQuota}
         totalRegistered={formQuota.totalRegistered}
-        onSave={(newQuota) => {
-          onUpdateGlobalQuota(newQuota);
+        onSave={(newQuota, newFormsSold) => {
+          onUpdateGlobalQuota(newQuota, newFormsSold);
           triggerToast(t.saveSuccess);
         }}
         lang={lang}

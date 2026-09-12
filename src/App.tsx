@@ -139,9 +139,9 @@ export function App() {
     }
   };
 
-  const handleUpdateGlobalQuota = async (totalQuota: number) => {
+  const handleUpdateGlobalQuota = async (totalQuota: number, formsSold?: number) => {
     try {
-      const res = await api.updateGlobalQuota(totalQuota);
+      const res = await api.updateGlobalQuota(totalQuota, formsSold);
       setFormQuota(res.formQuota);
       await fetchLevels();
     } catch (err: any) {
