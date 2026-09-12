@@ -116,6 +116,51 @@ export const api = {
     return data;
   },
 
+  async getAdminUsers(): Promise<{ users: { id: string; username: string; role: string; created_at: string }[] }> {
+    const res = await fetch('/api/auth/users', {
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to fetch admin users');
+    }
+    return res.json();
+  },
+
+  async createAdminUser(params: { username: string; password: string; role?: string }): Promise<{ success: boolean; user: any }> {
+    const res = await fetch('/api/auth/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify(params),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to create admin user');
+    }
+    return res.json();
+  },
+
+  async deleteAdminUser(userId: string): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`/api/auth/users/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to delete admin user');
+    }
+    return res.json();
+  },
+
   // Admin Level Actions
   async incrementLevel(level: JLPTLevel) {
     const res = await fetch(`/api/levels/${level}/increment`, {
