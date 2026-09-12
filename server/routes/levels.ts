@@ -1,12 +1,14 @@
 import { Router } from 'express';
-import { db } from '../db';
+import { db, getTotalFormQuota, setSystemSetting } from '../db';
 import { requireAdminAuth } from '../auth';
 import { broadcastEvent } from '../events';
 
 const router = Router();
 
-// GET all exam levels with real-time stats
+// GET all exam levels with real-time stats and unified form quota
 router.get('/', (req, res) => {
+  const formQuota = getTotalFormQuota();
+
   const levels = db.prepare(`
     SELECT 
       level, 
@@ -26,30 +28,60 @@ router.get('/', (req, res) => {
       END
   `).all() as any[];
 
-  const formatted = levels.map((lvl) => ({
+  const formattedLevels = levels.map((lvl) => ({
     level: lvl.level,
-    totalQuota: lvl.total_quota,
     registeredCount: lvl.registered_count,
-    remainingCount: Math.max(0, lvl.total_quota - lvl.registered_count),
     fee: lvl.fee,
     testTime: lvl.test_time,
     updatedAt: lvl.updated_at,
   }));
 
-  res.json(formatted);
+  res.json({
+    formQuota: {
+      totalQuota: formQuota.totalQuota,
+      totalRegistered: formQuota.totalRegistered,
+      remaining: formQuota.remaining,
+      isFull: formQuota.remaining <= 0,
+    },
+    levels: formattedLevels,
+  });
 });
 
-// Admin: +1 quick increment
+// Admin: Update Global Form Quota (Unified across all levels)
+router.put('/quota', requireAdminAuth, (req, res) => {
+  const { totalQuota } = req.body;
+  if (typeof totalQuota !== 'number' || totalQuota < 1) {
+    return res.status(400).json({ error: 'totalQuota must be a positive number' });
+  }
+
+  setSystemSetting('total_form_quota', String(totalQuota));
+  const formQuota = getTotalFormQuota();
+
+  broadcastEvent('levels_updated', { formQuota });
+
+  res.json({
+    success: true,
+    formQuota: {
+      totalQuota: formQuota.totalQuota,
+      totalRegistered: formQuota.totalRegistered,
+      remaining: formQuota.remaining,
+      isFull: formQuota.remaining <= 0,
+    },
+  });
+});
+
+// Admin: +1 quick increment for a level (deducts from overall form quota)
 router.post('/:level/increment', requireAdminAuth, (req, res) => {
   const { level } = req.params;
-  const current = db.prepare('SELECT total_quota, registered_count FROM exam_levels WHERE level = ?').get(level) as any;
+  const current = db.prepare('SELECT registered_count FROM exam_levels WHERE level = ?').get(level) as any;
 
   if (!current) {
     return res.status(404).json({ error: 'Exam level not found' });
   }
 
-  if (current.registered_count >= current.total_quota) {
-    return res.status(400).json({ error: 'Quota is already full' });
+  const formQuota = getTotalFormQuota();
+  if (formQuota.remaining <= 0) {
+    return res.status(400).json({ error: 'Total form quota is already full' });
   }
 
   const newRegistered = current.registered_count + 1;
@@ -59,46 +91,43 @@ router.post('/:level/increment', requireAdminAuth, (req, res) => {
     WHERE level = ?
   `).run(newRegistered, level);
 
-  broadcastEvent('levels_updated', { level, registeredCount: newRegistered });
+  const updatedFormQuota = getTotalFormQuota();
+  broadcastEvent('levels_updated', { level, registeredCount: newRegistered, formQuota: updatedFormQuota });
 
   res.json({
     level,
     registeredCount: newRegistered,
-    totalQuota: current.total_quota,
-    remainingCount: current.total_quota - newRegistered,
+    formQuota: updatedFormQuota,
   });
 });
 
-// Admin: Direct edit count and quota
+// Admin: Direct edit count for a level
 router.put('/:level', requireAdminAuth, (req, res) => {
   const { level } = req.params;
-  const { registeredCount, totalQuota } = req.body;
+  const { registeredCount } = req.body;
 
-  if (typeof registeredCount !== 'number' || typeof totalQuota !== 'number') {
-    return res.status(400).json({ error: 'registeredCount and totalQuota must be valid numbers' });
+  if (typeof registeredCount !== 'number' || registeredCount < 0) {
+    return res.status(400).json({ error: 'registeredCount must be a valid non-negative number' });
   }
 
-  if (registeredCount < 0 || totalQuota < 0) {
-    return res.status(400).json({ error: 'Values cannot be negative' });
-  }
-
-  if (registeredCount > totalQuota) {
-    return res.status(400).json({ error: 'Registered count cannot exceed total quota' });
+  const current = db.prepare('SELECT registered_count FROM exam_levels WHERE level = ?').get(level) as any;
+  if (!current) {
+    return res.status(404).json({ error: 'Exam level not found' });
   }
 
   db.prepare(`
     UPDATE exam_levels 
-    SET registered_count = ?, total_quota = ?, updated_at = CURRENT_TIMESTAMP 
+    SET registered_count = ?, updated_at = CURRENT_TIMESTAMP 
     WHERE level = ?
-  `).run(registeredCount, totalQuota, level);
+  `).run(registeredCount, level);
 
-  broadcastEvent('levels_updated', { level, registeredCount, totalQuota });
+  const updatedFormQuota = getTotalFormQuota();
+  broadcastEvent('levels_updated', { level, registeredCount, formQuota: updatedFormQuota });
 
   res.json({
     level,
     registeredCount,
-    totalQuota,
-    remainingCount: totalQuota - registeredCount,
+    formQuota: updatedFormQuota,
   });
 });
 

@@ -1,4 +1,4 @@
-import type { LevelStat, ExamRoom, JLPTLevel } from './types';
+import type { LevelStat, ExamRoom, JLPTLevel, FormQuotaStat } from './types';
 
 const TOKEN_KEY = 'jlpt_jwt_token';
 
@@ -21,18 +21,24 @@ function authHeaders(): Record<string, string> {
 
 export const api = {
   // Public endpoints
-  async getLevels(): Promise<LevelStat[]> {
+  async getLevels(): Promise<{ levels: LevelStat[]; formQuota: FormQuotaStat }> {
     const res = await fetch('/api/levels');
     if (!res.ok) throw new Error('Failed to fetch level stats');
     const data = await res.json();
-    return data.map((d: any) => ({
-      level: d.level,
-      registered: d.registeredCount,
-      quota: d.totalQuota,
-      remaining: d.remainingCount,
-      fee: d.fee,
-      testTime: d.testTime,
-    }));
+    return {
+      formQuota: {
+        totalQuota: data.formQuota?.totalQuota ?? 500,
+        totalRegistered: data.formQuota?.totalRegistered ?? 0,
+        remaining: data.formQuota?.remaining ?? 0,
+        isFull: data.formQuota?.isFull ?? false,
+      },
+      levels: (data.levels || []).map((d: any) => ({
+        level: d.level,
+        registered: d.registeredCount,
+        fee: d.fee,
+        testTime: d.testTime,
+      })),
+    };
   },
 
   async getRooms(): Promise<ExamRoom[]> {
@@ -100,18 +106,34 @@ export const api = {
     return res.json();
   },
 
-  async updateLevel(level: string, registeredCount: number, totalQuota: number) {
+  async updateGlobalQuota(totalQuota: number): Promise<{ formQuota: FormQuotaStat }> {
+    const res = await fetch('/api/levels/quota', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify({ totalQuota }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update total form quota');
+    }
+    return res.json();
+  },
+
+  async updateLevel(level: string, registeredCount: number) {
     const res = await fetch(`/api/levels/${level}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         ...authHeaders(),
       },
-      body: JSON.stringify({ registeredCount, totalQuota }),
+      body: JSON.stringify({ registeredCount }),
     });
     if (!res.ok) {
       const err = await res.json();
-      throw new Error(err.error || 'Failed to update quota');
+      throw new Error(err.error || 'Failed to update registered count');
     }
     return res.json();
   },

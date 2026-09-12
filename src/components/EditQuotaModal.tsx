@@ -7,7 +7,7 @@ interface EditQuotaModalProps {
   stat: LevelStat | null;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (level: string, registered: number, quota: number) => void;
+  onSave: (level: string, registered: number) => void;
   lang: Language;
 }
 
@@ -19,13 +19,11 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
   lang,
 }) => {
   const [registered, setRegistered] = useState(stat ? stat.registered : 0);
-  const [quota, setQuota] = useState(stat ? stat.quota : 0);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (stat) {
       setRegistered(stat.registered);
-      setQuota(stat.quota);
       setError('');
     }
   }, [stat]);
@@ -33,25 +31,19 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
   if (!isOpen || !stat) return null;
   const t = translations[lang];
 
-  const remaining = Math.max(0, quota - registered);
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (registered < 0 || quota < 0) {
-      setError('Numbers cannot be negative');
+    if (registered < 0) {
+      setError('Number cannot be negative');
       return;
     }
-    if (registered > quota) {
-      setError(t.quotaWarning);
-      return;
-    }
-    onSave(stat.level, registered, quota);
+    onSave(stat.level, registered);
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 overflow-hidden animate-fadeIn">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 overflow-hidden">
         {/* Header */}
         <div className="bg-slate-900 text-white p-5 border-b-2 border-red-700 flex justify-between items-center">
           <div className="flex items-center gap-3">
@@ -60,7 +52,7 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
             </span>
             <div>
               <h3 className="font-bold text-base text-white">
-                {t.editQuotaModalTitle} (JLPT {stat.level})
+                {t.editLevelRegisteredTitle} (JLPT {stat.level})
               </h3>
             </div>
           </div>
@@ -81,7 +73,7 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
           {/* Registered Input */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
-              {t.registeredLabel} ({t.personUnit})
+              {t.registeredInLevel} ({t.personUnit})
             </label>
             <input
               type="number"
@@ -92,28 +84,12 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
             />
           </div>
 
-          {/* Quota Input */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              {t.quotaLabel} ({t.slotsUnit})
-            </label>
-            <input
-              type="number"
-              min="1"
-              value={quota}
-              onChange={(e) => setQuota(parseInt(e.target.value) || 0)}
-              className="w-full px-3 py-2 text-base font-bold text-slate-800 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
-            />
-          </div>
-
-          {/* Calculated Remaining Result */}
-          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center justify-between">
-            <span className="text-xs font-semibold text-emerald-900">
-              {t.remainingComputedLabel}:
-            </span>
-            <span className="text-xl font-extrabold text-emerald-700">
-              {remaining} <span className="text-xs font-normal text-emerald-800">{t.slotsUnit}</span>
-            </span>
+          <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600">
+            <span className="font-semibold block mb-1">JLPT {stat.level} Information</span>
+            <div className="flex justify-between">
+              <span>Time: {stat.testTime}</span>
+              <span>Fee: {stat.fee.toLocaleString()} LAK</span>
+            </div>
           </div>
 
           {/* Action Buttons */}

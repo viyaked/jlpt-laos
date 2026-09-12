@@ -54,7 +54,18 @@ export function initDatabase() {
       registered_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE SET NULL
     );
+
+    CREATE TABLE IF NOT EXISTS system_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
   `);
+
+  // Initialize default system settings
+  const existingQuota = db.prepare('SELECT value FROM system_settings WHERE key = ?').get('total_form_quota');
+  if (!existingQuota) {
+    db.prepare('INSERT INTO system_settings (key, value) VALUES (?, ?)').run('total_form_quota', '500');
+  }
 
   // Seed default admin user if not exists
   const existingAdmin = db.prepare('SELECT id FROM users WHERE username = ?').get('admin');
@@ -73,6 +84,28 @@ export function initDatabase() {
   if (levelsCount.count === 0) {
     seedDefaultData();
   }
+}
+
+export function getSystemSetting(key: string, defaultValue: string): string {
+  const row = db.prepare('SELECT value FROM system_settings WHERE key = ?').get(key) as { value: string } | undefined;
+  return row ? row.value : defaultValue;
+}
+
+export function setSystemSetting(key: string, value: string): void {
+  db.prepare(`
+    INSERT INTO system_settings (key, value)
+    VALUES (?, ?)
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value
+  `).run(key, value);
+}
+
+export function getTotalFormQuota(): { totalQuota: number; totalRegistered: number; remaining: number } {
+  const quotaStr = getSystemSetting('total_form_quota', '500');
+  const totalQuota = parseInt(quotaStr, 10) || 500;
+  const regRow = db.prepare('SELECT COALESCE(SUM(registered_count), 0) as total FROM exam_levels').get() as { total: number };
+  const totalRegistered = regRow.total;
+  const remaining = Math.max(0, totalQuota - totalRegistered);
+  return { totalQuota, totalRegistered, remaining };
 }
 
 export function seedDefaultData() {
@@ -97,6 +130,9 @@ export function seedDefaultData() {
     db.prepare('DELETE FROM applicants').run();
     db.prepare('DELETE FROM rooms').run();
     db.prepare('DELETE FROM exam_levels').run();
+
+    // 0. Settings
+    setSystemSetting('total_form_quota', '500');
 
     // 1. Levels
     insertLevel.run('N5', 150, 124, 350000, '09:00 - 11:30');

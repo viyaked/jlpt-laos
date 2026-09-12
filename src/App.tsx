@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { Language, LevelStat, ExamRoom, AdminUser, JLPTLevel } from './types';
-import { initialLevelStats, initialExamRooms } from './data/mockData';
+import type { Language, LevelStat, ExamRoom, AdminUser, JLPTLevel, FormQuotaStat } from './types';
+import { initialLevelStats, initialExamRooms, initialFormQuota } from './data/mockData';
 import { translations } from './i18n';
 import { api, getAuthToken, subscribeToSSE } from './api';
 import { Navbar } from './components/Navbar';
@@ -46,6 +46,7 @@ export function App() {
 
   // 4. Data states loaded from persistent database
   const [levelStats, setLevelStats] = useState<LevelStat[]>(initialLevelStats);
+  const [formQuota, setFormQuota] = useState<FormQuotaStat>(initialFormQuota);
   const [examRooms, setExamRooms] = useState<ExamRoom[]>(initialExamRooms);
   const [isDbConnected, setIsDbConnected] = useState(false);
 
@@ -53,7 +54,8 @@ export function App() {
   const fetchLevels = useCallback(async () => {
     try {
       const data = await api.getLevels();
-      setLevelStats(data);
+      setLevelStats(data.levels);
+      setFormQuota(data.formQuota);
       setIsDbConnected(true);
     } catch {
       // Keep existing
@@ -129,16 +131,25 @@ export function App() {
     }
   };
 
-  const handleUpdateLevelQuota = async (
-    level: string,
-    registered: number,
-    quota: number
-  ) => {
+  const handleUpdateGlobalQuota = async (totalQuota: number) => {
     try {
-      await api.updateLevel(level, registered, quota);
+      const res = await api.updateGlobalQuota(totalQuota);
+      setFormQuota(res.formQuota);
       await fetchLevels();
     } catch (err: any) {
-      alert(err.message || 'Failed to update quota');
+      alert(err.message || 'Failed to update total form quota');
+    }
+  };
+
+  const handleUpdateLevelRegistered = async (
+    level: string,
+    registered: number
+  ) => {
+    try {
+      await api.updateLevel(level, registered);
+      await fetchLevels();
+    } catch (err: any) {
+      alert(err.message || 'Failed to update registered count');
     }
   };
 
@@ -245,18 +256,21 @@ export function App() {
         {viewMode === 'public' ? (
           <PublicView
             levelStats={levelStats}
+            formQuota={formQuota}
             examRooms={examRooms}
             lang={lang}
           />
         ) : (
           <AdminView
             levelStats={levelStats}
+            formQuota={formQuota}
             examRooms={examRooms}
             adminUser={adminUser}
             onLogin={handleLogin}
             onLogout={handleLogout}
             onIncrementRegistered={handleIncrementRegistered}
-            onUpdateLevelQuota={handleUpdateLevelQuota}
+            onUpdateGlobalQuota={handleUpdateGlobalQuota}
+            onUpdateLevelRegistered={handleUpdateLevelRegistered}
             onSaveRoom={handleSaveRoom}
             onDeleteRoom={handleDeleteRoom}
             onAddExamineeToRoom={handleAddExamineeToRoom}

@@ -1,43 +1,40 @@
-import type { LevelStat, ExamRoom } from '../types';
+import type { LevelStat, ExamRoom, FormQuotaStat } from '../types';
+
+export const initialFormQuota: FormQuotaStat = {
+  totalQuota: 500,
+  totalRegistered: 432,
+  remaining: 68,
+  isFull: false,
+};
 
 export const initialLevelStats: LevelStat[] = [
   {
     level: 'N5',
     registered: 124,
-    quota: 150,
-    remaining: 26,
     fee: 350000,
     testTime: '09:00 - 11:30'
   },
   {
     level: 'N4',
     registered: 98,
-    quota: 120,
-    remaining: 22,
     fee: 380000,
     testTime: '09:00 - 11:45'
   },
   {
     level: 'N3',
     registered: 92,
-    quota: 100,
-    remaining: 8,
     fee: 420000,
     testTime: '13:30 - 16:30'
   },
   {
     level: 'N2',
     registered: 80,
-    quota: 80,
-    remaining: 0,
     fee: 480000,
     testTime: '13:30 - 16:45'
   },
   {
     level: 'N1',
     registered: 38,
-    quota: 50,
-    remaining: 12,
     fee: 550000,
     testTime: '13:30 - 17:00'
   }

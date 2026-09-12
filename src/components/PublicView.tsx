@@ -1,5 +1,5 @@
 import { useState, useEffect, type FC } from 'react';
-import type { LevelStat, ExamRoom, Language } from '../types';
+import type { LevelStat, ExamRoom, Language, FormQuotaStat } from '../types';
 import { translations } from '../i18n';
 import { api } from '../api';
 import { RosterModal } from './RosterModal';
@@ -19,12 +19,14 @@ import {
 
 interface PublicViewProps {
   levelStats: LevelStat[];
+  formQuota: FormQuotaStat;
   examRooms: ExamRoom[];
   lang: Language;
 }
 
 export const PublicView: FC<PublicViewProps> = ({
   levelStats,
+  formQuota,
   examRooms,
   lang,
 }) => {
@@ -71,11 +73,13 @@ export const PublicView: FC<PublicViewProps> = ({
     return matchLevel && matchBuilding && (matchRoomCode || matchRoomBuilding || matchRoomFloor || hasMatchedDbCandidate);
   });
 
-
-  // Calculate totals
-  const totalRegistered = levelStats.reduce((sum, s) => sum + s.registered, 0);
-  const totalQuota = levelStats.reduce((sum, s) => sum + s.quota, 0);
-  const totalRemaining = levelStats.reduce((sum, s) => sum + s.remaining, 0);
+  // Calculate totals from unified formQuota
+  const totalRegistered = formQuota.totalRegistered;
+  const totalQuota = formQuota.totalQuota;
+  const totalRemaining = formQuota.remaining;
+  const percentFilled = Math.min(100, Math.round((totalRegistered / Math.max(1, totalQuota)) * 100));
+  const isFull = formQuota.isFull || totalRemaining <= 0;
+  const isAlmostFull = !isFull && totalRemaining <= 30;
 
   return (
     <div className="space-y-8 pb-12">
@@ -103,162 +107,211 @@ export const PublicView: FC<PublicViewProps> = ({
               </span>
             </div>
             <div>
-              <span className="text-xs text-slate-400 block">{t.registeredCount}</span>
+              <span className="text-xs text-slate-400 block">{t.usedFormsLabel}</span>
               <span className="font-bold text-lg text-blue-400 flex items-center gap-1.5 mt-0.5">
                 <Users className="w-4 h-4" />
-                {totalRegistered} <span className="text-xs font-normal text-slate-300">{t.personUnit}</span>
+                {totalRegistered} <span className="text-xs font-normal text-slate-300">{t.formUnit}</span>
               </span>
             </div>
             <div>
-              <span className="text-xs text-slate-400 block">{t.remainingCount}</span>
-              <span className="font-bold text-lg text-emerald-400 flex items-center gap-1.5 mt-0.5">
+              <span className="text-xs text-slate-400 block">{t.remainingFormsLabel}</span>
+              <span className={`font-bold text-lg flex items-center gap-1.5 mt-0.5 ${
+                isFull ? 'text-rose-400' : 'text-emerald-400'
+              }`}>
                 <Ticket className="w-4 h-4" />
-                {totalRemaining} <span className="text-xs font-normal text-slate-300">{t.slotsUnit}</span>
+                {totalRemaining} <span className="text-xs font-normal text-slate-300">{t.formUnit}</span>
               </span>
             </div>
             <div>
-              <span className="text-xs text-slate-400 block">{t.totalQuota}</span>
+              <span className="text-xs text-slate-400 block">{t.totalFormsLabel}</span>
               <span className="font-bold text-lg text-slate-200 mt-0.5 block">
-                {totalQuota} <span className="text-xs font-normal text-slate-400">{t.slotsUnit}</span>
+                {totalQuota} <span className="text-xs font-normal text-slate-400">{t.formUnit}</span>
               </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 1. Real-time Quota & Applicant Dashboard (N5 - N1) */}
-      <section className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
-          <div>
-            <h3 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              <span className="w-2.5 h-6 bg-red-700 rounded-sm inline-block"></span>
-              {t.quotaOverviewTitle}
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              {t.quotaOverviewDesc}
-            </p>
+      {/* 1. Real-time Unified Form Quota & Level Overview */}
+      <section className="space-y-6">
+        {/* Unified Form Quota Card */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
+            <div>
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <span className="w-2.5 h-6 bg-red-700 rounded-sm inline-block"></span>
+                <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                  {t.totalFormQuotaTitle}
+                </h3>
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">
+                  {t.unifiedFormBadge}
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-500">
+                {t.totalFormQuotaDesc}
+              </p>
+            </div>
+
+            {/* Status Badge */}
+            {isFull ? (
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 border border-red-200 self-start sm:self-auto flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-red-600"></span>
+                {t.statusFull}
+              </span>
+            ) : isAlmostFull ? (
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200 self-start sm:self-auto flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse"></span>
+                {t.statusAlmostFull}
+              </span>
+            ) : (
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 self-start sm:self-auto flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                {t.statusOpen}
+              </span>
+            )}
           </div>
-          <span className="text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200 self-start sm:self-auto">
-            {t.realtimeBadge}
-          </span>
+
+          {/* 3 Large Counter Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {/* Total Forms */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+              <span className="text-xs font-semibold text-slate-600 block">
+                {t.totalFormsLabel}
+              </span>
+              <div className="flex items-baseline gap-1.5 mt-2">
+                <span className="text-3xl font-black text-slate-900 tracking-tight">
+                  {totalQuota}
+                </span>
+                <span className="text-xs font-medium text-slate-500">
+                  {t.formUnit} ({t.slotsUnit})
+                </span>
+              </div>
+            </div>
+
+            {/* Registered Forms */}
+            <div className="bg-blue-50/70 border border-blue-100 rounded-xl p-4">
+              <span className="text-xs font-semibold text-blue-900 block">
+                {t.usedFormsLabel}
+              </span>
+              <div className="flex items-baseline gap-1.5 mt-2">
+                <span className="text-3xl font-black text-blue-800 tracking-tight">
+                  {totalRegistered}
+                </span>
+                <span className="text-xs font-medium text-blue-600">
+                  {t.formUnit} ({t.personUnit})
+                </span>
+              </div>
+            </div>
+
+            {/* Remaining Forms */}
+            <div className={`p-4 rounded-xl border ${
+              isFull
+                ? 'bg-rose-50 border-rose-200 text-rose-800'
+                : 'bg-emerald-50/70 border-emerald-100 text-emerald-800'
+            }`}>
+              <span className="text-xs font-semibold block">
+                {t.remainingFormsLabel}
+              </span>
+              <div className="flex items-baseline gap-1.5 mt-2">
+                <span className={`text-3xl font-black tracking-tight ${
+                  isFull ? 'text-rose-700' : 'text-emerald-700'
+                }`}>
+                  {totalRemaining}
+                </span>
+                <span className="text-xs font-medium opacity-80">
+                  {t.formUnit}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs font-medium text-slate-600">
+              <span>{t.filledPercent}: <strong className="text-slate-900">{percentFilled}%</strong></span>
+              <span>{totalRemaining} {t.formUnit} {t.seatsLeft}</span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden p-0.5 border border-slate-200">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${
+                  isFull ? 'bg-red-600' : isAlmostFull ? 'bg-amber-500' : 'bg-red-700'
+                }`}
+                style={{ width: `${percentFilled}%` }}
+              ></div>
+            </div>
+          </div>
         </div>
 
-        {/* 5 Cards for N5 to N1 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {levelStats.map((stat) => {
-            const percentFilled = Math.min(
-              100,
-              Math.round((stat.registered / stat.quota) * 100)
-            );
-            const isFull = stat.remaining <= 0;
-            const isAlmostFull = !isFull && stat.remaining <= 15;
+        {/* 2. JLPT Levels Details Section (No per-level quota!) */}
+        <div className="space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+            <h4 className="font-bold text-base text-slate-900 flex items-center gap-2">
+              <span>{t.levelInfoTitle}</span>
+            </h4>
+            <span className="text-xs text-slate-500">
+              {t.levelInfoDesc}
+            </span>
+          </div>
 
-            return (
-              <div
-                key={stat.level}
-                className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
-              >
-                <div>
-                  {/* Top Level Tag & Status */}
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-lg bg-red-700 text-white font-black text-sm flex items-center justify-center shadow-xs">
-                        {stat.level}
-                      </span>
-                      <span className="text-xs font-semibold text-slate-700">
-                        JLPT {stat.level}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {levelStats.map((stat) => {
+              const levelPercentOfTotal = totalRegistered > 0
+                ? Math.round((stat.registered / totalRegistered) * 100)
+                : 0;
+
+              return (
+                <div
+                  key={stat.level}
+                  className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs hover:shadow-sm transition-shadow flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="w-8 h-8 rounded-lg bg-slate-900 text-white font-black text-sm flex items-center justify-center shadow-xs">
+                          {stat.level}
+                        </span>
+                        <span className="text-xs font-bold text-slate-800">
+                          JLPT {stat.level}
+                        </span>
+                      </div>
+                      <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">
+                        {levelPercentOfTotal}% {t.percentOfTotal}
                       </span>
                     </div>
 
-                    {/* Status Badge */}
-                    {isFull ? (
-                      <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-red-100 text-red-800 border border-red-200">
-                        {t.statusFull}
-                      </span>
-                    ) : isAlmostFull ? (
-                      <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                        {t.statusAlmostFull}
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                        {t.statusOpen}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Registered vs Remaining (Clearly Separated Blocks) */}
-                  <div className="grid grid-cols-2 gap-2 my-3">
-                    {/* Registered Block */}
-                    <div className="bg-blue-50/70 border border-blue-100 rounded-lg p-2.5">
-                      <span className="text-[11px] font-medium text-blue-900 block truncate">
-                        {t.registeredCount}
+                    {/* Registered count for this level */}
+                    <div className="bg-slate-50 border border-slate-100 rounded-lg p-3 my-2">
+                      <span className="text-[11px] font-medium text-slate-600 block">
+                        {t.registeredInLevel}
                       </span>
                       <div className="flex items-baseline gap-1 mt-1">
-                        <span className="text-2xl font-black text-blue-800 tracking-tight">
+                        <span className="text-2xl font-black text-slate-900">
                           {stat.registered}
                         </span>
-                        <span className="text-[10px] text-blue-600 font-medium">
+                        <span className="text-[11px] text-slate-500">
                           {t.personUnit}
                         </span>
                       </div>
                     </div>
+                  </div>
 
-                    {/* Remaining Block */}
-                    <div className={`p-2.5 rounded-lg border ${
-                      isFull
-                        ? 'bg-rose-50 border-rose-200 text-rose-800'
-                        : 'bg-emerald-50/70 border-emerald-100 text-emerald-800'
-                    }`}>
-                      <span className="text-[11px] font-medium block truncate">
-                        {t.remainingCount}
+                  {/* Level Details: Time and Fee */}
+                  <div className="pt-3 border-t border-slate-100 space-y-1 text-[11px] text-slate-500">
+                    <div className="flex items-center justify-between">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-slate-400" />
+                        <span>{stat.testTime}</span>
                       </span>
-                      <div className="flex items-baseline gap-1 mt-1">
-                        <span className={`text-2xl font-black tracking-tight ${
-                          isFull ? 'text-rose-700' : 'text-emerald-700'
-                        }`}>
-                          {stat.remaining}
-                        </span>
-                        <span className="text-[10px] font-medium opacity-80">
-                          {t.slotsUnit}
-                        </span>
-                      </div>
                     </div>
-                  </div>
-
-                  {/* Capacity Bar */}
-                  <div className="space-y-1 mb-2">
-                    <div className="flex justify-between text-[11px] text-slate-500 font-medium">
-                      <span>{t.totalQuota}: {stat.quota}</span>
-                      <span>{percentFilled}%</span>
-                    </div>
-                    <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 ${
-                          isFull
-                            ? 'bg-red-600'
-                            : isAlmostFull
-                            ? 'bg-amber-500'
-                            : 'bg-blue-600'
-                        }`}
-                        style={{ width: `${percentFilled}%` }}
-                      ></div>
+                    <div className="flex items-center justify-between font-mono text-slate-700 font-semibold">
+                      <span>{stat.fee.toLocaleString()} LAK</span>
                     </div>
                   </div>
                 </div>
-
-                {/* Additional Level Details */}
-                <div className="pt-2 border-t border-slate-100 flex justify-between items-center text-[11px] text-slate-500">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-slate-400" />
-                    {stat.testTime}
-                  </span>
-                  <span className="font-mono text-slate-600">
-                    {stat.fee.toLocaleString()} LAK
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </section>
 
