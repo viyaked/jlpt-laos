@@ -1,13 +1,14 @@
 import { Router } from 'express';
-import { db, getTotalFormQuota, setSystemSetting } from '../db';
+import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear } from '../db';
 import { requireAdminAuth } from '../auth';
 import { broadcastEvent } from '../events';
 
 const router = Router();
 
-// GET all exam levels with real-time stats and unified form quota
+// GET all exam levels with real-time stats, unified form quota, and exam year
 router.get('/', (req, res) => {
   const formQuota = getTotalFormQuota();
+  const examYear = getExamYear();
 
   const levels = db.prepare(`
     SELECT 
@@ -37,6 +38,7 @@ router.get('/', (req, res) => {
   }));
 
   res.json({
+    examYear,
     formQuota: {
       totalQuota: formQuota.totalQuota,
       totalRegistered: formQuota.totalRegistered,
@@ -44,6 +46,24 @@ router.get('/', (req, res) => {
       isFull: formQuota.remaining <= 0,
     },
     levels: formattedLevels,
+  });
+});
+
+// Admin: Update Exam Year (e.g., 2026, 2027)
+router.put('/year', requireAdminAuth, (req, res) => {
+  const { examYear } = req.body;
+  if (!examYear || typeof examYear !== 'string' || !examYear.trim()) {
+    return res.status(400).json({ error: 'examYear is required and must be a valid string' });
+  }
+
+  const cleanYear = examYear.trim();
+  setExamYear(cleanYear);
+
+  broadcastEvent('levels_updated', { examYear: cleanYear });
+
+  res.json({
+    success: true,
+    examYear: cleanYear,
   });
 });
 

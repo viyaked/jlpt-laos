@@ -22,6 +22,7 @@ interface PublicViewProps {
   formQuota: FormQuotaStat;
   examRooms: ExamRoom[];
   lang: Language;
+  examYear?: string;
 }
 
 export const PublicView: FC<PublicViewProps> = ({
@@ -29,6 +30,7 @@ export const PublicView: FC<PublicViewProps> = ({
   formQuota,
   examRooms,
   lang,
+  examYear = '2026',
 }) => {
   const t = translations[lang];
 
@@ -100,10 +102,10 @@ export const PublicView: FC<PublicViewProps> = ({
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-700/80">
             <div>
-              <span className="text-xs text-slate-400 block">{t.examDate}</span>
+              <span className="text-xs text-slate-400 block">{t.examDate.replace('2026', examYear)}</span>
               <span className="font-semibold text-sm text-white flex items-center gap-1.5 mt-1">
                 <Calendar className="w-4 h-4 text-red-400" />
-                05/07/2026
+                05/07/{examYear}
               </span>
             </div>
             <div>

@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import type { Language, AdminUser } from '../types';
-import { translations } from '../i18n';
+import { translations, getAnnualExamTitle, getAnnualExamShort } from '../i18n';
 import { ShieldCheck, Users, LogOut, LogIn } from 'lucide-react';
 
 
@@ -12,6 +12,7 @@ interface NavbarProps {
   adminUser: AdminUser;
   onLogout: () => void;
   onOpenLogin: () => void;
+  examYear?: string;
 }
 
 export const Navbar: FC<NavbarProps> = ({
@@ -22,8 +23,12 @@ export const Navbar: FC<NavbarProps> = ({
   adminUser,
   onLogout,
   onOpenLogin,
+  examYear = '2026',
 }) => {
   const t = translations[lang];
+  const examTitle = getAnnualExamTitle(lang, examYear);
+  const examShort = getAnnualExamShort(lang, examYear);
+  const dynamicExamDate = t.examDate.replace('2026', examYear);
 
   return (
     <header className="sticky top-0 z-40 bg-slate-900 text-white shadow-md border-b-2 border-red-700">
@@ -32,7 +37,7 @@ export const Navbar: FC<NavbarProps> = ({
         <div className="flex items-center gap-2">
           <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span className="font-medium tracking-wide">
-            {t.annualExamShort} &bull; {t.examDate}
+            {examShort} &bull; {dynamicExamDate}
           </span>
         </div>
         <div className="hidden sm:flex items-center gap-3 text-slate-400">
@@ -58,7 +63,7 @@ export const Navbar: FC<NavbarProps> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-300 font-normal leading-normal">
-                {t.annualExamTitle}
+                {examTitle}
               </p>
             </div>
           </div>

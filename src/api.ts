@@ -21,11 +21,12 @@ function authHeaders(): Record<string, string> {
 
 export const api = {
   // Public endpoints
-  async getLevels(): Promise<{ levels: LevelStat[]; formQuota: FormQuotaStat }> {
+  async getLevels(): Promise<{ levels: LevelStat[]; formQuota: FormQuotaStat; examYear: string }> {
     const res = await fetch('/api/levels');
     if (!res.ok) throw new Error('Failed to fetch level stats');
     const data = await res.json();
     return {
+      examYear: data.examYear || '2026',
       formQuota: {
         totalQuota: data.formQuota?.totalQuota ?? 500,
         totalRegistered: data.formQuota?.totalRegistered ?? 0,
@@ -118,6 +119,22 @@ export const api = {
     if (!res.ok) {
       const err = await res.json();
       throw new Error(err.error || 'Failed to update total form quota');
+    }
+    return res.json();
+  },
+
+  async updateExamYear(examYear: string): Promise<{ examYear: string }> {
+    const res = await fetch('/api/levels/year', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify({ examYear }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update exam year');
     }
     return res.json();
   },

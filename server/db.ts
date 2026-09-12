@@ -67,6 +67,11 @@ export function initDatabase() {
     db.prepare('INSERT INTO system_settings (key, value) VALUES (?, ?)').run('total_form_quota', '500');
   }
 
+  const existingYear = db.prepare('SELECT value FROM system_settings WHERE key = ?').get('exam_year');
+  if (!existingYear) {
+    db.prepare('INSERT INTO system_settings (key, value) VALUES (?, ?)').run('exam_year', '2026');
+  }
+
   // Seed default admin user if not exists
   const existingAdmin = db.prepare('SELECT id FROM users WHERE username = ?').get('admin');
   if (!existingAdmin) {
@@ -97,6 +102,14 @@ export function setSystemSetting(key: string, value: string): void {
     VALUES (?, ?)
     ON CONFLICT(key) DO UPDATE SET value = excluded.value
   `).run(key, value);
+}
+
+export function getExamYear(): string {
+  return getSystemSetting('exam_year', '2026');
+}
+
+export function setExamYear(year: string): void {
+  setSystemSetting('exam_year', year);
 }
 
 export function getTotalFormQuota(): { totalQuota: number; totalRegistered: number; remaining: number } {
@@ -133,6 +146,7 @@ export function seedDefaultData() {
 
     // 0. Settings
     setSystemSetting('total_form_quota', '500');
+    setSystemSetting('exam_year', '2026');
 
     // 1. Levels
     insertLevel.run('N5', 150, 124, 350000, '09:00 - 11:30');

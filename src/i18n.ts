@@ -1,3 +1,17 @@
+import type { Language } from './types';
+
+export function getAnnualExamTitle(lang: Language, year: string = '2026'): string {
+  return lang === 'lo'
+    ? `ການສອບເສັງວັດລະດັບພາສາຍີ່ປຸ່ນ JLPT ປະຈຳປີ ${year}`
+    : `Annual Japanese Language Proficiency Test (JLPT) ${year}`;
+}
+
+export function getAnnualExamShort(lang: Language, year: string = '2026'): string {
+  return lang === 'lo'
+    ? `JLPT ປະຈຳປີ ${year}`
+    : `Annual JLPT ${year}`;
+}
+
 export const translations = {
   lo: {
     // Header & Meta
@@ -13,6 +27,17 @@ export const translations = {
     login: "ເຂົ້າສູ່ລະບົບ",
     adminBadge: "ເຈົ້າໜ້າທີ່ສະຖາບັນ",
     switchLanguagePrompt: "English",
+
+    // Exam Year Configuration
+    editExamYearBtn: "ແກ້ໄຂປີສອບເສັງ",
+    editExamYearModalTitle: "ແກ້ໄຂປີສອບເສັງ JLPT",
+    examYearLabel: "ປີສອບເສັງ (ຄ.ສ.)",
+    examYearHelp: "ປ່ຽນແປງຕົວເລກປີສອບເສັງໃນຫົວຂໍ້ ແລະ ລະບົບທັງໝົດ",
+    examYearSuccess: "ອັບເດດປີສອບເສັງສຳເລັດແລ້ວ",
+    examYearCardTitle: "ປີຈັດການສອບເສັງ",
+    examYearCardDesc: "ປີສຳລັບຫົວຂໍ້ການສອບເສັງ ແລະ ປ້າຍປະກາດທັງໝົດ",
+    examYearPreviewLabel: "ຕົວຢ່າງຫົວຂໍ້ທີ່ຈະສະແດງ",
+    examYearPlaceholder: "2026",
 
     // Public Dashboard
     publicWelcomeTitle: "ຂໍ້ມູນການສະໝັກ ແລະ ຫ້ອງສອບເສັງ JLPT",
@@ -150,6 +175,17 @@ export const translations = {
     login: "Staff Login",
     adminBadge: "Institute Staff",
     switchLanguagePrompt: "ລາວ",
+
+    // Exam Year Configuration
+    editExamYearBtn: "Edit Exam Year",
+    editExamYearModalTitle: "Edit JLPT Exam Year",
+    examYearLabel: "Exam Year (A.D.)",
+    examYearHelp: "Change the exam year displayed in title and system-wide",
+    examYearSuccess: "Exam year updated successfully",
+    examYearCardTitle: "Official Exam Year",
+    examYearCardDesc: "Year displayed across all headers, banners, and rosters",
+    examYearPreviewLabel: "Title preview",
+    examYearPlaceholder: "2026",
 
     // Public Dashboard
     publicWelcomeTitle: "JLPT Registration Statistics & Exam Rooms",

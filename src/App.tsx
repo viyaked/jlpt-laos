@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Language, LevelStat, ExamRoom, AdminUser, JLPTLevel, FormQuotaStat } from './types';
 import { initialLevelStats, initialExamRooms, initialFormQuota } from './data/mockData';
-import { translations } from './i18n';
+import { translations, getAnnualExamShort } from './i18n';
 import { api, getAuthToken, subscribeToSSE } from './api';
 import { Navbar } from './components/Navbar';
 import { PublicView } from './components/PublicView';
@@ -48,6 +48,7 @@ export function App() {
   const [levelStats, setLevelStats] = useState<LevelStat[]>(initialLevelStats);
   const [formQuota, setFormQuota] = useState<FormQuotaStat>(initialFormQuota);
   const [examRooms, setExamRooms] = useState<ExamRoom[]>(initialExamRooms);
+  const [examYear, setExamYear] = useState<string>('2026');
   const [isDbConnected, setIsDbConnected] = useState(false);
 
   // Fetch live data from backend
@@ -56,6 +57,9 @@ export function App() {
       const data = await api.getLevels();
       setLevelStats(data.levels);
       setFormQuota(data.formQuota);
+      if (data.examYear) {
+        setExamYear(data.examYear);
+      }
       setIsDbConnected(true);
     } catch {
       // Keep existing
@@ -138,6 +142,16 @@ export function App() {
       await fetchLevels();
     } catch (err: any) {
       alert(err.message || 'Failed to update total form quota');
+    }
+  };
+
+  const handleUpdateExamYear = async (newYear: string) => {
+    try {
+      const res = await api.updateExamYear(newYear);
+      setExamYear(res.examYear);
+      await fetchLevels();
+    } catch (err: any) {
+      alert(err.message || 'Failed to update exam year');
     }
   };
 
@@ -249,6 +263,7 @@ export function App() {
         adminUser={adminUser}
         onLogout={handleLogout}
         onOpenLogin={() => setIsLoginModalOpen(true)}
+        examYear={examYear}
       />
 
       {/* Main Content Area */}
@@ -259,6 +274,7 @@ export function App() {
             formQuota={formQuota}
             examRooms={examRooms}
             lang={lang}
+            examYear={examYear}
           />
         ) : (
           <AdminView
@@ -270,6 +286,7 @@ export function App() {
             onLogout={handleLogout}
             onIncrementRegistered={handleIncrementRegistered}
             onUpdateGlobalQuota={handleUpdateGlobalQuota}
+            onUpdateExamYear={handleUpdateExamYear}
             onUpdateLevelRegistered={handleUpdateLevelRegistered}
             onSaveRoom={handleSaveRoom}
             onDeleteRoom={handleDeleteRoom}
@@ -278,6 +295,7 @@ export function App() {
             onRemoveExamineeFromRoom={handleRemoveExamineeFromRoom}
             onResetData={handleResetData}
             lang={lang}
+            examYear={examYear}
           />
         )}
       </main>
@@ -287,10 +305,10 @@ export function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
           <div>
             <p className="font-semibold text-slate-300">
-              {t.instituteName} &bull; {t.annualExamShort}
+              {t.instituteName} &bull; {getAnnualExamShort(lang, examYear)}
             </p>
             <p className="text-slate-400 mt-1">
-              {t.footerText}
+              {t.footerText.replace('2026', examYear)}
             </p>
           </div>
           <div className="flex items-center gap-4">

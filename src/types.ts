@@ -16,6 +16,12 @@ export interface LevelStat {
   testTime: string;
 }
 
+export interface LevelsResponse {
+  levels: LevelStat[];
+  formQuota: FormQuotaStat;
+  examYear: string;
+}
+
 export interface Examinee {
   id: string;
   firstName: string;
