@@ -146,7 +146,7 @@ export const translations = {
     searchInRoomPlaceholder: "ຄົ້ນຫາຊື່ໃນຫ້ອງນີ້...",
 
     // Admin Dashboard
-    adminDashboardTitle: "ລະບົບຄຸ້ມຄອງການສອບເສັງສຳລັບເຈົ້າໜ້າທີ່",
+    adminDashboardTitle: "ຈັດການລະບົບ",
     adminDashboardSubtitle: "ຈັດການໂຄຕ້າຜູ້ສະໝັກ, ປັບຕົວເລກແບບວ່ອງໄວ ແລະ ຈັດສັນຫ້ອງສອບເສັງ",
     quickAdjustTitle: "ຈັດການໂຄຕ້າ ແລະ ປັບຍອດຜູ້ສະໝັກແຕ່ລະລະດັບ",
     quickAdjustDesc: "ກົດປຸ່ມ +1 ເພື່ອເພີ່ມຜູ້ສະໝັກທັນທີ ຫຼື ກົດປຸ່ມ 'ແກ້ໄຂ' ເພື່ອກຳນົດຕົວເລກໂດຍກົງ",
