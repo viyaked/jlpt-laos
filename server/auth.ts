@@ -24,7 +24,7 @@ export function requireAdminAuth(req: Request, res: Response, next: NextFunction
     const decoded = jwt.verify(token, JWT_SECRET) as AuthPayload;
     (req as any).user = decoded;
     next();
-  } catch (err) {
+  } catch {
     return res.status(401).json({ error: 'Invalid or expired token' });
   }
 }

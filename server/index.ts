@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { initDatabase, seedDefaultData } from './db';
 import { registerSSEClient, broadcastEvent } from './events';
 import authRouter from './routes/auth';

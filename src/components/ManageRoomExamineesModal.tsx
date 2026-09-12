@@ -25,7 +25,6 @@ interface ManageRoomExamineesModalProps {
 }
 
 export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
-
   room,
   isOpen,
   onClose,
@@ -34,9 +33,6 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
   onRemoveExaminee,
   lang,
 }) => {
-  if (!isOpen || !room) return null;
-  const t = translations[lang];
-
   // Tab mode: 'single' | 'batch' | 'list'
   const [activeTab, setActiveTab] = useState<'list' | 'single' | 'batch'>('list');
 
@@ -50,13 +46,18 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
   const [batchError, setBatchError] = useState('');
   const [batchSuccess, setBatchSuccess] = useState('');
 
+  if (!isOpen || !room) return null;
+  const t = translations[lang];
+
   const handleSingleAdd = (e: FormEvent) => {
     e.preventDefault();
     if (!firstName.trim() || !lastName.trim()) {
       setSingleError('Please fill in both first name and last name');
       return;
     }
-    onAddExaminee(room.id, firstName.trim(), lastName.trim());
+    if (room) {
+      onAddExaminee(room.id, firstName.trim(), lastName.trim());
+    }
     setFirstName('');
     setLastName('');
     setSingleError('');
@@ -85,7 +86,9 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
       }
     }
 
-    onBatchAddExaminees(room.id, newExaminees);
+    if (room) {
+      onBatchAddExaminees(room.id, newExaminees);
+    }
     setBatchText('');
     setBatchError('');
     setBatchSuccess(`Successfully added ${newExaminees.length} examinees!`);

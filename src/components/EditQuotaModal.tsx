@@ -12,18 +12,14 @@ interface EditQuotaModalProps {
 }
 
 export const EditQuotaModal: FC<EditQuotaModalProps> = ({
-
   stat,
   isOpen,
   onClose,
   onSave,
   lang,
 }) => {
-  if (!isOpen || !stat) return null;
-  const t = translations[lang];
-
-  const [registered, setRegistered] = useState(stat.registered);
-  const [quota, setQuota] = useState(stat.quota);
+  const [registered, setRegistered] = useState(stat ? stat.registered : 0);
+  const [quota, setQuota] = useState(stat ? stat.quota : 0);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -33,6 +29,9 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
       setError('');
     }
   }, [stat]);
+
+  if (!isOpen || !stat) return null;
+  const t = translations[lang];
 
   const remaining = Math.max(0, quota - registered);
 

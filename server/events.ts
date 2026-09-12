@@ -23,7 +23,7 @@ export function broadcastEvent(event: string, data: any = {}) {
   for (const client of clients) {
     try {
       client.write(message);
-    } catch (err) {
+    } catch {
       clients.delete(client);
     }
   }

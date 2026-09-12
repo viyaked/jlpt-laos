@@ -12,16 +12,12 @@ interface AddEditRoomModalProps {
 }
 
 export const AddEditRoomModal: FC<AddEditRoomModalProps> = ({
-
   room,
   isOpen,
   onClose,
   onSave,
   lang,
 }) => {
-  if (!isOpen) return null;
-  const t = translations[lang];
-
   const [code, setCode] = useState(room ? room.code : '');
   const [building, setBuilding] = useState(room ? room.building : 'Building A (ອາຄານ ອາ)');
   const [floor, setFloor] = useState(room ? room.floor : 'Floor 1 (ຊັ້ນ 1)');
@@ -43,6 +39,9 @@ export const AddEditRoomModal: FC<AddEditRoomModalProps> = ({
       setCapacity(30);
     }
   }, [room]);
+
+  if (!isOpen) return null;
+  const t = translations[lang];
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
