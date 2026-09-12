@@ -20,6 +20,7 @@ import {
   LogOut,
   Sliders,
   Calendar,
+  Loader2,
 } from 'lucide-react';
 
 interface AdminViewProps {
@@ -124,6 +125,20 @@ export const AdminView: FC<AdminViewProps> = ({
   };
 
 
+  const [isDemoLoggingIn, setIsDemoLoggingIn] = useState(false);
+
+  const handleDemoLogin = async () => {
+    setIsDemoLoggingIn(true);
+    try {
+      const res = await api.login('admin', 'jlpt2026');
+      onLogin(res.user.username);
+    } catch {
+      onLogin('admin');
+    } finally {
+      setIsDemoLoggingIn(false);
+    }
+  };
+
   // If not authenticated, render Login view directly
   if (!adminUser.isAuthenticated) {
     return (
@@ -148,10 +163,11 @@ export const AdminView: FC<AdminViewProps> = ({
             </div>
 
             <button
-              onClick={() => onLogin('admin')}
-              className="w-full py-3 bg-red-700 hover:bg-red-800 text-white font-bold rounded-xl text-sm shadow-md transition-all flex items-center justify-center gap-2"
+              onClick={handleDemoLogin}
+              disabled={isDemoLoggingIn}
+              className="w-full py-3 bg-red-700 hover:bg-red-800 disabled:bg-red-400 text-white font-bold rounded-xl text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <LogIn className="w-4 h-4" />
+              {isDemoLoggingIn ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
               <span>{t.demoLoginBtn}</span>
             </button>
 

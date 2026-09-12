@@ -129,12 +129,33 @@ export function App() {
     setViewMode('public');
   };
 
+  const handleAuthError = (err: any) => {
+    const msg = err?.message || '';
+    if (
+      msg.includes('token') ||
+      msg.includes('Authentication') ||
+      msg.includes('Unauthorized') ||
+      msg.includes('expired')
+    ) {
+      handleLogout();
+      setIsLoginModalOpen(true);
+      alert(
+        lang === 'lo'
+          ? 'ກະລຸນາເຂົ້າສູ່ລະບົບເຈົ້າໜ້າທີ່ກ່ອນ (Please login as admin)'
+          : 'Please login as institute staff first'
+      );
+      return true;
+    }
+    return false;
+  };
+
   // Level stats handlers (Admin)
   const handleIncrementRegistered = async (level: JLPTLevel) => {
     try {
       await api.incrementLevel(level);
       await fetchLevels();
     } catch (err: any) {
+      if (handleAuthError(err)) return;
       alert(err.message || 'Failed to increment');
     }
   };
@@ -145,6 +166,7 @@ export function App() {
       setFormQuota(res.formQuota);
       await fetchLevels();
     } catch (err: any) {
+      if (handleAuthError(err)) return;
       alert(err.message || 'Failed to update total form quota');
     }
   };
@@ -156,6 +178,7 @@ export function App() {
       setExamDate(res.examDate);
       await fetchLevels();
     } catch (err: any) {
+      if (handleAuthError(err)) return;
       alert(err.message || 'Failed to update exam schedule');
     }
   };
@@ -168,6 +191,7 @@ export function App() {
       await api.updateLevel(level, registered);
       await fetchLevels();
     } catch (err: any) {
+      if (handleAuthError(err)) return;
       alert(err.message || 'Failed to update registered count');
     }
   };
