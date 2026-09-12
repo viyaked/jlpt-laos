@@ -12,6 +12,44 @@ export function getAnnualExamShort(lang: Language, year: string = '2026'): strin
     : `Annual JLPT ${year}`;
 }
 
+export function formatExamDate(dateStr: string = '2026-07-05', lang: Language = 'lo'): { longDate: string; shortDate: string } {
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    const y = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10);
+    const d = parseInt(parts[2], 10);
+    const dateObj = new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const shortDate = `${pad(d)}/${pad(m)}/${y}`;
+
+    if (lang === 'lo') {
+      const laoDays = ["ວັນອາທິດ", "ວັນຈັນ", "ວັນອັງຄານ", "ວັນພຸດ", "ວັນພະຫັດ", "ວັນສຸກ", "ວັນເສົາ"];
+      const laoMonths = ["ມັງກອນ", "ກຸມພາ", "ມີນາ", "ເມສາ", "ພຶດສະພາ", "ມິຖຸນາ", "ກໍລະກົດ", "ສິງຫາ", "ກັນຍາ", "ຕຸລາ", "ພະຈິກ", "ທັນວາ"];
+      const dayName = laoDays[dateObj.getUTCDay()];
+      const monthName = laoMonths[m - 1] || "ກໍລະກົດ";
+      return {
+        longDate: `${dayName}, ${d} ${monthName} ${y}`,
+        shortDate,
+      };
+    } else {
+      const enDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const enMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const dayName = enDays[dateObj.getUTCDay()];
+      const monthName = enMonths[m - 1] || "July";
+      return {
+        longDate: `${dayName}, ${monthName} ${d}, ${y}`,
+        shortDate,
+      };
+    }
+  }
+
+  return {
+    longDate: dateStr,
+    shortDate: dateStr,
+  };
+}
+
 export const translations = {
   lo: {
     // Header & Meta
@@ -20,6 +58,7 @@ export const translations = {
     annualExamTitle: "ການສອບເສັງວັດລະດັບພາສາຍີ່ປຸ່ນ JLPT ປະຈຳປີ 2026",
     annualExamShort: "JLPT ປະຈຳປີ 2026",
     examDate: "ວັນອາທິດ, 5 ກໍລະກົດ 2026",
+    examDateLabel: "ວັນທີສອບເສັງ",
     publicView: "ໜ້າສາທາລະນະ",
     adminView: "ລະບົບເຈົ້າໜ້າທີ່ (Admin)",
     languageSwitch: "ປ່ຽນພາສາ / Language",
@@ -28,14 +67,19 @@ export const translations = {
     adminBadge: "ເຈົ້າໜ້າທີ່ສະຖາບັນ",
     switchLanguagePrompt: "English",
 
-    // Exam Year Configuration
+    // Exam Schedule & Year Configuration
     editExamYearBtn: "ແກ້ໄຂປີສອບເສັງ",
+    editExamScheduleBtn: "ຕັ້ງຄ່າວັນທີ & ປີສອບເສັງ",
     editExamYearModalTitle: "ແກ້ໄຂປີສອບເສັງ JLPT",
+    editExamScheduleModalTitle: "ຕັ້ງຄ່າປີ ແລະ ວັນທີສອບເສັງ JLPT",
     examYearLabel: "ປີສອບເສັງ (ຄ.ສ.)",
     examYearHelp: "ປ່ຽນແປງຕົວເລກປີສອບເສັງໃນຫົວຂໍ້ ແລະ ລະບົບທັງໝົດ",
+    examDateInputLabel: "ວັນທີສອບເສັງ (Exam Date)",
+    examDateInputHelp: "ເລືອກວັນທີສອບເສັງຕົວຈິງ (ລະບົບຈະຄິດໄລ່ວັນໃນສັບປະດາ ແລະ ເດືອນໃຫ້ອັດຕະໂນມັດ)",
     examYearSuccess: "ອັບເດດປີສອບເສັງສຳເລັດແລ້ວ",
-    examYearCardTitle: "ປີຈັດການສອບເສັງ",
-    examYearCardDesc: "ປີສຳລັບຫົວຂໍ້ການສອບເສັງ ແລະ ປ້າຍປະກາດທັງໝົດ",
+    examScheduleSuccess: "ອັບເດດກຳນົດການສອບເສັງສຳເລັດແລ້ວ",
+    examYearCardTitle: "ກຳນົດການສອບເສັງ",
+    examYearCardDesc: "ປີ ແລະ ວັນທີສຳລັບຫົວຂໍ້ການສອບເສັງ ແລະ ປ້າຍປະກາດທັງໝົດ",
     examYearPreviewLabel: "ຕົວຢ່າງຫົວຂໍ້ທີ່ຈະສະແດງ",
     examYearPlaceholder: "2026",
 
@@ -168,6 +212,7 @@ export const translations = {
     annualExamTitle: "Annual Japanese Language Proficiency Test (JLPT) 2026",
     annualExamShort: "Annual JLPT 2026",
     examDate: "Sunday, July 5, 2026",
+    examDateLabel: "Exam Date",
     publicView: "Public Portal",
     adminView: "Staff Admin Portal",
     languageSwitch: "Switch Language / ປ່ຽນພາສາ",
@@ -176,14 +221,19 @@ export const translations = {
     adminBadge: "Institute Staff",
     switchLanguagePrompt: "ລາວ",
 
-    // Exam Year Configuration
+    // Exam Schedule & Year Configuration
     editExamYearBtn: "Edit Exam Year",
+    editExamScheduleBtn: "Set Exam Date & Year",
     editExamYearModalTitle: "Edit JLPT Exam Year",
+    editExamScheduleModalTitle: "Set JLPT Exam Year & Date",
     examYearLabel: "Exam Year (A.D.)",
     examYearHelp: "Change the exam year displayed in title and system-wide",
+    examDateInputLabel: "Official Exam Date",
+    examDateInputHelp: "Select the official exam date (system auto-formats day of week and month)",
     examYearSuccess: "Exam year updated successfully",
-    examYearCardTitle: "Official Exam Year",
-    examYearCardDesc: "Year displayed across all headers, banners, and rosters",
+    examScheduleSuccess: "Exam schedule updated successfully",
+    examYearCardTitle: "Exam Schedule",
+    examYearCardDesc: "Year and date displayed across all headers, banners, and rosters",
     examYearPreviewLabel: "Title preview",
     examYearPlaceholder: "2026",
 

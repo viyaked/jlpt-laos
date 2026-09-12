@@ -21,12 +21,13 @@ function authHeaders(): Record<string, string> {
 
 export const api = {
   // Public endpoints
-  async getLevels(): Promise<{ levels: LevelStat[]; formQuota: FormQuotaStat; examYear: string }> {
+  async getLevels(): Promise<{ levels: LevelStat[]; formQuota: FormQuotaStat; examYear: string; examDate: string }> {
     const res = await fetch('/api/levels');
     if (!res.ok) throw new Error('Failed to fetch level stats');
     const data = await res.json();
     return {
       examYear: data.examYear || '2026',
+      examDate: data.examDate || '2026-07-05',
       formQuota: {
         totalQuota: data.formQuota?.totalQuota ?? 500,
         totalRegistered: data.formQuota?.totalRegistered ?? 0,
@@ -135,6 +136,38 @@ export const api = {
     if (!res.ok) {
       const err = await res.json();
       throw new Error(err.error || 'Failed to update exam year');
+    }
+    return res.json();
+  },
+
+  async updateExamDate(examDate: string): Promise<{ examDate: string }> {
+    const res = await fetch('/api/levels/date', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify({ examDate }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update exam date');
+    }
+    return res.json();
+  },
+
+  async updateExamSchedule(examYear: string, examDate: string): Promise<{ examYear: string; examDate: string }> {
+    const res = await fetch('/api/levels/schedule', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify({ examYear, examDate }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update exam schedule');
     }
     return res.json();
   },

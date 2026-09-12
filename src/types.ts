@@ -20,6 +20,7 @@ export interface LevelsResponse {
   levels: LevelStat[];
   formQuota: FormQuotaStat;
   examYear: string;
+  examDate: string;
 }
 
 export interface Examinee {

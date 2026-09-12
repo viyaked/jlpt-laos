@@ -1,14 +1,15 @@
 import { Router } from 'express';
-import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear } from '../db';
+import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear, getExamDate, setExamDate } from '../db';
 import { requireAdminAuth } from '../auth';
 import { broadcastEvent } from '../events';
 
 const router = Router();
 
-// GET all exam levels with real-time stats, unified form quota, and exam year
+// GET all exam levels with real-time stats, unified form quota, exam year, and exam date
 router.get('/', (req, res) => {
   const formQuota = getTotalFormQuota();
   const examYear = getExamYear();
+  const examDate = getExamDate();
 
   const levels = db.prepare(`
     SELECT 
@@ -39,6 +40,7 @@ router.get('/', (req, res) => {
 
   res.json({
     examYear,
+    examDate,
     formQuota: {
       totalQuota: formQuota.totalQuota,
       totalRegistered: formQuota.totalRegistered,
@@ -46,6 +48,48 @@ router.get('/', (req, res) => {
       isFull: formQuota.remaining <= 0,
     },
     levels: formattedLevels,
+  });
+});
+
+// Admin: Update Exam Schedule (Year and/or Date)
+router.put('/schedule', requireAdminAuth, (req, res) => {
+  const { examYear, examDate } = req.body;
+
+  if (examYear && typeof examYear === 'string' && examYear.trim()) {
+    setExamYear(examYear.trim());
+  }
+
+  if (examDate && typeof examDate === 'string' && examDate.trim()) {
+    setExamDate(examDate.trim());
+  }
+
+  const updatedYear = getExamYear();
+  const updatedDate = getExamDate();
+
+  broadcastEvent('levels_updated', { examYear: updatedYear, examDate: updatedDate });
+
+  res.json({
+    success: true,
+    examYear: updatedYear,
+    examDate: updatedDate,
+  });
+});
+
+// Admin: Update Exam Date
+router.put('/date', requireAdminAuth, (req, res) => {
+  const { examDate } = req.body;
+  if (!examDate || typeof examDate !== 'string' || !examDate.trim()) {
+    return res.status(400).json({ error: 'examDate is required' });
+  }
+
+  const cleanDate = examDate.trim();
+  setExamDate(cleanDate);
+
+  broadcastEvent('levels_updated', { examDate: cleanDate });
+
+  res.json({
+    success: true,
+    examDate: cleanDate,
   });
 });
 

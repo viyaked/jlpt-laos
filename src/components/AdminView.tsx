@@ -1,6 +1,6 @@
 import { useState, type FC } from 'react';
 import type { LevelStat, ExamRoom, AdminUser, Language, JLPTLevel, FormQuotaStat } from '../types';
-import { translations, getAnnualExamTitle, getAnnualExamShort } from '../i18n';
+import { translations, getAnnualExamTitle, getAnnualExamShort, formatExamDate } from '../i18n';
 import { api } from '../api';
 import { EditQuotaModal } from './EditQuotaModal';
 import { EditGlobalQuotaModal } from './EditGlobalQuotaModal';
@@ -31,7 +31,7 @@ interface AdminViewProps {
   onLogout: () => void;
   onIncrementRegistered: (level: JLPTLevel) => void;
   onUpdateGlobalQuota: (totalQuota: number) => void;
-  onUpdateExamYear: (newYear: string) => void;
+  onUpdateExamSchedule: (newYear: string, newDate: string) => void;
   onUpdateLevelRegistered: (level: string, registered: number) => void;
   onSaveRoom: (roomData: Omit<ExamRoom, 'id' | 'examinees'> & { id?: string }) => void;
   onDeleteRoom: (roomId: string) => void;
@@ -41,6 +41,7 @@ interface AdminViewProps {
   onResetData: () => void;
   lang: Language;
   examYear?: string;
+  examDate?: string;
 }
 
 export const AdminView: FC<AdminViewProps> = ({
@@ -52,7 +53,7 @@ export const AdminView: FC<AdminViewProps> = ({
   onLogout,
   onIncrementRegistered,
   onUpdateGlobalQuota,
-  onUpdateExamYear,
+  onUpdateExamSchedule,
   onUpdateLevelRegistered,
   onSaveRoom,
   onDeleteRoom,
@@ -62,8 +63,10 @@ export const AdminView: FC<AdminViewProps> = ({
   onResetData,
   lang,
   examYear = '2026',
+  examDate = '2026-07-05',
 }) => {
   const t = translations[lang];
+  const formattedExamDate = formatExamDate(examDate, lang);
 
   // Modals state
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -208,10 +211,10 @@ export const AdminView: FC<AdminViewProps> = ({
           <button
             onClick={() => setIsExamYearModalOpen(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors"
-            title={t.editExamYearBtn}
+            title={t.editExamScheduleBtn}
           >
             <Calendar className="w-3.5 h-3.5" />
-            <span>{t.editExamYearBtn} ({examYear})</span>
+            <span>{t.editExamScheduleBtn} ({formattedExamDate.shortDate})</span>
           </button>
 
           <button
@@ -240,40 +243,45 @@ export const AdminView: FC<AdminViewProps> = ({
       </div>
 
 
-      {/* 1. Global Form Quota & Exam Year & Level Adjustment */}
+      {/* 1. Global Form Quota & Exam Schedule & Level Adjustment */}
       <section className="space-y-6">
-        {/* Exam Title & Year Configuration Card */}
+        {/* Exam Schedule (Year & Date) Configuration Card */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2 mb-1">
-                <span className="w-2.5 h-6 bg-slate-900 rounded-sm inline-block"></span>
+                <span className="w-2.5 h-6 bg-red-700 rounded-sm inline-block"></span>
                 <h3 className="text-lg font-bold text-slate-900 tracking-tight">
                   {t.examYearCardTitle}
                 </h3>
+                <span className="text-xs bg-slate-900 text-white px-2.5 py-0.5 rounded-full font-bold">
+                  {t.examDateLabel}: {formattedExamDate.shortDate}
+                </span>
                 <span className="text-xs bg-red-50 text-red-700 border border-red-200 px-2.5 py-0.5 rounded-full font-bold">
-                  {examYear}
+                  ປີ {examYear}
                 </span>
               </div>
               <p className="text-xs text-slate-500">
                 {t.examYearCardDesc}
               </p>
-              <div className="pt-2">
-                <span className="text-[11px] font-semibold text-slate-500 block mb-1">
-                  {t.examYearPreviewLabel}:
-                </span>
-                <p className="text-sm font-bold text-slate-900 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-lg inline-block">
-                  {getAnnualExamTitle(lang, examYear)}
-                </p>
+              <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2 text-xs">
+                <div className="bg-slate-50 border border-slate-200 px-3 py-2 rounded-lg">
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">{t.examDateLabel}</span>
+                  <span className="font-bold text-slate-900">{formattedExamDate.longDate} ({formattedExamDate.shortDate})</span>
+                </div>
+                <div className="bg-slate-50 border border-slate-200 px-3 py-2 rounded-lg">
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">{t.examYearPreviewLabel}</span>
+                  <span className="font-bold text-red-700">{getAnnualExamTitle(lang, examYear)}</span>
+                </div>
               </div>
             </div>
 
             <button
               onClick={() => setIsExamYearModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors self-start sm:self-auto shrink-0"
+              className="flex items-center gap-2 px-4 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors self-start sm:self-auto shrink-0"
             >
-              <Calendar className="w-3.5 h-3.5" />
-              <span>{t.editExamYearBtn}</span>
+              <Calendar className="w-4 h-4" />
+              <span>{t.editExamScheduleBtn}</span>
             </button>
           </div>
         </div>
@@ -555,14 +563,15 @@ export const AdminView: FC<AdminViewProps> = ({
         lang={lang}
       />
 
-      {/* Edit Exam Year Modal */}
+      {/* Edit Exam Schedule Modal */}
       <EditExamYearModal
         isOpen={isExamYearModalOpen}
         onClose={() => setIsExamYearModalOpen(false)}
         currentYear={examYear}
-        onSave={(newYear) => {
-          onUpdateExamYear(newYear);
-          triggerToast(t.examYearSuccess);
+        currentDate={examDate}
+        onSave={(newYear, newDate) => {
+          onUpdateExamSchedule(newYear, newDate);
+          triggerToast(t.examScheduleSuccess);
         }}
         lang={lang}
       />

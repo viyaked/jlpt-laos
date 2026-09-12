@@ -49,6 +49,7 @@ export function App() {
   const [formQuota, setFormQuota] = useState<FormQuotaStat>(initialFormQuota);
   const [examRooms, setExamRooms] = useState<ExamRoom[]>(initialExamRooms);
   const [examYear, setExamYear] = useState<string>('2026');
+  const [examDate, setExamDate] = useState<string>('2026-07-05');
   const [isDbConnected, setIsDbConnected] = useState(false);
 
   // Fetch live data from backend
@@ -59,6 +60,9 @@ export function App() {
       setFormQuota(data.formQuota);
       if (data.examYear) {
         setExamYear(data.examYear);
+      }
+      if (data.examDate) {
+        setExamDate(data.examDate);
       }
       setIsDbConnected(true);
     } catch {
@@ -145,13 +149,14 @@ export function App() {
     }
   };
 
-  const handleUpdateExamYear = async (newYear: string) => {
+  const handleUpdateExamSchedule = async (newYear: string, newDate: string) => {
     try {
-      const res = await api.updateExamYear(newYear);
+      const res = await api.updateExamSchedule(newYear, newDate);
       setExamYear(res.examYear);
+      setExamDate(res.examDate);
       await fetchLevels();
     } catch (err: any) {
-      alert(err.message || 'Failed to update exam year');
+      alert(err.message || 'Failed to update exam schedule');
     }
   };
 
@@ -264,6 +269,7 @@ export function App() {
         onLogout={handleLogout}
         onOpenLogin={() => setIsLoginModalOpen(true)}
         examYear={examYear}
+        examDate={examDate}
       />
 
       {/* Main Content Area */}
@@ -275,6 +281,7 @@ export function App() {
             examRooms={examRooms}
             lang={lang}
             examYear={examYear}
+            examDate={examDate}
           />
         ) : (
           <AdminView
@@ -286,7 +293,7 @@ export function App() {
             onLogout={handleLogout}
             onIncrementRegistered={handleIncrementRegistered}
             onUpdateGlobalQuota={handleUpdateGlobalQuota}
-            onUpdateExamYear={handleUpdateExamYear}
+            onUpdateExamSchedule={handleUpdateExamSchedule}
             onUpdateLevelRegistered={handleUpdateLevelRegistered}
             onSaveRoom={handleSaveRoom}
             onDeleteRoom={handleDeleteRoom}
@@ -296,6 +303,7 @@ export function App() {
             onResetData={handleResetData}
             lang={lang}
             examYear={examYear}
+            examDate={examDate}
           />
         )}
       </main>

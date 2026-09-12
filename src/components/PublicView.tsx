@@ -1,6 +1,6 @@
 import { useState, useEffect, type FC } from 'react';
 import type { LevelStat, ExamRoom, Language, FormQuotaStat } from '../types';
-import { translations } from '../i18n';
+import { translations, formatExamDate } from '../i18n';
 import { api } from '../api';
 import { RosterModal } from './RosterModal';
 import {
@@ -23,6 +23,7 @@ interface PublicViewProps {
   examRooms: ExamRoom[];
   lang: Language;
   examYear?: string;
+  examDate?: string;
 }
 
 export const PublicView: FC<PublicViewProps> = ({
@@ -30,9 +31,11 @@ export const PublicView: FC<PublicViewProps> = ({
   formQuota,
   examRooms,
   lang,
-  examYear = '2026',
+  examYear: _examYear = '2026',
+  examDate = '2026-07-05',
 }) => {
   const t = translations[lang];
+  const formattedExamDate = formatExamDate(examDate, lang);
 
   // State for filtering rooms & search
   const [selectedLevel, setSelectedLevel] = useState<string>('ALL');
@@ -102,10 +105,13 @@ export const PublicView: FC<PublicViewProps> = ({
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-700/80">
             <div>
-              <span className="text-xs text-slate-400 block">{t.examDate.replace('2026', examYear)}</span>
+              <span className="text-xs text-slate-400 block">{t.examDateLabel}</span>
               <span className="font-semibold text-sm text-white flex items-center gap-1.5 mt-1">
                 <Calendar className="w-4 h-4 text-red-400" />
-                05/07/{examYear}
+                {formattedExamDate.shortDate}
+              </span>
+              <span className="text-[11px] text-slate-300 block truncate mt-0.5">
+                {formattedExamDate.longDate}
               </span>
             </div>
             <div>
