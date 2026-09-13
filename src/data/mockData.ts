@@ -11,31 +11,31 @@ export const initialLevelStats: LevelStat[] = [
   {
     level: 'N5',
     registered: 124,
-    fee: 350000,
+    fee: 300000,
     testTime: '09:00 - 11:30'
   },
   {
     level: 'N4',
     registered: 98,
-    fee: 380000,
+    fee: 300000,
     testTime: '09:00 - 11:45'
   },
   {
     level: 'N3',
     registered: 92,
-    fee: 420000,
+    fee: 350000,
     testTime: '13:30 - 16:30'
   },
   {
     level: 'N2',
     registered: 80,
-    fee: 480000,
+    fee: 350000,
     testTime: '13:30 - 16:45'
   },
   {
     level: 'N1',
     registered: 38,
-    fee: 550000,
+    fee: 350000,
     testTime: '13:30 - 17:00'
   }
 ];
