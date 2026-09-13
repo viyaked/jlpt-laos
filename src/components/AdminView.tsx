@@ -7,6 +7,7 @@ import { EditGlobalQuotaModal } from './EditGlobalQuotaModal';
 import { EditExamYearModal } from './EditExamYearModal';
 import { AddEditRoomModal } from './AddEditRoomModal';
 import { ManageRoomExamineesModal } from './ManageRoomExamineesModal';
+import { LoginModal } from './LoginModal';
 import { ChangeAdminPasswordModal } from './ChangeAdminPasswordModal';
 import { CampusMapModal } from './CampusMapModal';
 import { ImageViewerModal } from './ImageViewerModal';
@@ -86,6 +87,7 @@ export const AdminView: FC<AdminViewProps> = ({
   const formattedExamDate = formatExamDate(examDate, lang);
 
   // Modals state
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isGlobalQuotaModalOpen, setIsGlobalQuotaModalOpen] = useState(false);
   const [isExamYearModalOpen, setIsExamYearModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
@@ -192,8 +194,24 @@ export const AdminView: FC<AdminViewProps> = ({
               {isDemoLoggingIn ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
               <span>{t.demoLoginBtn}</span>
             </button>
+
+            <div className="text-center">
+              <button
+                onClick={() => setIsLoginModalOpen(true)}
+                className="text-xs text-slate-500 hover:text-slate-800 underline"
+              >
+                {t.login} (Manual Credentials)
+              </button>
+            </div>
           </div>
         </div>
+
+        <LoginModal
+          isOpen={isLoginModalOpen}
+          onClose={() => setIsLoginModalOpen(false)}
+          onLoginSuccess={onLogin}
+          lang={lang}
+        />
       </div>
     );
   }
