@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import type { Language, AdminUser } from '../types';
 import { translations, getAnnualExamTitle, getAnnualExamShort, formatExamDate } from '../i18n';
-import { ShieldCheck, Users, LogOut, LogIn } from 'lucide-react';
+import { ShieldCheck, Users, LogOut } from 'lucide-react';
 
 
 interface NavbarProps {
@@ -11,7 +11,6 @@ interface NavbarProps {
   onViewModeChange: (mode: 'public' | 'admin') => void;
   adminUser: AdminUser;
   onLogout: () => void;
-  onOpenLogin: () => void;
   examYear?: string;
   examDate?: string;
 }
@@ -23,7 +22,6 @@ export const Navbar: FC<NavbarProps> = ({
   onViewModeChange,
   adminUser,
   onLogout,
-  onOpenLogin,
   examYear = '2026',
   examDate = '2026-07-05',
 }) => {
@@ -145,14 +143,6 @@ export const Navbar: FC<NavbarProps> = ({
                   <LogOut className="w-4 h-4" />
                 </button>
               </div>
-            ) : viewMode === 'admin' ? (
-              <button
-                onClick={onOpenLogin}
-                className="hidden sm:flex items-center gap-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg transition-colors"
-              >
-                <LogIn className="w-3.5 h-3.5" />
-                <span>{t.login}</span>
-              </button>
             ) : null}
           </div>
         </div>

@@ -6,7 +6,6 @@ import { api, getAuthToken, subscribeToSSE } from './api';
 import { Navbar } from './components/Navbar';
 import { PublicView } from './components/PublicView';
 import { AdminView } from './components/AdminView';
-import { LoginModal } from './components/LoginModal';
 
 const STORAGE_KEY_LANG = 'jlpt_lang_v1';
 const STORAGE_KEY_AUTH = 'jlpt_admin_auth_v1';
@@ -41,8 +40,6 @@ export function App() {
     }
     return { isAuthenticated: false, username: '', role: 'guest' };
   });
-
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // 4. Data states loaded from persistent database
   const [levelStats, setLevelStats] = useState<LevelStat[]>(initialLevelStats);
@@ -123,7 +120,6 @@ export function App() {
     };
     setAdminUser(user);
     localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(user));
-    setIsLoginModalOpen(false);
   };
 
   const handleLogout = () => {
@@ -142,7 +138,6 @@ export function App() {
       msg.includes('expired')
     ) {
       handleLogout();
-      setIsLoginModalOpen(true);
       alert(
         lang === 'lo'
           ? 'ກະລຸນາເຂົ້າສູ່ລະບົບເຈົ້າໜ້າທີ່ກ່ອນ (Please login as admin)'
@@ -324,7 +319,6 @@ export function App() {
         onViewModeChange={setViewMode}
         adminUser={adminUser}
         onLogout={handleLogout}
-        onOpenLogin={() => setIsLoginModalOpen(true)}
         examYear={examYear}
         examDate={examDate}
       />
@@ -391,14 +385,6 @@ export function App() {
           </div>
         </div>
       </footer>
-
-      {/* Login Modal for navbar trigger */}
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-        onLoginSuccess={handleLogin}
-        lang={lang}
-      />
     </div>
   );
 }
