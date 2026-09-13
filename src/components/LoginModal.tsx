@@ -2,7 +2,7 @@ import { useState, type FC, type FormEvent } from 'react';
 import type { Language } from '../types';
 import { translations } from '../i18n';
 import { api } from '../api';
-import { ShieldCheck, Lock, User, AlertCircle, KeyRound, X, Loader2 } from 'lucide-react';
+import { ShieldCheck, Lock, User, AlertCircle, X, Loader2 } from 'lucide-react';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -17,8 +17,8 @@ export const LoginModal: FC<LoginModalProps> = ({
   onLoginSuccess,
   lang,
 }) => {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('jlpt2026');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -39,21 +39,6 @@ export const LoginModal: FC<LoginModalProps> = ({
       setIsSubmitting(false);
     }
   };
-
-  const handleDemoLogin = async () => {
-    setIsSubmitting(true);
-    setError('');
-    try {
-      const res = await api.login('admin', 'jlpt2026');
-      onLoginSuccess(res.user.username);
-      onClose();
-    } catch (err: any) {
-      setError(err.message || t.loginError);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
@@ -122,12 +107,7 @@ export const LoginModal: FC<LoginModalProps> = ({
             </div>
           </div>
 
-          <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-[11px] text-slate-600 flex items-center gap-1.5">
-            <KeyRound className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-            <span>{t.loginHint}</span>
-          </div>
-
-          <div className="space-y-2 pt-2">
+          <div className="pt-2">
             <button
               type="submit"
               disabled={isSubmitting}
@@ -135,15 +115,6 @@ export const LoginModal: FC<LoginModalProps> = ({
             >
               {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
               <span>{t.loginSubmitBtn}</span>
-            </button>
-            <button
-              type="button"
-              disabled={isSubmitting}
-              onClick={handleDemoLogin}
-              className="w-full py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-50 text-slate-800 font-medium rounded-lg text-xs transition-colors border border-slate-200 flex items-center justify-center gap-2"
-            >
-              {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-              <span>{t.demoLoginBtn}</span>
             </button>
           </div>
 
