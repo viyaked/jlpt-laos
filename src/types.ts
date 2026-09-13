@@ -43,6 +43,18 @@ export interface ExamRoom {
   imageUrl?: string;
 }
 
+export interface RoomSearchResult {
+  room: {
+    id: string;
+    code: string;
+    building: string;
+    floor: string;
+    level: JLPTLevel;
+    capacity: number;
+    imageUrl?: string;
+  };
+}
+
 
 export interface AdminUser {
   isAuthenticated: boolean;

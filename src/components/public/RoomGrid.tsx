@@ -6,8 +6,7 @@ import { RoomCard } from './RoomCard';
 interface RoomGridProps {
   rooms: ExamRoom[];
   lang: Language;
-  searchQuery: string;
-  matchedCandidates: any[];
+  matchedRoomIds: Set<string>;
   onRoomClick: (room: ExamRoom) => void;
   onPhotoClick: (room: ExamRoom, e: React.MouseEvent) => void;
 }
@@ -15,8 +14,7 @@ interface RoomGridProps {
 export function RoomGrid({
   rooms,
   lang,
-  searchQuery,
-  matchedCandidates,
+  matchedRoomIds,
   onRoomClick,
   onPhotoClick,
 }: RoomGridProps) {
@@ -39,21 +37,14 @@ export function RoomGrid({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-slideUp" role="list">
       {rooms.map((room) => {
-        const matchedCandidate = searchQuery.trim()
-          ? (matchedCandidates.find((m) => m.room.id === room.id) ||
-             room.examinees.find((ex) =>
-               `${ex.firstName} ${ex.lastName}`
-                 .toLowerCase()
-                 .includes(searchQuery.toLowerCase().trim())
-             ))
-          : null;
+        const isMatched = matchedRoomIds.has(room.id);
 
         return (
           <RoomCard
             key={room.id}
             room={room}
             lang={lang}
-            matchedCandidate={matchedCandidate}
+            isMatched={isMatched}
             onClick={() => onRoomClick(room)}
             onPhotoClick={(e) => onPhotoClick(room, e)}
           />

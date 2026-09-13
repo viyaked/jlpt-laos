@@ -1,4 +1,4 @@
-import type { ExamRoom, JLPTLevel, FormQuotaStat, LevelsResponse } from './types';
+import type { ExamRoom, JLPTLevel, FormQuotaStat, LevelsResponse, RoomSearchResult } from './types';
 
 const TOKEN_KEY = 'jlpt_jwt_token';
 
@@ -62,12 +62,16 @@ export const api = {
   },
 
   async getRoomApplicants(roomId: string): Promise<{ room: any; applicants: any[] }> {
-    const res = await fetch(`/api/rooms/${roomId}/applicants`);
+    const res = await fetch(`/api/rooms/${roomId}/applicants`, {
+      headers: {
+        ...authHeaders(),
+      },
+    });
     if (!res.ok) throw new Error('Failed to fetch room applicants');
     return res.json();
   },
 
-  async searchApplicants(query: string): Promise<any[]> {
+  async searchRoomsByName(query: string): Promise<RoomSearchResult[]> {
     if (!query.trim()) return [];
     const res = await fetch(`/api/applicants/search?q=${encodeURIComponent(query.trim())}`);
     if (!res.ok) return [];

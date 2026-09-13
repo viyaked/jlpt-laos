@@ -37,9 +37,8 @@ router.get('/', (req, res) => {
   res.json(formatted);
 });
 
-// GET examinees in a room (Public Endpoint)
-// PRIVACY RULE: Strictly returns only First & Last Name. NO seat numbers, NO contact info.
-router.get('/:id/applicants', (req, res) => {
+// GET examinees in a room (Admin only)
+router.get('/:id/applicants', requireAdminAuth, (req, res) => {
   const { id } = req.params;
 
   const room = db.prepare('SELECT id, code, building, floor, level, capacity, image_url FROM rooms WHERE id = ?').get(id) as any;

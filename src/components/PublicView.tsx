@@ -39,8 +39,8 @@ export const PublicView: FC<PublicViewProps> = ({
   const [selectedLevel, setSelectedLevel] = useState<string>('ALL');
   const [selectedBuilding, setSelectedBuilding] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [activeRoom, setActiveRoom] = useState<ExamRoom | null>(null);
-  const [matchedCandidates, setMatchedCandidates] = useState<any[]>([]);
+  const [selectedRoom, setSelectedRoom] = useState<ExamRoom | null>(null);
+  const [matchedRoomIds, setMatchedRoomIds] = useState<Set<string>>(new Set());
   const [isCampusMapOpen, setIsCampusMapOpen] = useState(false);
   const [previewPhoto, setPreviewPhoto] = useState<{ isOpen: boolean; url: string; title: string; subtitle?: string }>({
     isOpen: false,
@@ -50,13 +50,27 @@ export const PublicView: FC<PublicViewProps> = ({
 
   useEffect(() => {
     const q = searchQuery.trim();
-    if (q.length >= 2) {
-      api.searchApplicants(q)
-        .then(setMatchedCandidates)
-        .catch(() => setMatchedCandidates([]));
-    } else {
-      setMatchedCandidates([]);
+    if (!q) {
+      setMatchedRoomIds(new Set());
+      return;
     }
+
+    let active = true;
+    api.searchRoomsByName(q)
+      .then((results) => {
+        if (active) {
+          setMatchedRoomIds(new Set(results.map((result) => result.room.id)));
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setMatchedRoomIds(new Set());
+        }
+      });
+
+    return () => {
+      active = false;
+    };
   }, [searchQuery]);
 
   const buildings = Array.from(new Set(examRooms.map((r) => r.building)));
@@ -64,22 +78,17 @@ export const PublicView: FC<PublicViewProps> = ({
   const filteredRooms = examRooms.filter((room) => {
     const matchLevel = selectedLevel === 'ALL' || room.level === selectedLevel;
     const matchBuilding = selectedBuilding === 'ALL' || room.building === selectedBuilding;
+    const query = searchQuery.trim();
 
-    if (!searchQuery.trim()) {
+    if (!query) {
       return matchLevel && matchBuilding;
     }
 
-    const q = searchQuery.toLowerCase().trim();
-    const matchRoomCode = room.code.toLowerCase().includes(q) || formatRoomName(room.code, lang).toLowerCase().includes(q);
-    const matchRoomBuilding = room.building.toLowerCase().includes(q);
-    const matchRoomFloor = room.floor.toLowerCase().includes(q);
-    const hasMatchedDbCandidate = matchedCandidates.some((m) => m.room.id === room.id);
-
-    return matchLevel && matchBuilding && (matchRoomCode || matchRoomBuilding || matchRoomFloor || hasMatchedDbCandidate);
+    return matchLevel && matchBuilding && matchedRoomIds.has(room.id);
   });
 
   const handleRoomClick = useCallback((room: ExamRoom) => {
-    setActiveRoom(room);
+    setSelectedRoom(room);
   }, []);
 
   const handlePhotoClick = useCallback((room: ExamRoom, e: React.MouseEvent) => {
@@ -136,17 +145,16 @@ export const PublicView: FC<PublicViewProps> = ({
         <RoomGrid
           rooms={filteredRooms}
           lang={lang}
-          searchQuery={searchQuery}
-          matchedCandidates={matchedCandidates}
+          matchedRoomIds={matchedRoomIds}
           onRoomClick={handleRoomClick}
           onPhotoClick={handlePhotoClick}
         />
       </section>
 
       <RosterModal
-        room={activeRoom}
-        isOpen={Boolean(activeRoom)}
-        onClose={() => setActiveRoom(null)}
+        room={selectedRoom}
+        isOpen={Boolean(selectedRoom)}
+        onClose={() => setSelectedRoom(null)}
         lang={lang}
       />
 

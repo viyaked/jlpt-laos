@@ -94,7 +94,7 @@ export const translations = {
 
     // Public Dashboard
     publicWelcomeTitle: "ຂໍ້ມູນການສະໝັກ ແລະ ຫ້ອງສອບເສັງ JLPT",
-    publicWelcomeSubtitle: "ຕິດຕາມຈຳນວນຜູ້ສະໝັກ, ໂຄຕ້າທີ່ຍັງເຫຼືອ ແລະ ກວດສອບລາຍຊື່ຫ້ອງສອບເສັງແບບທັນເວລາ",
+    publicWelcomeSubtitle: "ຄົ້ນຫາດ້ວຍຊື່ຂອງທ່ານເພື່ອກວດເບິ່ງຫ້ອງສອບເສັງ. ຊື່ຜູ້ສອບຄົນອື່ນບໍ່ຖືກສະແດງຕໍ່ສາທາລະນະ.",
     realtimeBadge: "ອັບເດດສົດ (Real-time)",
     statusOpen: "ເປີດຮັບສະໝັກ",
     statusAlmostFull: "ໃກ້ຈະເຕັມແລ້ວ",
@@ -155,19 +155,21 @@ export const translations = {
 
     // Rooms Section
     roomsSectionTitle: "ລາຍການຫ້ອງສອບເສັງທັງໝົດ",
-    roomsSectionSubtitle: "ກົດເລືອກຫ້ອງສອບເສັງເພື່ອເບິ່ງລາຍຊື່ຜູ້ມີສິດສອບເສັງໃນແຕ່ລະຫ້ອງ",
+    roomsSectionSubtitle: "ໃຊ້ຊື່ຂອງທ່ານຄົ້ນຫາຫ້ອງສອບເສັງ. ລາຍລະອຽດຫ້ອງເປີດເຜີຍໄດ້, ແຕ່ຊື່ຜູ້ສອບທັງໝົດເປັນຂໍ້ມູນສ່ວນຕົວ.",
     filterAllLevels: "ທຸກລະດັບ (N1 - N5)",
     filterAllBuildings: "ທຸກອາຄານ",
-    searchByNameOrRoom: "ຄົ້ນຫາຊື່ຜູ້ສອບເສັງ ຫຼື ຊື່ຫ້ອງ...",
-    searchByNameHint: "ພິມຊື່ ຫຼື ນາມສະກຸນຂອງທ່ານ ເພື່ອກວດເບິ່ງວ່າຢູ່ຫ້ອງສອບໃດ",
+    searchByNameOrRoom: "ຄົ້ນຫາຊື່ຜູ້ສອບເສັງ...",
+    searchByNameHint: "ພິມຊື່ ຫຼື ນາມສະກຸນຂອງທ່ານ ເພື່ອກວດເບິ່ງຫ້ອງສອບ",
     buildingLabel: "ອາຄານ",
     floorLabel: "ຊັ້ນ",
     levelLabel: "ລະດັບ",
     roomCapacity: "ຄວາມຈຸຫ້ອງ",
     examineeCount: "ຈຳນວນຜູ້ສອບ",
-    viewRosterBtn: "ເບິ່ງລາຍຊື່ຜູ້ສອບເສັງ",
+    viewRoomDetailsBtn: "ເບິ່ງລາຍລະອຽດຫ້ອງ",
     noRoomsFound: "ບໍ່ພົບຂໍ້ມູນຫ້ອງສອບເສັງທີ່ກົງກັບເງື່ອນໄຂ",
-    foundCandidatesNotice: "ພົບຊື່ຂອງທ່ານໃນ",
+    roomAssignmentFound: "ພົບຫ້ອງສອບເສັງຂອງທ່ານແລ້ວ",
+    roomDetailsPrivacyTitle: "ຂໍ້ມູນສ່ວນຕົວ",
+    roomDetailsPrivacyDesc: "ທ່ານສາມາດກວດເບິ່ງຫ້ອງສອບເສັງຂອງທ່ານໄດ້. ຊື່ຜູ້ສອບຄົນອື່ນບໍ່ຖືກສະແດງໃນພື້ນທີ່ສາທາລະນະ.",
     roomUnit: "ຫ້ອງ",
 
     // Examinee Roster Modal / View
@@ -298,7 +300,7 @@ export const translations = {
 
     // Public Dashboard
     publicWelcomeTitle: "JLPT Registration Statistics & Exam Rooms",
-    publicWelcomeSubtitle: "Live tracking of applicants, remaining quotas, and official room rosters",
+    publicWelcomeSubtitle: "Search with your name to find your assigned exam room. Other examinees' names are never displayed publicly.",
     realtimeBadge: "Live Synchronized",
     statusOpen: "Registration Open",
     statusAlmostFull: "Few Slots Left",
@@ -359,19 +361,21 @@ export const translations = {
 
     // Rooms Section
     roomsSectionTitle: "Examination Rooms Directory",
-    roomsSectionSubtitle: "Select any exam room to view the list of examinees assigned to that location",
+    roomsSectionSubtitle: "Use your name to find your assigned exam room. Room details are public; examinee names remain private.",
     filterAllLevels: "All Levels (N1 - N5)",
     filterAllBuildings: "All Buildings",
-    searchByNameOrRoom: "Search by candidate name or room...",
-    searchByNameHint: "Type your name or surname to check which room you are assigned to",
+    searchByNameOrRoom: "Search by candidate name...",
+    searchByNameHint: "Enter your name or surname to find your room",
     buildingLabel: "Building",
     floorLabel: "Floor",
     levelLabel: "Level",
     roomCapacity: "Capacity",
     examineeCount: "Examinees",
-    viewRosterBtn: "View Examinee List",
+    viewRoomDetailsBtn: "View Room Details",
     noRoomsFound: "No examination rooms found matching the criteria",
-    foundCandidatesNotice: "Candidate name found in",
+    roomAssignmentFound: "Your exam room was found",
+    roomDetailsPrivacyTitle: "Privacy",
+    roomDetailsPrivacyDesc: "You can view your assigned exam room here. Other examinees' names are not displayed in the public portal.",
     roomUnit: "room(s)",
 
     // Examinee Roster Modal / View

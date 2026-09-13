@@ -6,8 +6,8 @@ import { broadcastEvent } from '../events';
 
 const router = Router();
 
-// Search applicants across all rooms (Public endpoint for candidate room lookup)
-// Strictly returns ONLY First & Last Name, Room Code, Building, Floor, Level. NO seat numbers, NO contact info.
+// Search exam rooms by examinee name (Public endpoint)
+// The response intentionally contains room metadata only; examinee names and IDs are never returned.
 router.get('/search', (req, res) => {
   const query = String(req.query.q || '').trim();
   if (!query) {
@@ -15,31 +15,32 @@ router.get('/search', (req, res) => {
   }
 
   const matches = db.prepare(`
-    SELECT 
-      a.id,
-      a.first_name,
-      a.last_name,
-      r.id as room_id,
-      r.code as room_code,
-      r.building as room_building,
-      r.floor as room_floor,
-      r.level as room_level
+    SELECT DISTINCT
+      r.id,
+      r.code,
+      r.building,
+      r.floor,
+      r.level,
+      r.capacity,
+      r.image_url
     FROM applicants a
     JOIN rooms r ON r.id = a.room_id
-    WHERE a.first_name LIKE ? OR a.last_name LIKE ? OR (a.first_name || ' ' || a.last_name) LIKE ?
+    WHERE instr(lower(a.first_name), lower(?)) > 0
+       OR instr(lower(a.last_name), lower(?)) > 0
+       OR instr(lower(a.first_name || ' ' || a.last_name), lower(?)) > 0
+    ORDER BY r.level ASC, r.code ASC
     LIMIT 30
-  `).all(`%${query}%`, `%${query}%`, `%${query}%`) as any[];
+  `).all(query, query, query) as any[];
 
   res.json(matches.map((m) => ({
-    id: m.id,
-    firstName: m.first_name,
-    lastName: m.last_name,
     room: {
-      id: m.room_id,
-      code: m.room_code,
-      building: m.room_building,
-      floor: m.room_floor,
-      level: m.room_level,
+      id: m.id,
+      code: m.code,
+      building: m.building,
+      floor: m.floor,
+      level: m.level,
+      capacity: m.capacity,
+      imageUrl: m.image_url || '',
     },
   })));
 });

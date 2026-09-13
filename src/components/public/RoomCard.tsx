@@ -6,7 +6,7 @@ import { Card, Badge, Button } from '../ui';
 interface RoomCardProps {
   room: ExamRoom;
   lang: Language;
-  matchedCandidate?: { firstName: string; lastName: string } | null;
+  isMatched: boolean;
   onClick: () => void;
   onPhotoClick: (e: React.MouseEvent) => void;
 }
@@ -14,7 +14,7 @@ interface RoomCardProps {
 export function RoomCard({
   room,
   lang,
-  matchedCandidate,
+  isMatched,
   onClick,
   onPhotoClick,
 }: RoomCardProps) {
@@ -23,11 +23,11 @@ export function RoomCard({
 
   return (
     <Card
-      variant={matchedCandidate ? 'outlined' : 'default'}
+      variant={isMatched ? 'outlined' : 'default'}
       padding="md"
       className={`
         cursor-pointer group flex flex-col justify-between transition-all
-        ${matchedCandidate
+        ${isMatched
           ? 'border-emerald-500 ring-2 ring-emerald-500/20 bg-emerald-50/20'
           : 'border-slate-200 hover:border-slate-300 hover:shadow-md'}
       `}
@@ -82,12 +82,10 @@ export function RoomCard({
           </div>
         </div>
 
-        {matchedCandidate && (
+        {isMatched && (
           <div className="bg-emerald-100 text-emerald-900 p-2 rounded-lg text-xs font-medium mb-3 border border-emerald-200 flex items-center gap-1.5 animate-fadeIn">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" aria-hidden="true" />
-            <span>
-              {t.foundCandidatesNotice}: <strong>{matchedCandidate.firstName} {matchedCandidate.lastName}</strong>
-            </span>
+            <span>{t.roomAssignmentFound}</span>
           </div>
         )}
       </div>
@@ -99,7 +97,7 @@ export function RoomCard({
         leftIcon={<ExternalLink className="w-3.5 h-3.5" />}
         className="group-hover:bg-red-700 group-hover:text-white transition-colors"
       >
-        {t.viewRosterBtn}
+        {t.viewRoomDetailsBtn}
       </Button>
     </Card>
   );
