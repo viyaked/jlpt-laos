@@ -7,7 +7,6 @@ import { EditGlobalQuotaModal } from './EditGlobalQuotaModal';
 import { EditExamYearModal } from './EditExamYearModal';
 import { AddEditRoomModal } from './AddEditRoomModal';
 import { ManageRoomExamineesModal } from './ManageRoomExamineesModal';
-
 import { ChangeAdminPasswordModal } from './ChangeAdminPasswordModal';
 import { CampusMapModal } from './CampusMapModal';
 import { ImageViewerModal } from './ImageViewerModal';
@@ -193,8 +192,7 @@ export const AdminView: FC<AdminViewProps> = ({
               {isDemoLoggingIn ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
               <span>{t.demoLoginBtn}</span>
             </button>
-
-            </div>
+          </div>
         </div>
       </div>
     );

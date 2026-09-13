@@ -227,15 +227,15 @@ export const translations = {
     quotaLabel: "ໂຄຕ້າທັງໝົດ (Total Quota)",
     remainingComputedLabel: "ຈຳນວນທີ່ຍັງເຫຼືອຄິດໄລ່ໄດ້ (Remaining)",
 
-    // Login Modal
-    loginTitle: "ເຂົ້າສູ່ລະບົບເຈົ້າໜ້າທີ່ສະຖາບັນ",
-    loginSubtitle: "ສຳລັບພະນັກງານ ແລະ ຄະນະກຳມະການຈັດການສອບເສັງ JLPT",
+// Login Modal
+    loginTitle: "",
+    loginSubtitle: "",
     usernameLabel: "ຊື່ຜູ້ໃຊ້ງານ (Username)",
-    passwordLabel: "ລະຫັດຜ່ານ (Password)",
+    passwordLabel: "ລະຫັດພຸານ (Password)",
     loginSubmitBtn: "ເຂົ້າສູ່ລະບົບ",
-    demoLoginBtn: "ເຂົ້າສູ່ລະບົບທົດລອງ (Demo 1-Click)",
-    loginError: "ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ (ລະຫັດທົດລອງ: admin / jlpt2026)",
-    loginHint: "ຂໍ້ມູນທົດລອງ: ຊື່ admin / ລະຫັດ jlpt2026",
+    demoLoginBtn: "",
+    loginError: "ຊື່ທີ່ใช່ອງ ຫຼື ລະຫັດພຸານບໍ່ຖືກຕ້ອງ (ລະຫັດທົດລອງ: admin / jlpt2026)",
+    loginHint: "",
 
     // Admin Account Settings
     adminSettingsBtn: "ຕັ້ງຄ່າບັນຊີ Admin",
@@ -433,14 +433,14 @@ export const translations = {
     remainingComputedLabel: "Calculated Remaining Slots",
 
     // Login Modal
-    loginTitle: "Staff Portal Login",
-    loginSubtitle: "Authorized Lao-Japan Institute personnel only",
+    loginTitle: "",
+    loginSubtitle: "",
     usernameLabel: "Username",
     passwordLabel: "Password",
     loginSubmitBtn: "Log In",
-    demoLoginBtn: "Demo 1-Click Login",
+    demoLoginBtn: "",
     loginError: "Invalid username or password (Demo credentials: admin / jlpt2026)",
-    loginHint: "Demo credentials: Username admin / Password jlpt2026",
+    loginHint: "",
 
     // Admin Account Settings
     adminSettingsBtn: "Admin Settings",

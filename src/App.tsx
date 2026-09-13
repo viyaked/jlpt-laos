@@ -129,7 +129,7 @@ export function App() {
     setViewMode('public');
   };
 
-  const handleAuthError = (err: any) => {
+const handleAuthError = (err: any) => {
     const msg = err?.message || '';
     if (
       msg.includes('token') ||
@@ -140,7 +140,7 @@ export function App() {
       handleLogout();
       alert(
         lang === 'lo'
-          ? 'ກະລຸນາເຂົ້າສູ່ລະບົບເຈົ້າໜ້າທີ່ກ່ອນ (Please login as admin)'
+          ? 'ກະລຸນາເຂົ້າສູ່ລະບົບເ Jediົ້າໜ້າທີ່ກ່ອນ (Please login as admin)'
           : 'Please login as institute staff first'
       );
       return true;
