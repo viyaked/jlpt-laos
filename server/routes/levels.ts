@@ -201,37 +201,64 @@ router.post('/:level/increment', requireAdminAuth, (req, res) => {
   });
 });
 
-// Admin: Direct edit count for a level
+// Admin: Direct edit count, fee, and test time for a level
 router.put('/:level', requireAdminAuth, (req, res) => {
   const { level } = req.params;
-  const { registeredCount } = req.body;
+  const { registeredCount, fee, testTime } = req.body;
 
-  if (typeof registeredCount !== 'number' || registeredCount < 0) {
-    return res.status(400).json({ error: 'registeredCount must be a valid non-negative number' });
-  }
-
-  const current = db.prepare('SELECT registered_count FROM exam_levels WHERE level = ?').get(level) as any;
+  const current = db.prepare('SELECT * FROM exam_levels WHERE level = ?').get(level) as any;
   if (!current) {
     return res.status(404).json({ error: 'Exam level not found' });
   }
 
-  const diff = registeredCount - current.registered_count;
+  let newRegistered = current.registered_count;
+  let newFee = current.fee;
+  let newTestTime = current.test_time;
+
+  if (registeredCount !== undefined) {
+    if (typeof registeredCount !== 'number' || registeredCount < 0) {
+      return res.status(400).json({ error: 'registeredCount must be a valid non-negative number' });
+    }
+    newRegistered = registeredCount;
+    const diff = newRegistered - current.registered_count;
+    const currentSold = getFormsSold();
+    setFormsSold(Math.max(0, currentSold + diff));
+  }
+
+  if (fee !== undefined) {
+    if (typeof fee !== 'number' || fee < 0) {
+      return res.status(400).json({ error: 'fee must be a valid non-negative number' });
+    }
+    newFee = fee;
+  }
+
+  if (testTime !== undefined) {
+    if (typeof testTime !== 'string' || !testTime.trim()) {
+      return res.status(400).json({ error: 'testTime must be a valid non-empty string' });
+    }
+    newTestTime = testTime.trim();
+  }
 
   db.prepare(`
     UPDATE exam_levels 
-    SET registered_count = ?, updated_at = CURRENT_TIMESTAMP 
+    SET registered_count = ?, fee = ?, test_time = ?, updated_at = CURRENT_TIMESTAMP 
     WHERE level = ?
-  `).run(registeredCount, level);
-
-  const currentSold = getFormsSold();
-  setFormsSold(Math.max(0, currentSold + diff));
+  `).run(newRegistered, newFee, newTestTime, level);
 
   const updatedFormQuota = getTotalFormQuota();
-  broadcastEvent('levels_updated', { level, registeredCount, formQuota: updatedFormQuota });
+  broadcastEvent('levels_updated', { 
+    level, 
+    registeredCount: newRegistered, 
+    fee: newFee, 
+    testTime: newTestTime, 
+    formQuota: updatedFormQuota 
+  });
 
   res.json({
     level,
-    registeredCount,
+    registeredCount: newRegistered,
+    fee: newFee,
+    testTime: newTestTime,
     formQuota: updatedFormQuota,
   });
 });

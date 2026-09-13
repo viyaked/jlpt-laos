@@ -183,6 +183,23 @@ export function App() {
     }
   };
 
+  const handleUpdateLevel = async (
+    level: string,
+    data: { registered: number; fee: number; testTime: string }
+  ) => {
+    try {
+      await api.updateLevel(level, {
+        registeredCount: data.registered,
+        fee: data.fee,
+        testTime: data.testTime,
+      });
+      await fetchLevels();
+    } catch (err: any) {
+      if (handleAuthError(err)) return;
+      alert(err.message || 'Failed to update exam level details');
+    }
+  };
+
   const handleUpdateLevelRegistered = async (
     level: string,
     registered: number
@@ -318,6 +335,7 @@ export function App() {
             onIncrementRegistered={handleIncrementRegistered}
             onUpdateGlobalQuota={handleUpdateGlobalQuota}
             onUpdateExamSchedule={handleUpdateExamSchedule}
+            onUpdateLevel={handleUpdateLevel}
             onUpdateLevelRegistered={handleUpdateLevelRegistered}
             onSaveRoom={handleSaveRoom}
             onDeleteRoom={handleDeleteRoom}

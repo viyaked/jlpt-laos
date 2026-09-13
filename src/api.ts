@@ -257,18 +257,22 @@ export const api = {
     return res.json();
   },
 
-  async updateLevel(level: string, registeredCount: number) {
+  async updateLevel(
+    level: string,
+    data: number | { registeredCount?: number; fee?: number; testTime?: string }
+  ) {
+    const payload = typeof data === 'number' ? { registeredCount: data } : data;
     const res = await fetch(`/api/levels/${level}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         ...authHeaders(),
       },
-      body: JSON.stringify({ registeredCount }),
+      body: JSON.stringify(payload),
     });
     if (!res.ok) {
       const err = await res.json();
-      throw new Error(err.error || 'Failed to update registered count');
+      throw new Error(err.error || 'Failed to update exam level');
     }
     return res.json();
   },

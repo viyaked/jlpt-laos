@@ -21,6 +21,8 @@ import {
   LogOut,
   Sliders,
   Calendar,
+  Clock,
+  Banknote,
   Loader2,
   KeyRound,
 } from 'lucide-react';
@@ -35,7 +37,11 @@ interface AdminViewProps {
   onIncrementRegistered: (level: JLPTLevel) => void;
   onUpdateGlobalQuota: (totalQuota: number, formsSold?: number) => void;
   onUpdateExamSchedule: (newYear: string, newDate: string) => void;
-  onUpdateLevelRegistered: (level: string, registered: number) => void;
+  onUpdateLevel?: (
+    level: string,
+    data: { registered: number; fee: number; testTime: string }
+  ) => void;
+  onUpdateLevelRegistered?: (level: string, registered: number) => void;
   onSaveRoom: (roomData: Omit<ExamRoom, 'id' | 'examinees'> & { id?: string }) => void;
   onDeleteRoom: (roomId: string) => void;
   onAddExamineeToRoom: (roomId: string, firstName: string, lastName: string) => void;
@@ -57,6 +63,7 @@ export const AdminView: FC<AdminViewProps> = ({
   onIncrementRegistered,
   onUpdateGlobalQuota,
   onUpdateExamSchedule,
+  onUpdateLevel,
   onUpdateLevelRegistered,
   onSaveRoom,
   onDeleteRoom,
@@ -439,7 +446,7 @@ export const AdminView: FC<AdminViewProps> = ({
                 >
                   <div>
                     {/* Level Badge */}
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center justify-between mb-2.5">
                       <div className="flex items-center gap-2">
                         <span className="w-7 h-7 rounded-md bg-slate-900 text-white font-bold text-xs flex items-center justify-center">
                           {stat.level}
@@ -448,18 +455,30 @@ export const AdminView: FC<AdminViewProps> = ({
                           JLPT {stat.level}
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono text-slate-500">
-                        {stat.testTime}
+                      <span className="text-[10px] font-mono text-slate-500 flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-slate-400" />
+                        <span>{stat.testTime}</span>
                       </span>
                     </div>
 
                     {/* Registered Display */}
-                    <div className="bg-slate-50 border border-slate-100 p-3 rounded-lg mb-3">
+                    <div className="bg-slate-50 border border-slate-100 p-3 rounded-lg mb-2">
                       <span className="text-[10px] font-medium text-slate-600 block truncate">
                         {t.registeredInLevel}
                       </span>
                       <span className="text-2xl font-black text-slate-900 block mt-0.5">
                         {stat.registered} <span className="text-xs font-normal text-slate-500">{t.personUnit}</span>
+                      </span>
+                    </div>
+
+                    {/* Fee Display */}
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 bg-slate-50/60 px-2.5 py-1.5 rounded-md border border-slate-100 mb-3 font-mono">
+                      <span className="flex items-center gap-1 text-slate-600">
+                        <Banknote className="w-3 h-3 text-slate-400" />
+                        <span>{t.examFeeField}</span>
+                      </span>
+                      <span className="font-bold text-red-700">
+                        {stat.fee.toLocaleString()} LAK
                       </span>
                     </div>
                   </div>
@@ -630,13 +649,17 @@ export const AdminView: FC<AdminViewProps> = ({
         lang={lang}
       />
 
-      {/* Direct Level Registered Count Edit Modal */}
+      {/* Direct Level Registered Count, Time, Fee Edit Modal */}
       <EditQuotaModal
         stat={editingStat}
         isOpen={Boolean(editingStat)}
         onClose={() => setEditingStat(null)}
-        onSave={(level, registered) => {
-          onUpdateLevelRegistered(level, registered);
+        onSave={(level, data) => {
+          if (onUpdateLevel) {
+            onUpdateLevel(level, data);
+          } else if (onUpdateLevelRegistered) {
+            onUpdateLevelRegistered(level, data.registered);
+          }
           triggerToast(t.saveSuccess);
         }}
         lang={lang}
