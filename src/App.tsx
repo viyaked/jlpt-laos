@@ -50,6 +50,7 @@ export function App() {
   const [examRooms, setExamRooms] = useState<ExamRoom[]>(initialExamRooms);
   const [examYear, setExamYear] = useState<string>('2026');
   const [examDate, setExamDate] = useState<string>('2026-07-05');
+  const [campusMap, setCampusMap] = useState<string>('');
   const [isDbConnected, setIsDbConnected] = useState(false);
 
   // Fetch live data from backend
@@ -63,6 +64,9 @@ export function App() {
       }
       if (data.examDate) {
         setExamDate(data.examDate);
+      }
+      if (data.campusMap !== undefined) {
+        setCampusMap(data.campusMap);
       }
       setIsDbConnected(true);
     } catch {
@@ -213,6 +217,16 @@ export function App() {
     }
   };
 
+  const handleUpdateCampusMap = async (newMap: string) => {
+    try {
+      await api.updateCampusMap(newMap);
+      setCampusMap(newMap);
+    } catch (err: any) {
+      if (handleAuthError(err)) return;
+      alert(err.message || 'Failed to update campus map');
+    }
+  };
+
   // Exam rooms handlers (Admin)
   const handleSaveRoom = async (
     roomData: Omit<ExamRoom, 'id' | 'examinees'> & { id?: string }
@@ -225,6 +239,7 @@ export function App() {
           floor: roomData.floor,
           level: roomData.level,
           capacity: roomData.capacity,
+          imageUrl: roomData.imageUrl,
         });
       } else {
         await api.createRoom({
@@ -233,6 +248,7 @@ export function App() {
           floor: roomData.floor,
           level: roomData.level,
           capacity: roomData.capacity,
+          imageUrl: roomData.imageUrl,
         });
       }
       await fetchRooms();
@@ -323,6 +339,7 @@ export function App() {
             lang={lang}
             examYear={examYear}
             examDate={examDate}
+            campusMap={campusMap}
           />
         ) : (
           <AdminView
@@ -346,6 +363,8 @@ export function App() {
             lang={lang}
             examYear={examYear}
             examDate={examDate}
+            campusMap={campusMap}
+            onUpdateCampusMap={handleUpdateCampusMap}
           />
         )}
       </main>

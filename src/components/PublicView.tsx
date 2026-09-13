@@ -3,6 +3,8 @@ import type { LevelStat, ExamRoom, Language, FormQuotaStat } from '../types';
 import { translations, formatExamDate, formatRoomName } from '../i18n';
 import { api } from '../api';
 import { RosterModal } from './RosterModal';
+import { CampusMapModal } from './CampusMapModal';
+import { ImageViewerModal } from './ImageViewerModal';
 import {
   Users,
   Ticket,
@@ -15,6 +17,8 @@ import {
   Calendar,
   ExternalLink,
   Info,
+  MapPin,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 interface PublicViewProps {
@@ -24,6 +28,7 @@ interface PublicViewProps {
   lang: Language;
   examYear?: string;
   examDate?: string;
+  campusMap?: string;
 }
 
 export const PublicView: FC<PublicViewProps> = ({
@@ -33,6 +38,7 @@ export const PublicView: FC<PublicViewProps> = ({
   lang,
   examYear: _examYear = '2026',
   examDate = '2026-07-05',
+  campusMap = '',
 }) => {
   const t = translations[lang];
   const formattedExamDate = formatExamDate(examDate, lang);
@@ -43,6 +49,12 @@ export const PublicView: FC<PublicViewProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeRoom, setActiveRoom] = useState<ExamRoom | null>(null);
   const [matchedCandidates, setMatchedCandidates] = useState<any[]>([]);
+  const [isCampusMapOpen, setIsCampusMapOpen] = useState(false);
+  const [previewPhoto, setPreviewPhoto] = useState<{ isOpen: boolean; url: string; title: string; subtitle?: string }>({
+    isOpen: false,
+    url: '',
+    title: '',
+  });
 
   // Live search candidates across database
   useEffect(() => {
@@ -335,6 +347,14 @@ export const PublicView: FC<PublicViewProps> = ({
               {t.roomsSectionSubtitle}
             </p>
           </div>
+
+          <button
+            onClick={() => setIsCampusMapOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg text-xs sm:text-sm font-semibold shadow-xs transition-colors self-start sm:self-auto cursor-pointer"
+          >
+            <MapPin className="w-4 h-4" />
+            <span>{t.viewCampusMapBtn}</span>
+          </button>
         </div>
 
         {/* Filter Controls & Search */}
@@ -435,6 +455,31 @@ export const PublicView: FC<PublicViewProps> = ({
                       </span>
                     </div>
 
+                    {/* Room Photo Thumbnail if available */}
+                    {room.imageUrl && (
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPreviewPhoto({
+                            isOpen: true,
+                            url: room.imageUrl!,
+                            title: formatRoomName(room.code, lang),
+                            subtitle: `${room.building} • ${room.floor} (JLPT ${room.level})`,
+                          });
+                        }}
+                        className="relative rounded-lg overflow-hidden border border-slate-200 mb-3 bg-slate-900 group/img cursor-pointer h-24 sm:h-28 shadow-xs"
+                      >
+                        <img
+                          src={room.imageUrl}
+                          alt={room.code}
+                          className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-200"
+                        />
+                        <div className="absolute bottom-2 right-2 bg-slate-950/75 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 font-medium">
+                          <ImageIcon className="w-3 h-3 text-red-400" />
+                          <span>{t.viewRoomPhotoBtn}</span>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Location Information */}
                     <div className="space-y-1.5 mb-4 text-xs text-slate-600">
@@ -493,6 +538,25 @@ export const PublicView: FC<PublicViewProps> = ({
         room={activeRoom}
         isOpen={Boolean(activeRoom)}
         onClose={() => setActiveRoom(null)}
+        lang={lang}
+      />
+
+      {/* Campus Map Master Plan Modal */}
+      <CampusMapModal
+        isOpen={isCampusMapOpen}
+        onClose={() => setIsCampusMapOpen(false)}
+        campusMap={campusMap}
+        isAdmin={false}
+        lang={lang}
+      />
+
+      {/* Lightbox Image Previewer for Room Photos */}
+      <ImageViewerModal
+        isOpen={previewPhoto.isOpen}
+        onClose={() => setPreviewPhoto({ isOpen: false, url: '', title: '' })}
+        imageUrl={previewPhoto.url}
+        title={previewPhoto.title}
+        subtitle={previewPhoto.subtitle}
         lang={lang}
       />
     </div>

@@ -1,4 +1,4 @@
-import type { LevelStat, ExamRoom, JLPTLevel, FormQuotaStat } from './types';
+import type { ExamRoom, JLPTLevel, FormQuotaStat, LevelsResponse } from './types';
 
 const TOKEN_KEY = 'jlpt_jwt_token';
 
@@ -21,13 +21,14 @@ function authHeaders(): Record<string, string> {
 
 export const api = {
   // Public endpoints
-  async getLevels(): Promise<{ levels: LevelStat[]; formQuota: FormQuotaStat; examYear: string; examDate: string }> {
+  async getLevels(): Promise<LevelsResponse> {
     const res = await fetch('/api/levels');
     if (!res.ok) throw new Error('Failed to fetch level stats');
     const data = await res.json();
     return {
       examYear: data.examYear || '2026',
       examDate: data.examDate || '2026-07-05',
+      campusMap: data.campusMap || '',
       formQuota: {
         totalQuota: data.formQuota?.totalQuota ?? 500,
         totalRegistered: data.formQuota?.totalRegistered ?? 0,
@@ -54,6 +55,7 @@ export const api = {
       floor: r.floor,
       level: r.level,
       capacity: r.capacity,
+      imageUrl: r.imageUrl || '',
       examinees: [], // loaded on demand for privacy and performance
       examineeCount: r.examineeCount,
     }));
@@ -277,8 +279,25 @@ export const api = {
     return res.json();
   },
 
+  // Admin: Update Campus Map
+  async updateCampusMap(campusMap: string) {
+    const res = await fetch('/api/levels/campus-map', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify({ campusMap }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update campus map');
+    }
+    return res.json();
+  },
+
   // Admin Room Actions
-  async createRoom(roomData: { code: string; building: string; floor: string; level: string; capacity: number }) {
+  async createRoom(roomData: { code: string; building: string; floor: string; level: string; capacity: number; imageUrl?: string }) {
     const res = await fetch('/api/rooms', {
       method: 'POST',
       headers: {
@@ -294,7 +313,7 @@ export const api = {
     return res.json();
   },
 
-  async updateRoom(id: string, roomData: { code: string; building: string; floor: string; level: string; capacity: number }) {
+  async updateRoom(id: string, roomData: { code: string; building: string; floor: string; level: string; capacity: number; imageUrl?: string }) {
     const res = await fetch(`/api/rooms/${id}`, {
       method: 'PUT',
       headers: {

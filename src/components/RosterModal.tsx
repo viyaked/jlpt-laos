@@ -2,7 +2,8 @@ import { useState, useEffect, type FC } from 'react';
 import type { ExamRoom, Language } from '../types';
 import { translations, formatRoomName } from '../i18n';
 import { api } from '../api';
-import { X, Search, ShieldAlert, Users, Loader2 } from 'lucide-react';
+import { X, Search, ShieldAlert, Users, Loader2, Image as ImageIcon } from 'lucide-react';
+import { ImageViewerModal } from './ImageViewerModal';
 
 interface RosterModalProps {
   room: ExamRoom | null;
@@ -20,6 +21,7 @@ export const RosterModal: FC<RosterModalProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [examinees, setExaminees] = useState<{ id: string; firstName: string; lastName: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPhotoViewerOpen, setIsPhotoViewerOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen && room) {
@@ -99,6 +101,36 @@ export const RosterModal: FC<RosterModalProps> = ({
 
         {/* Content & List */}
         <div className="p-6 flex-1 overflow-y-auto">
+          {/* Room Photo Banner if available */}
+          {room.imageUrl && (
+            <div className="mb-4 rounded-xl border border-slate-200 overflow-hidden bg-slate-900 shadow-xs flex items-center justify-between p-3 gap-4">
+              <div className="flex items-center gap-3">
+                <img
+                  src={room.imageUrl}
+                  alt={room.code}
+                  className="w-16 h-12 object-cover rounded-lg border border-slate-700 cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => setIsPhotoViewerOpen(true)}
+                />
+                <div>
+                  <span className="text-xs font-bold text-white block">
+                    {t.roomPhotoField}
+                  </span>
+                  <span className="text-[11px] text-slate-400">
+                    {t.clickToEnlarge}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPhotoViewerOpen(true)}
+                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-700"
+              >
+                <ImageIcon className="w-3.5 h-3.5 text-red-500" />
+                <span>{t.viewRoomPhotoBtn}</span>
+              </button>
+            </div>
+          )}
+
           {/* Stats & Search */}
           <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mb-4">
             <div className="flex items-center gap-2 text-sm text-slate-700">
@@ -173,6 +205,17 @@ export const RosterModal: FC<RosterModalProps> = ({
           </button>
         </div>
       </div>
+
+      {room.imageUrl && (
+        <ImageViewerModal
+          isOpen={isPhotoViewerOpen}
+          onClose={() => setIsPhotoViewerOpen(false)}
+          imageUrl={room.imageUrl}
+          title={formatRoomName(room.code, lang)}
+          subtitle={`${room.building} • ${room.floor} (JLPT ${room.level})`}
+          lang={lang}
+        />
+      )}
     </div>
   );
 };

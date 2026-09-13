@@ -15,6 +15,7 @@ router.get('/', (req, res) => {
       r.floor,
       r.level,
       r.capacity,
+      r.image_url,
       COUNT(a.id) as examinee_count
     FROM rooms r
     LEFT JOIN applicants a ON a.room_id = r.id
@@ -29,6 +30,7 @@ router.get('/', (req, res) => {
     floor: r.floor,
     level: r.level,
     capacity: r.capacity,
+    imageUrl: r.image_url || '',
     examineeCount: r.examinee_count,
   }));
 
@@ -40,7 +42,7 @@ router.get('/', (req, res) => {
 router.get('/:id/applicants', (req, res) => {
   const { id } = req.params;
 
-  const room = db.prepare('SELECT id, code, building, floor, level, capacity FROM rooms WHERE id = ?').get(id) as any;
+  const room = db.prepare('SELECT id, code, building, floor, level, capacity, image_url FROM rooms WHERE id = ?').get(id) as any;
   if (!room) {
     return res.status(404).json({ error: 'Room not found' });
   }
@@ -63,6 +65,7 @@ router.get('/:id/applicants', (req, res) => {
       floor: room.floor,
       level: room.level,
       capacity: room.capacity,
+      imageUrl: room.image_url || '',
     },
     // Strictly First & Last Name only!
     applicants: applicants.map((a) => ({
@@ -75,17 +78,19 @@ router.get('/:id/applicants', (req, res) => {
 
 // Admin: Add new room
 router.post('/', requireAdminAuth, (req, res) => {
-  const { code, building, floor, level, capacity } = req.body;
+  const { code, building, floor, level, capacity, imageUrl } = req.body;
 
   if (!code || !building || !floor || !level || !capacity) {
     return res.status(400).json({ error: 'Missing required room fields' });
   }
 
   const id = `room-${Date.now()}`;
+  const img = typeof imageUrl === 'string' ? imageUrl.trim() : '';
+
   db.prepare(`
-    INSERT INTO rooms (id, code, building, floor, level, capacity)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `).run(id, code, building, floor, level, Number(capacity));
+    INSERT INTO rooms (id, code, building, floor, level, capacity, image_url)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(id, code, building, floor, level, Number(capacity), img);
 
   broadcastEvent('rooms_updated', { id, action: 'created' });
 
@@ -96,6 +101,7 @@ router.post('/', requireAdminAuth, (req, res) => {
     floor,
     level,
     capacity: Number(capacity),
+    imageUrl: img,
     examineeCount: 0,
   });
 });
@@ -103,22 +109,24 @@ router.post('/', requireAdminAuth, (req, res) => {
 // Admin: Edit room
 router.put('/:id', requireAdminAuth, (req, res) => {
   const { id } = req.params;
-  const { code, building, floor, level, capacity } = req.body;
+  const { code, building, floor, level, capacity, imageUrl } = req.body;
 
-  const existing = db.prepare('SELECT id FROM rooms WHERE id = ?').get(id);
+  const existing = db.prepare('SELECT id, image_url FROM rooms WHERE id = ?').get(id) as any;
   if (!existing) {
     return res.status(404).json({ error: 'Room not found' });
   }
 
+  const img = imageUrl !== undefined ? (typeof imageUrl === 'string' ? imageUrl.trim() : '') : (existing.image_url || '');
+
   db.prepare(`
     UPDATE rooms 
-    SET code = ?, building = ?, floor = ?, level = ?, capacity = ?
+    SET code = ?, building = ?, floor = ?, level = ?, capacity = ?, image_url = ?
     WHERE id = ?
-  `).run(code, building, floor, level, Number(capacity), id);
+  `).run(code, building, floor, level, Number(capacity), img, id);
 
   broadcastEvent('rooms_updated', { id, action: 'updated' });
 
-  res.json({ id, code, building, floor, level, capacity: Number(capacity) });
+  res.json({ id, code, building, floor, level, capacity: Number(capacity), imageUrl: img });
 });
 
 // Admin: Delete room

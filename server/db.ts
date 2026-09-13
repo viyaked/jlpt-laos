@@ -42,6 +42,7 @@ export function initDatabase() {
       floor TEXT NOT NULL,
       level TEXT NOT NULL,
       capacity INTEGER NOT NULL,
+      image_url TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (level) REFERENCES exam_levels(level) ON UPDATE CASCADE
     );
@@ -60,6 +61,13 @@ export function initDatabase() {
       value TEXT NOT NULL
     );
   `);
+
+  // Migration: Ensure image_url column exists in rooms table
+  const roomColumns = db.prepare("PRAGMA table_info(rooms)").all() as any[];
+  const hasImageUrl = roomColumns.some((col: any) => col.name === 'image_url');
+  if (!hasImageUrl) {
+    db.exec("ALTER TABLE rooms ADD COLUMN image_url TEXT");
+  }
 
   // Initialize default system settings
   const existingQuota = db.prepare('SELECT value FROM system_settings WHERE key = ?').get('total_form_quota');
@@ -97,6 +105,14 @@ export function initDatabase() {
     // Ensure room codes have ຫ້ອງ prefix
     db.prepare(`UPDATE rooms SET code = 'ຫ້ອງ ' || code WHERE code NOT LIKE 'ຫ້ອງ%' AND code NOT LIKE 'Room%'`).run();
   }
+}
+
+export function getCampusMap(): string {
+  return getSystemSetting('campus_map_image', '');
+}
+
+export function setCampusMap(imageUrl: string): void {
+  setSystemSetting('campus_map_image', imageUrl);
 }
 
 export function getSystemSetting(key: string, defaultValue: string): string {

@@ -1,15 +1,16 @@
 import { Router } from 'express';
-import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear, getExamDate, setExamDate, getFormsSold, setFormsSold } from '../db';
+import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear, getExamDate, setExamDate, getFormsSold, setFormsSold, getCampusMap, setCampusMap } from '../db';
 import { requireAdminAuth } from '../auth';
 import { broadcastEvent } from '../events';
 
 const router = Router();
 
-// GET all exam levels with real-time stats, unified form quota, exam year, and exam date
+// GET all exam levels with real-time stats, unified form quota, exam year, exam date, and campus map
 router.get('/', (req, res) => {
   const formQuota = getTotalFormQuota();
   const examYear = getExamYear();
   const examDate = getExamDate();
+  const campusMap = getCampusMap();
 
   const levels = db.prepare(`
     SELECT 
@@ -41,6 +42,7 @@ router.get('/', (req, res) => {
   res.json({
     examYear,
     examDate,
+    campusMap,
     formQuota: {
       totalQuota: formQuota.totalQuota,
       totalRegistered: formQuota.totalRegistered,
@@ -49,6 +51,15 @@ router.get('/', (req, res) => {
     },
     levels: formattedLevels,
   });
+});
+
+// Admin: Update Campus Master Floor Plan / Map
+router.put('/campus-map', requireAdminAuth, (req, res) => {
+  const { campusMap } = req.body;
+  const mapValue = typeof campusMap === 'string' ? campusMap.trim() : '';
+  setCampusMap(mapValue);
+  broadcastEvent('levels_updated', { campusMap: mapValue });
+  res.json({ success: true, campusMap: mapValue });
 });
 
 // Admin: Update Exam Schedule (Year and/or Date)

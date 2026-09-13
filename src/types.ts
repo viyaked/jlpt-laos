@@ -21,6 +21,7 @@ export interface LevelsResponse {
   formQuota: FormQuotaStat;
   examYear: string;
   examDate: string;
+  campusMap?: string;
 }
 
 export interface Examinee {
@@ -39,6 +40,7 @@ export interface ExamRoom {
   capacity: number;
   examinees: Examinee[];
   examineeCount?: number;
+  imageUrl?: string;
 }
 
 

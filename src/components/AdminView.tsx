@@ -9,6 +9,8 @@ import { AddEditRoomModal } from './AddEditRoomModal';
 import { ManageRoomExamineesModal } from './ManageRoomExamineesModal';
 import { LoginModal } from './LoginModal';
 import { ChangeAdminPasswordModal } from './ChangeAdminPasswordModal';
+import { CampusMapModal } from './CampusMapModal';
+import { ImageViewerModal } from './ImageViewerModal';
 import {
   Plus,
   Edit2,
@@ -25,6 +27,8 @@ import {
   Banknote,
   Loader2,
   KeyRound,
+  MapPin,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 interface AdminViewProps {
@@ -51,6 +55,8 @@ interface AdminViewProps {
   lang: Language;
   examYear?: string;
   examDate?: string;
+  campusMap?: string;
+  onUpdateCampusMap?: (map: string) => Promise<void>;
 }
 
 export const AdminView: FC<AdminViewProps> = ({
@@ -74,6 +80,8 @@ export const AdminView: FC<AdminViewProps> = ({
   lang,
   examYear = '2026',
   examDate = '2026-07-05',
+  campusMap = '',
+  onUpdateCampusMap,
 }) => {
   const t = translations[lang];
   const formattedExamDate = formatExamDate(examDate, lang);
@@ -83,6 +91,12 @@ export const AdminView: FC<AdminViewProps> = ({
   const [isGlobalQuotaModalOpen, setIsGlobalQuotaModalOpen] = useState(false);
   const [isExamYearModalOpen, setIsExamYearModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [isCampusMapModalOpen, setIsCampusMapModalOpen] = useState(false);
+  const [previewPhoto, setPreviewPhoto] = useState<{ isOpen: boolean; url: string; title: string; subtitle?: string }>({
+    isOpen: false,
+    url: '',
+    title: '',
+  });
   const [editingStat, setEditingStat] = useState<LevelStat | null>(null);
   const [roomModalData, setRoomModalData] = useState<{ isOpen: boolean; room: ExamRoom | null }>({
     isOpen: false,
@@ -233,7 +247,16 @@ export const AdminView: FC<AdminViewProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 self-end sm:self-auto">
+        <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
+          <button
+            onClick={() => setIsCampusMapModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors border border-slate-800"
+            title={t.manageCampusMapBtn}
+          >
+            <MapPin className="w-3.5 h-3.5 text-red-500" />
+            <span>{t.manageCampusMapBtn}</span>
+          </button>
+
           <button
             onClick={() => setIsExamYearModalOpen(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors"
@@ -558,9 +581,49 @@ export const AdminView: FC<AdminViewProps> = ({
                 {examRooms.map((room) => (
                   <tr key={room.id} className="hover:bg-slate-50 transition-colors">
                     <td className="py-3 px-4">
-                      <span className="font-bold text-slate-900 block">
-                        {formatRoomName(room.code, lang)}
-                      </span>
+                      <div className="flex items-center gap-2.5">
+                        {room.imageUrl ? (
+                          <img
+                            src={room.imageUrl}
+                            alt={room.code}
+                            onClick={() =>
+                              setPreviewPhoto({
+                                isOpen: true,
+                                url: room.imageUrl!,
+                                title: formatRoomName(room.code, lang),
+                                subtitle: `${room.building} • ${room.floor} (JLPT ${room.level})`,
+                              })
+                            }
+                            className="w-10 h-8 object-cover rounded-lg border border-slate-200 cursor-pointer hover:opacity-80 transition-opacity shadow-xs shrink-0"
+                            title={t.clickToEnlarge}
+                          />
+                        ) : (
+                          <div className="w-10 h-8 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-300 shrink-0">
+                            <ImageIcon className="w-4 h-4" />
+                          </div>
+                        )}
+                        <div>
+                          <span className="font-bold text-slate-900 block">
+                            {formatRoomName(room.code, lang)}
+                          </span>
+                          {room.imageUrl && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setPreviewPhoto({
+                                  isOpen: true,
+                                  url: room.imageUrl!,
+                                  title: formatRoomName(room.code, lang),
+                                  subtitle: `${room.building} • ${room.floor} (JLPT ${room.level})`,
+                                })
+                              }
+                              className="text-[10px] text-red-700 hover:underline flex items-center gap-0.5"
+                            >
+                              <span>{t.viewRoomPhotoBtn}</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </td>
                     <td className="py-3 px-4">
                       <span className="px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-800 border border-slate-200">
@@ -709,6 +772,31 @@ export const AdminView: FC<AdminViewProps> = ({
           onLogin(newUsername);
           triggerToast(t.credentialsUpdateSuccess);
         }}
+        lang={lang}
+      />
+
+      {/* Campus Map Master Plan Modal */}
+      <CampusMapModal
+        isOpen={isCampusMapModalOpen}
+        onClose={() => setIsCampusMapModalOpen(false)}
+        campusMap={campusMap}
+        isAdmin={true}
+        onSaveMap={async (newMap) => {
+          if (onUpdateCampusMap) {
+            await onUpdateCampusMap(newMap);
+            triggerToast(newMap ? t.campusMapUploadedSuccess : t.campusMapDeletedSuccess);
+          }
+        }}
+        lang={lang}
+      />
+
+      {/* Lightbox Image Previewer for Room Photos */}
+      <ImageViewerModal
+        isOpen={previewPhoto.isOpen}
+        onClose={() => setPreviewPhoto({ isOpen: false, url: '', title: '' })}
+        imageUrl={previewPhoto.url}
+        title={previewPhoto.title}
+        subtitle={previewPhoto.subtitle}
         lang={lang}
       />
     </div>
