@@ -258,7 +258,7 @@ export const translations = {
     adminDeletedSuccess: "ລຶບບັນຊີຜູ້ດູແລສຳເລັດແລ້ວ!",
 
     // Reset Data
-    resetToDefaultBtn: "ຣີເຊັດຂໍ້ມູນຕົວຢ່າງ",
+    resetToDefaultBtn: "ຣີເຊັດຂໍ້ມູນ",
     resetSuccess: "ຣີເຊັດຂໍ້ມູນເປັນຄ່າເລີ່ມຕົ້ນຮຽບຮ້ອຍແລ້ວ!",
     saveSuccess: "ບັນທຶກຂໍ້ມູນສຳເລັດແລ້ວ!",
     quotaWarning: "ຈຳນວນຜູ້ສະໝັກບໍ່ສາມາດເກີນໂຄຕ້າໄດ້",
@@ -463,7 +463,7 @@ export const translations = {
     adminDeletedSuccess: "Admin account deleted successfully!",
 
     // Reset Data
-    resetToDefaultBtn: "Reset Demo Data",
+    resetToDefaultBtn: "Reset Data",
     resetSuccess: "Demo data has been reset to defaults!",
     saveSuccess: "Changes saved successfully!",
     quotaWarning: "Registered count cannot exceed total quota",
