@@ -191,16 +191,16 @@ export function seedDefaultData() {
 
     // 0. Settings
     setSystemSetting('total_form_quota', '500');
-    setSystemSetting('forms_sold', '432');
+    setSystemSetting('forms_sold', '0');
     setSystemSetting('exam_year', '2026');
     setSystemSetting('exam_date', '2026-07-05');
 
     // 1. Levels  (fee: N4/N5 = 300,000 ກີບ | N1/N2/N3 = 350,000 ກີບ)
-    insertLevel.run('N5', 150, 124, 300000, '09:00 - 11:30');
-    insertLevel.run('N4', 120, 98,  300000, '09:00 - 11:45');
-    insertLevel.run('N3', 100, 92,  350000, '13:30 - 16:30');
-    insertLevel.run('N2', 80,  80,  350000, '13:30 - 16:45');
-    insertLevel.run('N1', 50,  38,  350000, '13:30 - 17:00');
+    insertLevel.run('N5', 150, 0, 300000, '09:00 - 11:30');
+    insertLevel.run('N4', 120, 0, 300000, '09:00 - 11:45');
+    insertLevel.run('N3', 100, 0, 350000, '13:30 - 16:30');
+    insertLevel.run('N2', 80,  0, 350000, '13:30 - 16:45');
+    insertLevel.run('N1', 50,  0, 350000, '13:30 - 17:00');
 
     // 2. Rooms — ຕາມແຜນທີ່ LJI Campus
     const rooms = [
@@ -226,53 +226,10 @@ export function seedDefaultData() {
       insertRoom.run(r.id, r.code, r.building, r.floor, r.level, r.capacity);
     }
 
-    // 3. Sample applicants
-    const sampleApplicants = [
-      // N5 — Annex 4
-      { id: 'ex-1',  first_name: 'ອາລຸນ',      last_name: 'ສີສົມບັດ',   room_id: 'room-annex4', date: '2026-05-10' },
-      { id: 'ex-2',  first_name: 'ວິໄລພອນ',    last_name: 'ວົງສະຫວັນ',  room_id: 'room-annex4', date: '2026-05-10' },
-      { id: 'ex-3',  first_name: 'ສົມສັກ',      last_name: 'ແກ້ວມະນີ',   room_id: 'room-annex4', date: '2026-05-11' },
-      { id: 'ex-4',  first_name: 'ມະນີວັນ',     last_name: 'ພອນປະເສີດ',  room_id: 'room-annex4', date: '2026-05-11' },
-      { id: 'ex-5',  first_name: 'Takeshi',      last_name: 'Yamamoto',    room_id: 'room-annex4', date: '2026-05-12' },
-      // N5 — Annex 5
-      { id: 'ex-6',  first_name: 'ທິດາລັດ',    last_name: 'ຈັນທະວົງ',   room_id: 'room-annex5', date: '2026-05-12' },
-      { id: 'ex-7',  first_name: 'ແສງດາວ',      last_name: 'ຄຳມະນີ',     room_id: 'room-annex5', date: '2026-05-13' },
-      { id: 'ex-8',  first_name: 'ບຸນມີ',       last_name: 'ໄຊຍະວົງ',    room_id: 'room-annex5', date: '2026-05-13' },
-      // N5 — MBA
-      { id: 'ex-9',  first_name: 'ວັນໄຊ',       last_name: 'ພົມມະຈັນ',   room_id: 'room-mba',    date: '2026-05-14' },
-      { id: 'ex-10', first_name: 'ພຸດທະສອນ',   last_name: 'ລັດຕະນະ',    room_id: 'room-mba',    date: '2026-05-15' },
-      // N4 — Annex 1
-      { id: 'ex-13', first_name: 'ເກດສະໜາ',    last_name: 'ມະນີຈັນ',    room_id: 'room-annex1', date: '2026-05-15' },
-      { id: 'ex-14', first_name: 'ຈັນສະໝອນ',   last_name: 'ຫຼວງລາດ',    room_id: 'room-annex1', date: '2026-05-16' },
-      { id: 'ex-15', first_name: 'ດາວວອນ',      last_name: 'ສຸວັນນະສີ',  room_id: 'room-annex1', date: '2026-05-16' },
-      // N4 — Annex 2
-      { id: 'ex-21', first_name: 'ຄຳຫຼ້າ',     last_name: 'ແສງສຸລິຍາ',  room_id: 'room-annex2', date: '2026-05-11' },
-      { id: 'ex-22', first_name: 'ຈິດປະສົງ',   last_name: 'ສີຫາລາດ',    room_id: 'room-annex2', date: '2026-05-11' },
-      { id: 'ex-23', first_name: 'Sarah',        last_name: 'Jenkins',     room_id: 'room-annex2', date: '2026-05-12' },
-      // N4 — Annex 3
-      { id: 'ex-31', first_name: 'ຍອດແກ້ວ',    last_name: 'ໂພທິສານ',    room_id: 'room-annex3', date: '2026-05-16' },
-      { id: 'ex-32', first_name: 'ລັດຕະນະ',    last_name: 'ສີສົມພອນ',   room_id: 'room-annex3', date: '2026-05-16' },
-      // N3 — Seminar 1
-      { id: 'ex-36', first_name: 'ອະນຸວັດ',    last_name: 'ສີຫາປັນຍາ',  room_id: 'room-seminar1', date: '2026-05-10' },
-      { id: 'ex-37', first_name: 'Kenji',        last_name: 'Sato',        room_id: 'room-seminar1', date: '2026-05-10' },
-      // N3 — ຫ້ອງລະເນາປະສົງ
-      { id: 'ex-38', first_name: 'ສຸວັນນາ',    last_name: 'ທຳມະວົງ',    room_id: 'room-laonea',   date: '2026-05-11' },
-      { id: 'ex-39', first_name: 'Michael',      last_name: 'Chen',        room_id: 'room-laonea',   date: '2026-05-11' },
-      // N2 — Seminar 2
-      { id: 'ex-44', first_name: 'ທອງສຸກ',     last_name: 'ສີວິໄຊ',     room_id: 'room-seminar2', date: '2026-05-08' },
-      { id: 'ex-45', first_name: 'ວົງເດືອນ',   last_name: 'ລາດຊະວົງ',   room_id: 'room-seminar2', date: '2026-05-08' },
-      // N2 — Incubation Room
-      { id: 'ex-46', first_name: 'Elena',        last_name: 'Rostova',     room_id: 'room-incubation', date: '2026-05-09' },
-      // N1 — Annex 6
-      { id: 'ex-50', first_name: 'ສາຍສະໝອນ',  last_name: 'ສຸລິຍະວົງ',  room_id: 'room-annex6', date: '2026-05-05' },
-      { id: 'ex-51', first_name: 'David',        last_name: 'Armstrong',   room_id: 'room-annex6', date: '2026-05-05' },
-    ];
-
-    for (const a of sampleApplicants) {
-      insertApplicant.run(a.id, a.first_name, a.last_name, a.room_id, a.date);
-    }
+    // No sample applicants — rooms start empty, admin adds examinees via CSV or manual import
   });
 
   seedTx();
   console.log('Initial JLPT database seeded successfully.');
 }
+
