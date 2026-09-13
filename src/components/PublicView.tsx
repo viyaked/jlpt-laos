@@ -1,6 +1,6 @@
 import { useState, useEffect, type FC } from 'react';
 import type { LevelStat, ExamRoom, Language, FormQuotaStat } from '../types';
-import { translations, formatExamDate } from '../i18n';
+import { translations, formatExamDate, formatRoomName } from '../i18n';
 import { api } from '../api';
 import { RosterModal } from './RosterModal';
 import {
@@ -70,7 +70,7 @@ export const PublicView: FC<PublicViewProps> = ({
     }
 
     const q = searchQuery.toLowerCase().trim();
-    const matchRoomCode = room.code.toLowerCase().includes(q);
+    const matchRoomCode = room.code.toLowerCase().includes(q) || formatRoomName(room.code, lang).toLowerCase().includes(q);
     const matchRoomBuilding = room.building.toLowerCase().includes(q);
     const matchRoomFloor = room.floor.toLowerCase().includes(q);
     const hasMatchedDbCandidate = matchedCandidates.some((m) => m.room.id === room.id);
@@ -423,7 +423,7 @@ export const PublicView: FC<PublicViewProps> = ({
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-lg text-slate-900 group-hover:text-red-700 transition-colors">
-                            {room.code}
+                            {formatRoomName(room.code, lang)}
                           </span>
                           <span className="px-2 py-0.5 text-xs font-bold rounded bg-slate-100 text-slate-700 border border-slate-200">
                             JLPT {room.level}

@@ -1,6 +1,6 @@
 import { useState, type FC } from 'react';
 import type { LevelStat, ExamRoom, AdminUser, Language, JLPTLevel, FormQuotaStat } from '../types';
-import { translations, getAnnualExamTitle, getAnnualExamShort, formatExamDate } from '../i18n';
+import { translations, getAnnualExamTitle, getAnnualExamShort, formatExamDate, formatRoomName } from '../i18n';
 import { api } from '../api';
 import { EditQuotaModal } from './EditQuotaModal';
 import { EditGlobalQuotaModal } from './EditGlobalQuotaModal';
@@ -540,7 +540,7 @@ export const AdminView: FC<AdminViewProps> = ({
                   <tr key={room.id} className="hover:bg-slate-50 transition-colors">
                     <td className="py-3 px-4">
                       <span className="font-bold text-slate-900 block">
-                        {room.code}
+                        {formatRoomName(room.code, lang)}
                       </span>
                     </td>
                     <td className="py-3 px-4">

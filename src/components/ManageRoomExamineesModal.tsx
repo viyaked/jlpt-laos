@@ -1,6 +1,6 @@
 import { useState, type FC, type FormEvent } from 'react';
 import type { ExamRoom, Language } from '../types';
-import { translations } from '../i18n';
+import { translations, formatRoomName } from '../i18n';
 import {
   X,
   UserPlus,
@@ -123,7 +123,7 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-bold text-base text-white">
-                  {t.manageRoomsTitle} - {room.code}
+                  {t.manageRoomsTitle} - {formatRoomName(room.code, lang)}
                 </h3>
                 <span className="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">
                   {room.building} &bull; {room.floor}
@@ -240,7 +240,7 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
                   {t.addExamineeTitle}
                 </h4>
                 <p className="text-xs text-slate-500">
-                  {room.code} &bull; JLPT {room.level}
+                  {formatRoomName(room.code, lang)} &bull; JLPT {room.level}
                 </p>
               </div>
 

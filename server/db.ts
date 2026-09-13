@@ -93,6 +93,9 @@ export function initDatabase() {
   const levelsCount = db.prepare('SELECT COUNT(*) as count FROM exam_levels').get() as { count: number };
   if (levelsCount.count === 0) {
     seedDefaultData();
+  } else {
+    // Ensure room codes have ຫ້ອງ prefix
+    db.prepare(`UPDATE rooms SET code = 'ຫ້ອງ ' || code WHERE code NOT LIKE 'ຫ້ອງ%' AND code NOT LIKE 'Room%'`).run();
   }
 }
 
@@ -185,13 +188,13 @@ export function seedDefaultData() {
 
     // 2. Rooms
     const rooms = [
-      { id: 'room-101', code: 'A-101', building: 'Building A (ອາຄານ ອາ)', floor: 'Floor 1 (ຊັ້ນ 1)', level: 'N5', capacity: 35 },
-      { id: 'room-102', code: 'A-102', building: 'Building A (ອາຄານ ອາ)', floor: 'Floor 1 (ຊັ້ນ 1)', level: 'N5', capacity: 35 },
-      { id: 'room-201', code: 'A-201', building: 'Building A (ອາຄານ ອາ)', floor: 'Floor 2 (ຊັ້ນ 2)', level: 'N4', capacity: 35 },
-      { id: 'room-202', code: 'A-202', building: 'Building A (ອາຄານ ອາ)', floor: 'Floor 2 (ຊັ້ນ 2)', level: 'N4', capacity: 35 },
-      { id: 'room-301', code: 'B-101', building: 'Building B (ອາຄານ ເບ)', floor: 'Floor 1 (ຊັ້ນ 1)', level: 'N3', capacity: 30 },
-      { id: 'room-401', code: 'B-201', building: 'Building B (ອາຄານ ເບ)', floor: 'Floor 2 (ຊັ້ນ 2)', level: 'N2', capacity: 30 },
-      { id: 'room-501', code: 'B-301', building: 'Building B (ອາຄານ ເບ)', floor: 'Floor 3 (ຊັ້ນ 3)', level: 'N1', capacity: 25 },
+      { id: 'room-101', code: 'ຫ້ອງ A-101', building: 'Building A (ອາຄານ ອາ)', floor: 'Floor 1 (ຊັ້ນ 1)', level: 'N5', capacity: 35 },
+      { id: 'room-102', code: 'ຫ້ອງ A-102', building: 'Building A (ອາຄານ ອາ)', floor: 'Floor 1 (ຊັ້ນ 1)', level: 'N5', capacity: 35 },
+      { id: 'room-201', code: 'ຫ້ອງ A-201', building: 'Building A (ອາຄານ ອາ)', floor: 'Floor 2 (ຊັ້ນ 2)', level: 'N4', capacity: 35 },
+      { id: 'room-202', code: 'ຫ້ອງ A-202', building: 'Building A (ອາຄານ ອາ)', floor: 'Floor 2 (ຊັ້ນ 2)', level: 'N4', capacity: 35 },
+      { id: 'room-301', code: 'ຫ້ອງ B-101', building: 'Building B (ອາຄານ ເບ)', floor: 'Floor 1 (ຊັ້ນ 1)', level: 'N3', capacity: 30 },
+      { id: 'room-401', code: 'ຫ້ອງ B-201', building: 'Building B (ອາຄານ ເບ)', floor: 'Floor 2 (ຊັ້ນ 2)', level: 'N2', capacity: 30 },
+      { id: 'room-501', code: 'ຫ້ອງ B-301', building: 'Building B (ອາຄານ ເບ)', floor: 'Floor 3 (ຊັ້ນ 3)', level: 'N1', capacity: 25 },
     ];
 
     for (const r of rooms) {

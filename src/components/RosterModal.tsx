@@ -1,6 +1,6 @@
 import { useState, useEffect, type FC } from 'react';
 import type { ExamRoom, Language } from '../types';
-import { translations } from '../i18n';
+import { translations, formatRoomName } from '../i18n';
 import { api } from '../api';
 import { X, Search, ShieldAlert, Users, Loader2 } from 'lucide-react';
 
@@ -62,7 +62,7 @@ export const RosterModal: FC<RosterModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-bold text-lg leading-tight text-white">
-                  {room.code}
+                  {formatRoomName(room.code, lang)}
                 </h3>
                 <span className="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">
                   JLPT {room.level}

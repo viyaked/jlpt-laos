@@ -50,6 +50,15 @@ export function formatExamDate(dateStr: string = '2026-07-05', lang: Language = 
   };
 }
 
+export function formatRoomName(code: string, lang: Language = 'lo'): string {
+  if (!code) return '';
+  const trimmed = code.trim();
+  if (trimmed.startsWith('ຫ້ອງ') || trimmed.toLowerCase().startsWith('room')) {
+    return trimmed;
+  }
+  return lang === 'lo' ? `ຫ້ອງ ${trimmed}` : `Room ${trimmed}`;
+}
+
 export const translations = {
   lo: {
     // Header & Meta

@@ -47,9 +47,14 @@ export const AddEditRoomModal: FC<AddEditRoomModalProps> = ({
     e.preventDefault();
     if (!code.trim()) return;
 
+    let finalCode = code.trim();
+    if (lang === 'lo' && !finalCode.startsWith('ຫ້ອງ') && !finalCode.toLowerCase().startsWith('room')) {
+      finalCode = `ຫ້ອງ ${finalCode}`;
+    }
+
     onSave({
       id: room ? room.id : undefined,
-      code: code.trim(),
+      code: finalCode,
       building: building.trim(),
       floor: floor.trim(),
       level,
