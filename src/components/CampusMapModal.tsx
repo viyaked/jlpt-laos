@@ -41,6 +41,31 @@ export const CampusMapModal: FC<CampusMapModalProps> = ({
   const dragStartRef = useRef({ x: 0, y: 0 });
   const touchStartRef = useRef<{ x: number; y: number; dist?: number }>({ x: 0, y: 0 });
 
+  // Window listeners for mouse drag – must be declared before any early return (Rules of Hooks)
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleWindowMouseMove = (e: MouseEvent) => {
+      e.preventDefault();
+      setPosition({
+        x: e.clientX - dragStartRef.current.x,
+        y: e.clientY - dragStartRef.current.y,
+      });
+    };
+
+    const handleWindowMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    window.addEventListener('mousemove', handleWindowMouseMove, { passive: false });
+    window.addEventListener('mouseup', handleWindowMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleWindowMouseMove);
+      window.removeEventListener('mouseup', handleWindowMouseUp);
+    };
+  }, [isDragging]);
+
   if (!isOpen) return null;
   const t = translations[lang];
 
@@ -67,32 +92,6 @@ export const CampusMapModal: FC<CampusMapModalProps> = ({
     };
   };
 
-  // Window listeners for mouse drag so panning is ultra-smooth and doesn't drop when cursor leaves container
-  useEffect(() => {
-    if (!isDragging) return;
-
-    const handleWindowMouseMove = (e: MouseEvent) => {
-      e.preventDefault();
-      setPosition({
-        x: e.clientX - dragStartRef.current.x,
-        y: e.clientY - dragStartRef.current.y,
-      });
-    };
-
-    const handleWindowMouseUp = (e: MouseEvent) => {
-      e.preventDefault();
-      setIsDragging(false);
-    };
-
-    window.addEventListener('mousemove', handleWindowMouseMove, { passive: false });
-    window.addEventListener('mouseup', handleWindowMouseUp);
-
-    return () => {
-      window.removeEventListener('mousemove', handleWindowMouseMove);
-      window.removeEventListener('mouseup', handleWindowMouseUp);
-    };
-  }, [isDragging]);
-
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 1) {
       setIsDragging(true);
@@ -108,6 +107,7 @@ export const CampusMapModal: FC<CampusMapModalProps> = ({
       touchStartRef.current.dist = dist;
     }
   };
+
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (e.touches.length === 1 && isDragging) {
