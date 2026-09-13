@@ -457,8 +457,7 @@ export const CampusMapModal: FC<CampusMapModalProps> = ({
 
         {/* Footer info */}
         {campusMap && (
-          <div className="bg-white px-5 py-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
-            <span>{t.clickToEnlarge}</span>
+          <div className="bg-white px-5 py-3 border-t border-slate-200 flex items-center justify-end text-xs text-slate-500">
             <a
               href={campusMap}
               download="campus-master-plan.jpg"
