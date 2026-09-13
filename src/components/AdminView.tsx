@@ -1,13 +1,12 @@
 import { useState, type FC } from 'react';
 import type { LevelStat, ExamRoom, AdminUser, Language, JLPTLevel, FormQuotaStat } from '../types';
-import { translations, getAnnualExamTitle, getAnnualExamShort, formatExamDate, formatRoomName } from '../i18n';
+import { translations, getAnnualExamTitle, formatExamDate, formatRoomName } from '../i18n';
 import { api } from '../api';
 import { EditQuotaModal } from './EditQuotaModal';
 import { EditGlobalQuotaModal } from './EditGlobalQuotaModal';
 import { EditExamYearModal } from './EditExamYearModal';
 import { AddEditRoomModal } from './AddEditRoomModal';
 import { ManageRoomExamineesModal } from './ManageRoomExamineesModal';
-import { LoginModal } from './LoginModal';
 import { ChangeAdminPasswordModal } from './ChangeAdminPasswordModal';
 import { CampusMapModal } from './CampusMapModal';
 import { ImageViewerModal } from './ImageViewerModal';
@@ -87,7 +86,6 @@ export const AdminView: FC<AdminViewProps> = ({
   const formattedExamDate = formatExamDate(examDate, lang);
 
   // Modals state
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isGlobalQuotaModalOpen, setIsGlobalQuotaModalOpen] = useState(false);
   const [isExamYearModalOpen, setIsExamYearModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
@@ -149,17 +147,22 @@ export const AdminView: FC<AdminViewProps> = ({
   };
 
 
-  const [isDemoLoggingIn, setIsDemoLoggingIn] = useState(false);
+  const [loginUsername, setLoginUsername] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const handleDemoLogin = async () => {
-    setIsDemoLoggingIn(true);
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoggingIn(true);
+    setLoginError('');
     try {
-      const res = await api.login('admin', 'jlpt2026');
+      const res = await api.login(loginUsername, loginPassword);
       onLogin(res.user.username);
-    } catch {
-      onLogin('admin');
+    } catch (err: any) {
+      setLoginError(err.message || t.loginError);
     } finally {
-      setIsDemoLoggingIn(false);
+      setIsLoggingIn(false);
     }
   };
 
@@ -172,46 +175,57 @@ export const AdminView: FC<AdminViewProps> = ({
             <div className="w-12 h-12 rounded-xl bg-red-700 text-white mx-auto flex items-center justify-center mb-3 shadow-md">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <h2 className="text-xl font-bold text-white">
-              {t.loginTitle}
-            </h2>
-            <p className="text-xs text-slate-300 mt-1">
-              {t.loginSubtitle}
-            </p>
+            <h2 className="text-xl font-bold text-white">{t.loginTitle}</h2>
+            <p className="text-xs text-slate-300 mt-1">{t.loginSubtitle}</p>
           </div>
 
-          <div className="p-6 space-y-4">
-            <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-lg p-3 text-xs leading-relaxed">
-              <span className="font-semibold block mb-0.5">{t.loginHint}</span>
-              <span>{getAnnualExamShort(lang, examYear)} &bull; JLPT Examination Committee</span>
+          <form onSubmit={handleLoginSubmit} className="p-6 space-y-4">
+            {loginError && (
+              <div className="bg-red-50 text-red-800 text-xs p-3 rounded-lg border border-red-200 flex items-center gap-2">
+                <span>{loginError}</span>
+              </div>
+            )}
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">{t.usernameLabel}</label>
+              <div className="relative">
+                <KeyRound className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={loginUsername}
+                  onChange={(e) => setLoginUsername(e.target.value)}
+                  required
+                  autoComplete="username"
+                  className="w-full pl-9 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">{t.passwordLabel}</label>
+              <div className="relative">
+                <LogIn className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className="w-full pl-9 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
+                />
+              </div>
             </div>
 
             <button
-              onClick={handleDemoLogin}
-              disabled={isDemoLoggingIn}
-              className="w-full py-3 bg-red-700 hover:bg-red-800 disabled:bg-red-400 text-white font-bold rounded-xl text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              type="submit"
+              disabled={isLoggingIn}
+              className="w-full py-3 bg-red-700 hover:bg-red-800 disabled:opacity-50 text-white font-bold rounded-xl text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              {isDemoLoggingIn ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
-              <span>{t.demoLoginBtn}</span>
+              {isLoggingIn ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
+              <span>{t.loginSubmitBtn}</span>
             </button>
-
-            <div className="text-center">
-              <button
-                onClick={() => setIsLoginModalOpen(true)}
-                className="text-xs text-slate-500 hover:text-slate-800 underline"
-              >
-                {t.login} (Manual Credentials)
-              </button>
-            </div>
-          </div>
+          </form>
         </div>
-
-        <LoginModal
-          isOpen={isLoginModalOpen}
-          onClose={() => setIsLoginModalOpen(false)}
-          onLoginSuccess={onLogin}
-          lang={lang}
-        />
       </div>
     );
   }
