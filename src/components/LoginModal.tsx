@@ -116,10 +116,9 @@ export const LoginModal: FC<LoginModalProps> = ({
               {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
               <span>{t.loginSubmitBtn}</span>
             </button>
-          </div>
-
+</div>
         </form>
       </div>
     </div>
   );
-};
+  };

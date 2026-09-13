@@ -1,6 +1,6 @@
 import { useState, type FC } from 'react';
 import type { LevelStat, ExamRoom, AdminUser, Language, JLPTLevel, FormQuotaStat } from '../types';
-import { translations, getAnnualExamTitle, formatExamDate, formatRoomName } from '../i18n';
+import { translations, formatRoomName } from '../i18n';
 import { api } from '../api';
 import { EditQuotaModal } from './EditQuotaModal';
 import { EditGlobalQuotaModal } from './EditGlobalQuotaModal';
@@ -11,24 +11,16 @@ import { ChangeAdminPasswordModal } from './ChangeAdminPasswordModal';
 import { CampusMapModal } from './CampusMapModal';
 import { ImageViewerModal } from './ImageViewerModal';
 import {
-  Plus,
-  Edit2,
-  Trash2,
-  UserCheck,
-  RotateCcw,
-  CheckCircle2,
-  ShieldCheck,
-  LogIn,
-  LogOut,
-  Sliders,
-  Calendar,
-  Clock,
-  Banknote,
-  Loader2,
-  KeyRound,
-  MapPin,
-  Image as ImageIcon,
-} from 'lucide-react';
+  AdminHeader,
+  AdminFooter,
+  LoginView,
+  ToastNotification,
+  ExamScheduleCard,
+  GlobalQuotaCard,
+  LevelAdjustmentCard,
+  RoomTable,
+  AddRoomButton,
+} from './admin';
 
 interface AdminViewProps {
   levelStats: LevelStat[];
@@ -83,7 +75,6 @@ export const AdminView: FC<AdminViewProps> = ({
   onUpdateCampusMap,
 }) => {
   const t = translations[lang];
-  const formattedExamDate = formatExamDate(examDate, lang);
 
   // Modals state
   const [isGlobalQuotaModalOpen, setIsGlobalQuotaModalOpen] = useState(false);
@@ -169,393 +160,66 @@ export const AdminView: FC<AdminViewProps> = ({
   // If not authenticated, render Login view directly
   if (!adminUser.isAuthenticated) {
     return (
-      <div className="max-w-md mx-auto py-12 px-4 animate-fadeIn">
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-          <div className="bg-slate-900 text-white p-6 border-b-2 border-red-700 text-center">
-            <div className="w-12 h-12 rounded-xl bg-red-700 text-white mx-auto flex items-center justify-center mb-3 shadow-md">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h2 className="text-xl font-bold text-white">{t.loginTitle}</h2>
-            <p className="text-xs text-slate-300 mt-1">{t.loginSubtitle}</p>
-          </div>
-
-          <form onSubmit={handleLoginSubmit} className="p-6 space-y-4">
-            {loginError && (
-              <div className="bg-red-50 text-red-800 text-xs p-3 rounded-lg border border-red-200 flex items-center gap-2">
-                <span>{loginError}</span>
-              </div>
-            )}
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">{t.usernameLabel}</label>
-              <div className="relative">
-                <KeyRound className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={loginUsername}
-                  onChange={(e) => setLoginUsername(e.target.value)}
-                  required
-                  autoComplete="username"
-                  className="w-full pl-9 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">{t.passwordLabel}</label>
-              <div className="relative">
-                <LogIn className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="password"
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  required
-                  autoComplete="current-password"
-                  className="w-full pl-9 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoggingIn}
-              className="w-full py-3 bg-red-700 hover:bg-red-800 disabled:opacity-50 text-white font-bold rounded-xl text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              {isLoggingIn ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
-              <span>{t.loginSubmitBtn}</span>
-            </button>
-          </form>
-        </div>
-      </div>
+      <LoginView
+        lang={lang}
+        username={loginUsername}
+        password={loginPassword}
+        error={loginError}
+        loading={isLoggingIn}
+        onUsernameChange={setLoginUsername}
+        onPasswordChange={setLoginPassword}
+        onSubmit={handleLoginSubmit}
+      />
     );
   }
 
   return (
     <div className="space-y-8 pb-16">
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl border border-slate-700 flex items-center gap-2.5 text-xs sm:text-sm animate-bounce">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
+      <ToastNotification message={toastMessage} />
 
-      {/* Staff Admin Top Bar */}
-      <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-slate-900 text-red-500 flex items-center justify-center font-bold">
-            <ShieldCheck className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="font-bold text-slate-900 text-base sm:text-lg">
-                {t.adminDashboardTitle}
-              </h2>
-              <span className="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full font-bold">
-                Online
-              </span>
-            </div>
-            <p className="text-xs text-slate-500">
-              {t.adminDashboardSubtitle}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
-          <button
-            onClick={() => setIsCampusMapModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors border border-slate-800"
-            title={t.manageCampusMapBtn}
-          >
-            <MapPin className="w-3.5 h-3.5 text-red-500" />
-            <span>{t.manageCampusMapBtn}</span>
-          </button>
-
-          <button
-            onClick={() => setIsExamYearModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors"
-            title={t.editExamScheduleBtn}
-          >
-            <Calendar className="w-3.5 h-3.5" />
-            <span>{t.editExamScheduleBtn} ({formattedExamDate.shortDate})</span>
-          </button>
-
-          <button
-            onClick={() => setIsChangePasswordModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors border border-slate-800"
-            title={t.adminSettingsBtn}
-          >
-            <KeyRound className="w-3.5 h-3.5 text-amber-400" />
-            <span>{t.adminSettingsBtn}</span>
-          </button>
-
-          <button
-            onClick={() => {
-              if (window.confirm('Reset all applicant data and exam rooms to defaults?')) {
-                onResetData();
-                triggerToast(t.resetSuccess);
-              }
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition-colors"
-            title={t.resetToDefaultBtn}
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>{t.resetToDefaultBtn}</span>
-          </button>
-
-          <button
-            onClick={onLogout}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-red-700 text-white rounded-lg text-xs font-medium transition-colors"
-            title={t.logout}
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>{t.logout}</span>
-          </button>
-        </div>
-      </div>
+      <AdminHeader
+        examDate={examDate}
+        lang={lang}
+        onExamYearClick={() => setIsExamYearModalOpen(true)}
+        onCampusMapClick={() => setIsCampusMapModalOpen(true)}
+        onChangePasswordClick={() => setIsChangePasswordModalOpen(true)}
+        onResetClick={() => {
+          if (window.confirm('Reset all applicant data and exam rooms to defaults?')) {
+            onResetData();
+            triggerToast(t.resetSuccess);
+          }
+        }}
+        onLogout={onLogout}
+      />
 
 
-      {/* 1. Global Form Quota & Exam Schedule & Level Adjustment */}
       <section className="space-y-6">
-        {/* Exam Schedule (Year & Date) Configuration Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1.5">
-              <div className="flex flex-wrap items-center gap-2 mb-1">
-                <span className="w-2.5 h-6 bg-red-700 rounded-sm inline-block"></span>
-                <h3 className="text-lg font-bold text-slate-900 tracking-tight">
-                  {t.examYearCardTitle}
-                </h3>
-                <span className="text-xs bg-slate-900 text-white px-2.5 py-0.5 rounded-full font-bold">
-                  {t.examDateLabel}: {formattedExamDate.shortDate}
-                </span>
-                <span className="text-xs bg-red-50 text-red-700 border border-red-200 px-2.5 py-0.5 rounded-full font-bold">
-                  ປີ {examYear}
-                </span>
-              </div>
-              <p className="text-xs text-slate-500">
-                {t.examYearCardDesc}
-              </p>
-              <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-2 text-xs">
-                <div className="bg-slate-50 border border-slate-200 px-3 py-2 rounded-lg">
-                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">{t.examDateLabel}</span>
-                  <span className="font-bold text-slate-900">{formattedExamDate.longDate} ({formattedExamDate.shortDate})</span>
-                </div>
-                <div className="bg-slate-50 border border-slate-200 px-3 py-2 rounded-lg">
-                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">{t.examYearPreviewLabel}</span>
-                  <span className="font-bold text-red-700">{getAnnualExamTitle(lang, examYear)}</span>
-                </div>
-              </div>
-            </div>
+        <ExamScheduleCard
+          examYear={examYear}
+          examDate={examDate}
+          lang={lang}
+          onEditClick={() => setIsExamYearModalOpen(true)}
+        />
 
-            <button
-              onClick={() => setIsExamYearModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-red-700 hover:bg-red-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors self-start sm:self-auto shrink-0"
-            >
-              <Calendar className="w-4 h-4" />
-              <span>{t.editExamScheduleBtn}</span>
-            </button>
-          </div>
-        </div>
-        {/* Global Unified Form Quota Admin Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-            <div>
-              <div className="flex flex-wrap items-center gap-2 mb-1">
-                <span className="w-2.5 h-6 bg-red-700 rounded-sm inline-block"></span>
-                <h3 className="text-lg font-bold text-slate-900 tracking-tight">
-                  {t.totalFormQuotaTitle}
-                </h3>
-                <span className="text-xs bg-red-50 text-red-700 border border-red-200 px-2.5 py-0.5 rounded-full font-bold">
-                  {t.unifiedFormBadge}
-                </span>
-              </div>
-              <p className="text-xs text-slate-500">
-                {t.totalFormQuotaDesc}
-              </p>
-            </div>
+        <GlobalQuotaCard
+          formQuota={formQuota}
+          lang={lang}
+          onEditClick={() => setIsGlobalQuotaModalOpen(true)}
+        />
 
-            <button
-              onClick={() => setIsGlobalQuotaModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors self-start sm:self-auto"
-            >
-              <Sliders className="w-3.5 h-3.5" />
-              <span>{t.editGlobalQuotaBtn}</span>
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
-            <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-slate-600 block">
-                    {t.totalFormsLabel}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setIsGlobalQuotaModalOpen(true)}
-                    className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-700 hover:text-slate-900 bg-slate-200/70 hover:bg-slate-200 px-2 py-0.5 rounded transition-colors"
-                    title={t.editDirectlyBtn}
-                  >
-                    <Edit2 className="w-3 h-3" />
-                    <span>{t.editDirectlyBtn}</span>
-                  </button>
-                </div>
-                <div className="flex items-baseline gap-1 mt-1">
-                  <span className="text-2xl font-black text-slate-900">
-                    {formQuota.totalQuota}
-                  </span>
-                  <span className="text-xs text-slate-500 font-medium">
-                    {t.formUnit}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-blue-50/70 border border-blue-100 p-3.5 rounded-xl flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-blue-900 block">
-                    {t.usedFormsLabel}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setIsGlobalQuotaModalOpen(true)}
-                    className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-700 hover:text-blue-900 bg-blue-100 hover:bg-blue-200/80 px-2 py-0.5 rounded transition-colors"
-                    title={t.editDirectlyBtn}
-                  >
-                    <Edit2 className="w-3 h-3" />
-                    <span>{t.editDirectlyBtn}</span>
-                  </button>
-                </div>
-                <div className="flex items-baseline gap-1 mt-1">
-                  <span className="text-2xl font-black text-blue-800">
-                    {formQuota.totalRegistered}
-                  </span>
-                  <span className="text-xs text-blue-600 font-medium">
-                    {t.formUnit}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className={`p-3.5 rounded-xl border ${
-              formQuota.remaining <= 0
-                ? 'bg-rose-50 border-rose-200 text-rose-800'
-                : 'bg-emerald-50/70 border-emerald-100 text-emerald-800'
-            }`}>
-              <span className="text-[11px] font-semibold block">
-                {t.remainingFormsLabel}
-              </span>
-              <div className="flex items-baseline gap-1 mt-1">
-                <span className={`text-2xl font-black ${
-                  formQuota.remaining <= 0 ? 'text-rose-700' : 'text-emerald-700'
-                }`}>
-                  {formQuota.remaining}
-                </span>
-                <span className="text-xs font-medium opacity-80">
-                  {t.formUnit}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Level Applicants Quick Adjustment */}
-        <div>
-          <div className="mb-3">
-            <h4 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
-              <span>{t.quickAdjustTitle}</span>
-            </h4>
-            <p className="text-xs text-slate-500">
-              {t.quickAdjustDesc}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {levelStats.map((stat) => {
-              const isQuotaFull = formQuota.remaining <= 0;
-
-              return (
-                <div
-                  key={stat.level}
-                  className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    {/* Level Badge */}
-                    <div className="flex items-center justify-between mb-2.5">
-                      <div className="flex items-center gap-2">
-                        <span className="w-7 h-7 rounded-md bg-slate-900 text-white font-bold text-xs flex items-center justify-center">
-                          {stat.level}
-                        </span>
-                        <span className="font-bold text-xs text-slate-800">
-                          JLPT {stat.level}
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-mono text-slate-500 flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-slate-400" />
-                        <span>{stat.testTime}</span>
-                      </span>
-                    </div>
-
-                    {/* Registered Display */}
-                    <div className="bg-slate-50 border border-slate-100 p-3 rounded-lg mb-2">
-                      <span className="text-[10px] font-medium text-slate-600 block truncate">
-                        {t.registeredInLevel}
-                      </span>
-                      <span className="text-2xl font-black text-slate-900 block mt-0.5">
-                        {stat.registered} <span className="text-xs font-normal text-slate-500">{t.personUnit}</span>
-                      </span>
-                    </div>
-
-                    {/* Fee Display */}
-                    <div className="flex items-center justify-between text-[11px] text-slate-500 bg-slate-50/60 px-2.5 py-1.5 rounded-md border border-slate-100 mb-3 font-mono">
-                      <span className="flex items-center gap-1 text-slate-600">
-                        <Banknote className="w-3 h-3 text-slate-400" />
-                        <span>{t.examFeeField}</span>
-                      </span>
-                      <span className="font-bold text-red-700">
-                        {stat.fee.toLocaleString()} LAK
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Adjustment Buttons: +1 or Edit Count */}
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-                    <button
-                      onClick={() => {
-                        onIncrementRegistered(stat.level);
-                        triggerToast(`+1 Applicant added to JLPT ${stat.level}`);
-                      }}
-                      disabled={isQuotaFull}
-                      className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${
-                        isQuotaFull
-                          ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                          : 'bg-red-700 hover:bg-red-800 text-white shadow-xs active:scale-95'
-                      }`}
-                      title={t.addOneBtn}
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>{t.addOneBtn}</span>
-                    </button>
-
-                    <button
-                      onClick={() => setEditingStat(stat)}
-                      className="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1"
-                      title={t.editDirectlyBtn}
-                    >
-                      <Edit2 className="w-3 h-3" />
-                      <span>{t.editDirectlyBtn}</span>
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <LevelAdjustmentCard
+          levelStats={levelStats}
+          formQuota={formQuota}
+          lang={lang}
+          onIncrement={(level: JLPTLevel) => {
+            onIncrementRegistered(level);
+            triggerToast(`+1 Applicant added to JLPT ${level}`);
+          }}
+          onEditClick={setEditingStat}
+        />
       </section>
 
-      {/* 2. Exam Rooms Management */}
+
       <section className="space-y-4 pt-4 border-t border-slate-200">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -568,170 +232,68 @@ export const AdminView: FC<AdminViewProps> = ({
             </p>
           </div>
 
-          <button
+          <AddRoomButton
+            lang={lang}
             onClick={() => setRoomModalData({ isOpen: true, room: null })}
-            className="flex items-center gap-2 px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg text-xs sm:text-sm font-semibold shadow-sm transition-colors self-start sm:self-auto"
-          >
-            <Plus className="w-4 h-4" />
-            <span>{t.addNewRoomBtn}</span>
-          </button>
+          />
         </div>
 
-        {/* Room Table */}
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-900 text-white font-semibold text-xs border-b border-slate-800">
-                <tr>
-                  <th className="py-3 px-4">{t.roomNameField}</th>
-                  <th className="py-3 px-4">{t.levelField}</th>
-                  <th className="py-3 px-4">{t.buildingField}</th>
-                  <th className="py-3 px-4">{t.floorField}</th>
-                  <th className="py-3 px-4 text-center">{t.examineeCount} / {t.roomCapacity}</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {examRooms.map((room) => (
-                  <tr key={room.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-2.5">
-                        {room.imageUrl ? (
-                          <img
-                            src={room.imageUrl}
-                            alt={room.code}
-                            onClick={() =>
-                              setPreviewPhoto({
-                                isOpen: true,
-                                url: room.imageUrl!,
-                                title: formatRoomName(room.code, lang),
-                                subtitle: `${room.building} • ${room.floor} (JLPT ${room.level})`,
-                              })
-                            }
-                            className="w-10 h-8 object-cover rounded-lg border border-slate-200 cursor-pointer hover:opacity-80 transition-opacity shadow-xs shrink-0"
-                            title={t.clickToEnlarge}
-                          />
-                        ) : (
-                          <div className="w-10 h-8 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-300 shrink-0">
-                            <ImageIcon className="w-4 h-4" />
-                          </div>
-                        )}
-                        <div>
-                          <span className="font-bold text-slate-900 block">
-                            {formatRoomName(room.code, lang)}
-                          </span>
-                          {room.imageUrl && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setPreviewPhoto({
-                                  isOpen: true,
-                                  url: room.imageUrl!,
-                                  title: formatRoomName(room.code, lang),
-                                  subtitle: `${room.building} • ${room.floor} (JLPT ${room.level})`,
-                                })
-                              }
-                              className="text-[10px] text-red-700 hover:underline flex items-center gap-0.5"
-                            >
-                              <span>{t.viewRoomPhotoBtn}</span>
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className="px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-800 border border-slate-200">
-                        JLPT {room.level}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-slate-700 text-xs">
-                      {room.building}
-                    </td>
-                    <td className="py-3 px-4 text-slate-700 text-xs">
-                      {room.floor}
-                    </td>
-                    <td className="py-3 px-4 text-center">
-                      <span className="font-mono text-xs font-semibold text-slate-800">
-                        {room.examineeCount ?? room.examinees.length} / {room.capacity}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {/* Manage Examinees */}
-                        <button
-                          onClick={() => handleOpenManageExaminees(room)}
-                          className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded-md text-xs font-semibold transition-colors flex items-center gap-1 border border-red-200"
-                          title={t.manageExamineesBtn}
-                        >
-                          <UserCheck className="w-3.5 h-3.5" />
-                          <span>{t.manageExamineesBtn}</span>
-                        </button>
-
-
-                        {/* Edit Room */}
-                        <button
-                          onClick={() => setRoomModalData({ isOpen: true, room })}
-                          className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors"
-                          title={t.editRoomBtn}
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-
-                        {/* Delete Room */}
-                        <button
-                          onClick={() => {
-                            if (window.confirm(t.confirmDeleteRoom)) {
-                              onDeleteRoom(room.id);
-                              triggerToast('Room deleted successfully');
-                            }
-                          }}
-                          className="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md transition-colors"
-                          title={t.deleteRoomBtn}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <RoomTable
+          rooms={examRooms}
+          lang={lang}
+          onEdit={(room: ExamRoom) => setRoomModalData({ isOpen: true, room })}
+          onDelete={(roomId: string) => {
+            if (window.confirm(t.confirmDeleteRoom)) {
+              onDeleteRoom(roomId);
+              triggerToast('Room deleted successfully');
+            }
+          }}
+          onManageExaminees={handleOpenManageExaminees}
+          onPhotoClick={(room: ExamRoom, e: React.MouseEvent) => {
+            e.stopPropagation();
+            setPreviewPhoto({
+              isOpen: true,
+              url: room.imageUrl!,
+              title: formatRoomName(room.code, lang),
+              subtitle: `${room.building} • ${room.floor} (JLPT ${room.level})`,
+            });
+          }}
+          confirmDeleteMessage={t.confirmDeleteRoom}
+        />
       </section>
 
-      {/* Global Total Form Quota Modal */}
+
       <EditGlobalQuotaModal
         isOpen={isGlobalQuotaModalOpen}
         onClose={() => setIsGlobalQuotaModalOpen(false)}
         currentTotalQuota={formQuota.totalQuota}
         totalRegistered={formQuota.totalRegistered}
-        onSave={(newQuota, newFormsSold) => {
+        onSave={(newQuota: number, newFormsSold?: number) => {
           onUpdateGlobalQuota(newQuota, newFormsSold);
           triggerToast(t.saveSuccess);
         }}
         lang={lang}
       />
 
-      {/* Edit Exam Schedule Modal */}
+
       <EditExamYearModal
         isOpen={isExamYearModalOpen}
         onClose={() => setIsExamYearModalOpen(false)}
         currentYear={examYear}
         currentDate={examDate}
-        onSave={(newYear, newDate) => {
+        onSave={(newYear: string, newDate: string) => {
           onUpdateExamSchedule(newYear, newDate);
           triggerToast(t.examScheduleSuccess);
         }}
         lang={lang}
       />
 
-      {/* Direct Level Registered Count, Time, Fee Edit Modal */}
+
       <EditQuotaModal
         stat={editingStat}
         isOpen={Boolean(editingStat)}
         onClose={() => setEditingStat(null)}
-        onSave={(level, data) => {
+        onSave={(level: string, data: { registered: number; fee: number; testTime: string }) => {
           if (onUpdateLevel) {
             onUpdateLevel(level, data);
           } else if (onUpdateLevelRegistered) {
@@ -742,34 +304,34 @@ export const AdminView: FC<AdminViewProps> = ({
         lang={lang}
       />
 
-      {/* Add / Edit Room Modal */}
+
       <AddEditRoomModal
         room={roomModalData.room}
         isOpen={roomModalData.isOpen}
         onClose={() => setRoomModalData({ isOpen: false, room: null })}
-        onSave={(roomData) => {
+        onSave={(roomData: Omit<ExamRoom, 'id' | 'examinees'> & { id?: string }) => {
           onSaveRoom(roomData);
           triggerToast(t.saveSuccess);
         }}
         lang={lang}
       />
 
-      {/* Manage Examinees in Room Modal */}
+
       <ManageRoomExamineesModal
         room={manageExamineesRoom}
         isOpen={Boolean(manageExamineesRoom)}
         onClose={() => setManageExamineesRoom(null)}
-        onAddExaminee={async (roomId, firstName, lastName) => {
+        onAddExaminee={async (roomId: string, firstName: string, lastName: string) => {
           await onAddExamineeToRoom(roomId, firstName, lastName);
           await refreshRoomExaminees(roomId);
           triggerToast('Examinee added successfully');
         }}
-        onBatchAddExaminees={async (roomId, examinees) => {
+        onBatchAddExaminees={async (roomId: string, examinees: { firstName: string; lastName: string }[]) => {
           await onBatchAddExaminees(roomId, examinees);
           await refreshRoomExaminees(roomId);
           triggerToast(`Batch added ${examinees.length} examinees`);
         }}
-        onRemoveExaminee={async (roomId, examineeId) => {
+        onRemoveExaminee={async (roomId: string, examineeId: string) => {
           await onRemoveExamineeFromRoom(roomId, examineeId);
           await refreshRoomExaminees(roomId);
           triggerToast('Examinee removed');
@@ -777,25 +339,25 @@ export const AdminView: FC<AdminViewProps> = ({
         lang={lang}
       />
 
-      {/* Change Admin Password / Credentials Modal */}
+
       <ChangeAdminPasswordModal
         isOpen={isChangePasswordModalOpen}
         onClose={() => setIsChangePasswordModalOpen(false)}
         currentUsername={adminUser.username}
-        onSuccess={(newUsername) => {
+        onSuccess={(newUsername: string) => {
           onLogin(newUsername);
           triggerToast(t.credentialsUpdateSuccess);
         }}
         lang={lang}
       />
 
-      {/* Campus Map Master Plan Modal */}
+
       <CampusMapModal
         isOpen={isCampusMapModalOpen}
         onClose={() => setIsCampusMapModalOpen(false)}
         campusMap={campusMap}
         isAdmin={true}
-        onSaveMap={async (newMap) => {
+        onSaveMap={async (newMap: string) => {
           if (onUpdateCampusMap) {
             await onUpdateCampusMap(newMap);
             triggerToast(newMap ? t.campusMapUploadedSuccess : t.campusMapDeletedSuccess);
@@ -804,7 +366,7 @@ export const AdminView: FC<AdminViewProps> = ({
         lang={lang}
       />
 
-      {/* Lightbox Image Previewer for Room Photos */}
+
       <ImageViewerModal
         isOpen={previewPhoto.isOpen}
         onClose={() => setPreviewPhoto({ isOpen: false, url: '', title: '' })}
@@ -813,7 +375,9 @@ export const AdminView: FC<AdminViewProps> = ({
         subtitle={previewPhoto.subtitle}
         lang={lang}
       />
+
+
+      <AdminFooter lang={lang} examYear={examYear} />
     </div>
   );
 };
-

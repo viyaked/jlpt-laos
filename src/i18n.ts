@@ -228,14 +228,14 @@ export const translations = {
     remainingComputedLabel: "ຈຳນວນທີ່ຍັງເຫຼືອຄິດໄລ່ໄດ້ (Remaining)",
 
 // Login Modal
-    loginTitle: "",
-    loginSubtitle: "",
+    loginTitle: "ລະບົບເຈົ້າໜ້າທີ່",
+    loginSubtitle: "ເຂົ້າສູ່ລະບົບເພື່ອເຂົ້າຖືກການຈັດການ",
     usernameLabel: "ຊື່ຜູ້ໃຊ້ງານ (Username)",
     passwordLabel: "ລະຫັດພຸານ (Password)",
     loginSubmitBtn: "ເຂົ້າສູ່ລະບົບ",
-    demoLoginBtn: "",
-    loginError: "ຊື່ທີ່ใช່ອງ ຫຼື ລະຫັດພຸານບໍ່ຖືກຕ້ອງ (ລະຫັດທົດລອງ: admin / jlpt2026)",
-    loginHint: "",
+    demoLoginBtn: "ເຂົ້າສູ່ລະບົບ (ລະຫັດທົດ)",
+    loginError: "ຊື່ທີ່ໃຊ້ບໍ່ຖືກຕ້ອງ ຫຼື ລະຫັດພຸານບໍ່ຖືກຕ້ອງ (ລະຫັດທົດລອງ: admin / jlpt2026)",
+    loginHint: "ລະຫັດທົດ: admin / jlpt2026",
 
     // Admin Account Settings
     adminSettingsBtn: "ຕັ້ງຄ່າບັນຊີ Admin",
@@ -433,14 +433,14 @@ export const translations = {
     remainingComputedLabel: "Calculated Remaining Slots",
 
     // Login Modal
-    loginTitle: "",
-    loginSubtitle: "",
+    loginTitle: "Staff Login",
+    loginSubtitle: "Sign in to access the admin portal",
     usernameLabel: "Username",
     passwordLabel: "Password",
     loginSubmitBtn: "Log In",
-    demoLoginBtn: "",
+    demoLoginBtn: "Sign in (Demo)",
     loginError: "Invalid username or password (Demo credentials: admin / jlpt2026)",
-    loginHint: "",
+    loginHint: "Demo credentials: admin / jlpt2026",
 
     // Admin Account Settings
     adminSettingsBtn: "Admin Settings",
