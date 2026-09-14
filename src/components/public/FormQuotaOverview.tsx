@@ -72,12 +72,32 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
           </span>
           <div className="flex items-baseline gap-1.5 mt-2">
             <span className="text-2xl sm:text-3xl font-black text-blue-800 tracking-tight">
-              {totalRegistered}
+              {formsSold}
             </span>
             <span className="text-xs font-medium text-blue-600">
               {t.formUnit} ({t.personUnit})
             </span>
           </div>
+          <span className="text-[10px] text-slate-500 block mt-0.5">
+            {t.formsSoldDesc}
+          </span>
+        </div>
+
+        <div className="bg-amber-50/70 border border-amber-100 rounded-xl p-3 sm:p-4">
+          <span className="text-xs font-semibold text-amber-900 block">
+            {t.totalRegisteredLabel}
+          </span>
+          <div className="flex items-baseline gap-1.5 mt-2">
+            <span className="text-2xl sm:text-3xl font-black text-amber-800 tracking-tight">
+              {totalRegistered}
+            </span>
+            <span className="text-xs font-medium text-amber-600">
+              {t.personUnit}
+            </span>
+          </div>
+          <span className="text-[10px] text-slate-500 block mt-0.5">
+            {lang === 'lo' ? 'ຜູ້ສອບທີ່ລົງທະບຽນແລ້ວ' : 'Actual examinees registered'}
+          </span>
         </div>
 
         <div className={`p-3 sm:p-4 rounded-xl border ${
