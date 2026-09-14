@@ -94,7 +94,7 @@ export const translations = {
 
     // Public Dashboard
     publicWelcomeTitle: "ຂໍ້ມູນການສະໝັກ ແລະ ຫ້ອງສອບເສັງ JLPT",
-    publicWelcomeSubtitle: "ຄົ້ນຫາດ້ວຍຊື່ຂອງທ່ານເພື່ອກວດເບິ່ງຫ້ອງສອບເສັງ. ຊື່ຜູ້ສອບຄົນອື່ນບໍ່ຖືກສະແດງຕໍ່ສາທາລະນະ.",
+    publicWelcomeSubtitle: "ສູນລວມຂໍ້ມູນສຳລັບຜູ້ສະໝັກສອບເສັງ JLPT: ຕິດຕາມຂ່າວສານປະກາດທາງການ, ກວດເບິ່ງໂຄຕ້າຟອມ ແລະ ບ່ອນນັ່ງວ່າງ (N1 - N5), ເບິ່ງກຳນົດເວລາ ແລະ ຄ່າທຳນຽມ, ພ້ອມທັງຄົ້ນຫາຫ້ອງສອບເສັງ ແລະ ແຜນຜັງສະຖານທີ່.",
     realtimeBadge: "ອັບເດດສົດ (Real-time)",
     statusOpen: "ເປີດຮັບສະໝັກ",
     statusAlmostFull: "ໃກ້ຈະເຕັມແລ້ວ",
@@ -340,7 +340,7 @@ export const translations = {
 
     // Public Dashboard
     publicWelcomeTitle: "JLPT Registration Statistics & Exam Rooms",
-    publicWelcomeSubtitle: "Search with your name to find your assigned exam room. Other examinees' names are never displayed publicly.",
+    publicWelcomeSubtitle: "Official portal for JLPT examinees: check live form quotas and seat availability (N1–N5), view exam schedules and fees, follow official announcements, and find your assigned exam room and campus map.",
     realtimeBadge: "Live Synchronized",
     statusOpen: "Registration Open",
     statusAlmostFull: "Few Seats Left",

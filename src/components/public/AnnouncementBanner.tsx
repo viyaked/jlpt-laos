@@ -1,4 +1,4 @@
-import { Calendar } from 'lucide-react';
+import { Calendar, Megaphone, BarChart3, Clock, MapPin } from 'lucide-react';
 import type { Language } from '../../types';
 import { translations, formatExamDate } from '../../i18n';
 
@@ -18,7 +18,7 @@ export function AnnouncementBanner({ lang, examDate }: AnnouncementBannerProps) 
       <div className="absolute left-1/3 bottom-0 translate-y-12 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
 
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="max-w-2xl space-y-2.5">
+        <div className="max-w-2xl space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-red-950/80 text-red-300 border border-red-800/70">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" aria-hidden="true" />
             <span>{t.realtimeBadge}</span>
@@ -31,6 +31,26 @@ export function AnnouncementBanner({ lang, examDate }: AnnouncementBannerProps) 
           <p className="text-xs sm:text-sm text-slate-300 font-lo leading-relaxed">
             {t.publicWelcomeSubtitle}
           </p>
+
+          {/* Key capability pills for examinees */}
+          <div className="flex flex-wrap gap-2 pt-1">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-slate-200 font-medium transition-colors border border-white/5">
+              <Megaphone className="w-3.5 h-3.5 text-red-400 shrink-0" aria-hidden="true" />
+              <span>{lang === 'lo' ? 'ປະກາດການສອບເສັງ' : 'Official Notices'}</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-slate-200 font-medium transition-colors border border-white/5">
+              <BarChart3 className="w-3.5 h-3.5 text-emerald-400 shrink-0" aria-hidden="true" />
+              <span>{lang === 'lo' ? 'ໂຄຕ້າ & ບ່ອນນັ່ງວ່າງ' : 'Live Quota & Seats'}</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-slate-200 font-medium transition-colors border border-white/5">
+              <Clock className="w-3.5 h-3.5 text-sky-400 shrink-0" aria-hidden="true" />
+              <span>{lang === 'lo' ? 'ຕາຕະລາງເວລາ & ຄ່າທຳນຽມ' : 'Schedules & Fees'}</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-slate-200 font-medium transition-colors border border-white/5">
+              <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
+              <span>{lang === 'lo' ? 'ຄົ້ນຫາຫ້ອງສອບ & ແຜນຜັງ' : 'Room Search & Map'}</span>
+            </span>
+          </div>
         </div>
 
         {/* Exam Date Card */}
