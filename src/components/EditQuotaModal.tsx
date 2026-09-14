@@ -201,7 +201,7 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
             <div className="flex items-center justify-between mb-1">
               <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
                 <Users className="w-3.5 h-3.5 text-emerald-600" />
-                <span>{t.totalQuota} ({t.slotsUnit})</span>
+                <span>{t.totalQuota}</span>
               </label>
               <span className="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
                 {Number(quota || 0).toLocaleString()} {t.slotsUnit}
