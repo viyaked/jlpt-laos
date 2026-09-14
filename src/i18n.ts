@@ -243,10 +243,10 @@ export const translations = {
     loginTitle: "ລະບົບເຈົ້າໜ້າທີ່",
     loginSubtitle: "ເຂົ້າສູ່ລະບົບເພື່ອເຂົ້າຖືກການຈັດການ",
     usernameLabel: "ຊື່ຜູ້ໃຊ້ງານ (Username)",
-    passwordLabel: "ລະຫັດພຸານ (Password)",
+    passwordLabel: "ລະຫັດຜ່ານ (Password)",
     loginSubmitBtn: "ເຂົ້າສູ່ລະບົບ",
     demoLoginBtn: "ເຂົ້າສູ່ລະບົບ (ລະຫັດທົດ)",
-    loginError: "ຊື່ທີ່ໃຊ້ບໍ່ຖືກຕ້ອງ ຫຼື ລະຫັດພຸານບໍ່ຖືກຕ້ອງ (ລະຫັດທົດລອງ: admin / jlpt2026)",
+    loginError: "ຊື່ທີ່ໃຊ້ບໍ່ຖືກຕ້ອງ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ (ລະຫັດທົດລອງ: admin / jlpt2026)",
     loginHint: "ລະຫັດທົດ: admin / jlpt2026",
 
     // Admin Account Settings
