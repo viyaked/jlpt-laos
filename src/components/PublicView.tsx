@@ -124,12 +124,10 @@ export const PublicView: FC<PublicViewProps> = ({
         onViewPoster={handleViewPoster}
       />
 
-      {formQuota.registrationOpen && (
-        <section className="space-y-6">
-          <FormQuotaOverview formQuota={formQuota} lang={lang} />
-          <LevelStatsGrid levelStats={levelStats} lang={lang} />
-        </section>
-      )}
+      <section className="space-y-6">
+        <FormQuotaOverview formQuota={formQuota} lang={lang} />
+        <LevelStatsGrid levelStats={levelStats} lang={lang} />
+      </section>
 
       <section className="space-y-4 pt-4 border-t border-slate-200">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
@@ -138,16 +136,16 @@ export const PublicView: FC<PublicViewProps> = ({
               <span className="w-2.5 h-6 bg-slate-900 rounded-sm inline-block" aria-hidden="true" />
               {t.roomsSectionTitle}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 font-lo mt-1">
               {t.roomsSectionSubtitle}
             </p>
           </div>
 
           <button
             onClick={() => setIsCampusMapOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg text-xs sm:text-sm font-semibold shadow-xs transition-colors self-start sm:self-auto cursor-pointer"
+            className="flex items-center gap-2 px-4 h-10 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all self-start sm:self-auto cursor-pointer"
           >
-            <MapPin className="w-4 h-4" aria-hidden="true" />
+            <MapPin className="w-4 h-4 text-red-400 shrink-0" aria-hidden="true" />
             <span>{t.viewCampusMapBtn}</span>
           </button>
         </div>

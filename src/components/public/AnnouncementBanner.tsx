@@ -12,24 +12,37 @@ export function AnnouncementBanner({ lang, examDate }: AnnouncementBannerProps) 
   const formattedExamDate = formatExamDate(examDate, lang);
 
   return (
-    <section className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 border border-slate-800 relative overflow-hidden animate-fadeIn">
-      <div className="absolute right-0 top-0 translate-x-12 -translate-y-8 w-64 h-64 bg-red-600/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
-      <div className="relative z-10 max-w-3xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-red-950 text-red-300 border border-red-800 mb-3">
-          <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" aria-hidden="true" />
-          <span>{t.realtimeBadge}</span>
-        </div>
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white mb-6">
-          {t.publicWelcomeTitle}
-        </h2>
+    <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white rounded-2xl sm:rounded-3xl shadow-lg p-6 sm:p-8 border border-slate-800/80 relative overflow-hidden animate-fadeIn">
+      {/* Ambient background glows */}
+      <div className="absolute right-0 top-0 translate-x-12 -translate-y-8 w-72 h-72 bg-red-600/15 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
+      <div className="absolute left-1/3 bottom-0 translate-y-12 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
 
-        <div className="pt-4 border-t border-slate-700/80">
-          <span className="text-xs text-slate-300 font-bold block mb-1">{t.examDateLabel}</span>
-          <span className="font-bold text-sm sm:text-base text-white flex items-center gap-1.5 mt-1">
-            <Calendar className="w-4 h-4 text-red-400" aria-hidden="true" />
-            {formattedExamDate.shortDate}
+      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="max-w-2xl space-y-2.5">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-red-950/80 text-red-300 border border-red-800/70">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" aria-hidden="true" />
+            <span>{t.realtimeBadge}</span>
+          </div>
+
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white leading-snug">
+            {t.publicWelcomeTitle}
+          </h2>
+
+          <p className="text-xs sm:text-sm text-slate-300 font-lo leading-relaxed">
+            {t.publicWelcomeSubtitle}
+          </p>
+        </div>
+
+        {/* Exam Date Card */}
+        <div className="bg-slate-900/90 backdrop-blur-xs border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col justify-center shrink-0 min-w-[220px]">
+          <span className="text-[11px] uppercase tracking-wider text-slate-400 font-bold block mb-1">
+            {t.examDateLabel}
           </span>
-          <span className="text-xs text-slate-200 block truncate mt-0.5 font-semibold">
+          <div className="flex items-center gap-2 text-white font-bold text-base sm:text-lg">
+            <Calendar className="w-5 h-5 text-red-500 shrink-0" aria-hidden="true" />
+            <span className="font-mono">{formattedExamDate.shortDate}</span>
+          </div>
+          <span className="text-xs text-slate-400 font-lo mt-1">
             {formattedExamDate.longDate}
           </span>
         </div>

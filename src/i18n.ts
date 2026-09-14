@@ -139,7 +139,7 @@ export const translations = {
     // Campus Map & Room Photos
     campusMapTitle: "ແຜນຜັງລວມສະຖານທີ່ສອບເສັງ",
     campusMapSubtitle: "ແຜນຜັງອາຄານ, ຈຸດລົງທະບຽນ ແລະ ຫ້ອງສອບເສັງທັງໝົດຂອງສະຖາບັນ",
-    viewCampusMapBtn: "🗺️ ເບິ່ງແຜນຜັງລວມສະຖາບັນ",
+    viewCampusMapBtn: "ເບິ່ງແຜນຜັງລວມສະຖາບັນ",
     manageCampusMapBtn: "ຈັດການແຜນຜັງລວມ",
     uploadCampusMapBtn: "ອັບໂຫຼດແຜນຜັງໃໝ່",
     editCampusMapBtn: "ປ່ຽນແຜນຜັງ",
@@ -385,7 +385,7 @@ export const translations = {
     // Campus Map & Room Photos
     campusMapTitle: "Campus Floor Plan & Map",
     campusMapSubtitle: "Campus overview, registration points, and exam building layout",
-    viewCampusMapBtn: "🗺️ View Campus Map",
+    viewCampusMapBtn: "View Campus Map",
     manageCampusMapBtn: "Manage Campus Map",
     uploadCampusMapBtn: "Upload New Map",
     editCampusMapBtn: "Change Map",

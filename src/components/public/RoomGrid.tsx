@@ -22,19 +22,21 @@ export function RoomGrid({
 
   if (rooms.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-slate-200 p-12 text-center animate-fadeIn">
-        <AlertCircle className="w-10 h-10 text-slate-400 mx-auto mb-3" aria-hidden="true" />
-        <h4 className="font-bold text-slate-900 text-base sm:text-lg mb-1.5">
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-10 sm:p-14 text-center animate-fadeIn shadow-xs">
+        <div className="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 mx-auto flex items-center justify-center mb-3.5">
+          <AlertCircle className="w-7 h-7" aria-hidden="true" />
+        </div>
+        <h4 className="font-bold text-slate-900 text-base sm:text-lg mb-1">
           {t.noRoomsFound}
         </h4>
-        <p className="text-xs sm:text-sm text-slate-600">
+        <p className="text-xs sm:text-sm text-slate-500 font-lo max-w-md mx-auto">
           {lang === 'lo' ? (
             <>
-              ກະລຸນາ <strong className="font-bold text-slate-900">ພິມຊື່ແລະ ນາມສະກຸນຂອງທ່ານ</strong> ເພື່ອກວດເບິ່ງຫ້ອງສອບເສັງ
+              ກະລຸນາ <strong className="font-bold text-slate-800">ພິມຊື່ ແລະ ນາມສະກຸນຂອງທ່ານ</strong> ໃນຊ່ອງຄົ້ນຫາດ້ານເທິງ ເພື່ອກວດເບິ່ງຫ້ອງສອບເສັງ
             </>
           ) : (
             <>
-              Please <strong className="font-bold text-slate-900">enter your full name</strong> to find your exam room
+              Please <strong className="font-bold text-slate-800">enter your full name</strong> in the search box above to find your exam room
             </>
           )}
         </p>
