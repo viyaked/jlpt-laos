@@ -61,6 +61,16 @@ export function initDatabase() {
       key TEXT PRIMARY KEY,
       value TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS announcements (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      content TEXT,
+      image_url TEXT,
+      is_pinned INTEGER NOT NULL DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 
   // Migration: Ensure image_url column exists in rooms table
@@ -124,6 +134,21 @@ export function initDatabase() {
   } else {
     // Ensure room codes have ຫ້ອງ prefix
     db.prepare(`UPDATE rooms SET code = 'ຫ້ອງ ' || code WHERE code NOT LIKE 'ຫ້ອງ%' AND code NOT LIKE 'Room%'`).run();
+  }
+
+  // Seed default announcement if empty
+  const announcementsCount = db.prepare('SELECT COUNT(*) as count FROM announcements').get() as { count: number };
+  if (announcementsCount.count === 0) {
+    db.prepare(`
+      INSERT INTO announcements (id, title, content, image_url, is_pinned, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    `).run(
+      'announcement-welcome',
+      'ຂໍ້ແນະນຳ ແລະ ລະບຽບການເຂົ້າຫ້ອງສອບເສັງ JLPT',
+      'ກະລຸນາມາກ່ອນເວລາສອບເສັງຢ່າງໜ້ອຍ 30 ນາທີ. ນຳເອົາບັດປະຈຳຕົວ ຫຼື ໜັງສືຜ່ານແດນຕົວຈິງ ແລະ ບັດສອບເສັງ (Test Voucher) ມາສະແດງຕໍ່ກຳມະການ. ຫ້າມນຳເອົາໂທລະສັບມືຖື, ໂມງອັດສະລິຍະ ແລະ ອຸປະກອນອີເລັກໂຕຣນິກທຸກຊະນິດເຂົ້າຫ້ອງສອບເສັງ.',
+      '',
+      1
+    );
   }
 }
 
@@ -272,5 +297,103 @@ export function seedDefaultData() {
 
   seedTx();
   console.log('Initial JLPT database seeded successfully.');
+}
+
+export interface AnnouncementRecord {
+  id: string;
+  title: string;
+  content: string;
+  imageUrl: string;
+  isPinned: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export function getAllAnnouncements(): AnnouncementRecord[] {
+  const rows = db.prepare(`
+    SELECT id, title, content, image_url, is_pinned, created_at, updated_at
+    FROM announcements
+    ORDER BY is_pinned DESC, created_at DESC
+  `).all() as any[];
+
+  return rows.map((r) => ({
+    id: r.id,
+    title: r.title,
+    content: r.content || '',
+    imageUrl: r.image_url || '',
+    isPinned: Boolean(r.is_pinned),
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+  }));
+}
+
+export function getAnnouncementById(id: string): AnnouncementRecord | null {
+  const r = db.prepare(`
+    SELECT id, title, content, image_url, is_pinned, created_at, updated_at
+    FROM announcements
+    WHERE id = ?
+  `).get(id) as any;
+
+  if (!r) return null;
+  return {
+    id: r.id,
+    title: r.title,
+    content: r.content || '',
+    imageUrl: r.image_url || '',
+    isPinned: Boolean(r.is_pinned),
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+  };
+}
+
+export function createAnnouncementRecord(data: {
+  title: string;
+  content?: string;
+  imageUrl?: string;
+  isPinned?: boolean;
+}): AnnouncementRecord {
+  const id = `announcement-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+  const title = (data.title || '').trim();
+  const content = (data.content || '').trim();
+  const imageUrl = (data.imageUrl || '').trim();
+  const isPinned = data.isPinned ? 1 : 0;
+
+  db.prepare(`
+    INSERT INTO announcements (id, title, content, image_url, is_pinned, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  `).run(id, title, content, imageUrl, isPinned);
+
+  return getAnnouncementById(id)!;
+}
+
+export function updateAnnouncementRecord(
+  id: string,
+  data: {
+    title: string;
+    content?: string;
+    imageUrl?: string;
+    isPinned?: boolean;
+  }
+): AnnouncementRecord | null {
+  const existing = getAnnouncementById(id);
+  if (!existing) return null;
+
+  const title = (data.title !== undefined ? data.title : existing.title).trim();
+  const content = (data.content !== undefined ? data.content : existing.content).trim();
+  const imageUrl = (data.imageUrl !== undefined ? data.imageUrl : existing.imageUrl).trim();
+  const isPinned = data.isPinned !== undefined ? (data.isPinned ? 1 : 0) : (existing.isPinned ? 1 : 0);
+
+  db.prepare(`
+    UPDATE announcements
+    SET title = ?, content = ?, image_url = ?, is_pinned = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `).run(title, content, imageUrl, isPinned, id);
+
+  return getAnnouncementById(id);
+}
+
+export function deleteAnnouncementRecord(id: string): boolean {
+  const info = db.prepare('DELETE FROM announcements WHERE id = ?').run(id);
+  return info.changes > 0;
 }
 

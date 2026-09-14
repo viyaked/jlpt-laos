@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { Language, LevelStat, ExamRoom, AdminUser, JLPTLevel, FormQuotaStat } from './types';
+import type { Language, LevelStat, ExamRoom, AdminUser, JLPTLevel, FormQuotaStat, Announcement } from './types';
 import { initialLevelStats, initialExamRooms, initialFormQuota } from './data/mockData';
 import { translations, getAnnualExamShort } from './i18n';
 import { api, getAuthToken, subscribeToSSE } from './api';
 import { Navbar } from './components/Navbar';
 import { PublicView } from './components/PublicView';
 import { AdminView } from './components/AdminView';
+import { AddEditAnnouncementModal } from './components/AddEditAnnouncementModal';
 
 const STORAGE_KEY_LANG = 'jlpt_lang_v1';
 const STORAGE_KEY_AUTH = 'jlpt_admin_auth_v1';
@@ -48,6 +49,14 @@ export function App() {
   const [examYear, setExamYear] = useState<string>('2026');
   const [examDate, setExamDate] = useState<string>('2026-07-05');
   const [campusMap, setCampusMap] = useState<string>('');
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [publicAnnouncementModal, setPublicAnnouncementModal] = useState<{
+    isOpen: boolean;
+    announcement: Announcement | null;
+  }>({
+    isOpen: false,
+    announcement: null,
+  });
 
   // Fetch live data from backend
   const fetchLevels = useCallback(async () => {
@@ -78,10 +87,20 @@ export function App() {
     }
   }, []);
 
+  const fetchAnnouncements = useCallback(async () => {
+    try {
+      const data = await api.getAnnouncements();
+      setAnnouncements(data);
+    } catch {
+      // Keep existing
+    }
+  }, []);
+
   const refreshAll = useCallback(() => {
     fetchLevels();
     fetchRooms();
-  }, [fetchLevels, fetchRooms]);
+    fetchAnnouncements();
+  }, [fetchLevels, fetchRooms, fetchAnnouncements]);
 
   // Initial load
   useEffect(() => {
@@ -96,6 +115,8 @@ export function App() {
       } else if (event === 'rooms_updated' || event === 'applicants_updated') {
         fetchRooms();
         fetchLevels();
+      } else if (event === 'announcements_updated') {
+        fetchAnnouncements();
       }
     });
 
@@ -106,7 +127,7 @@ export function App() {
       unsubscribe();
       clearInterval(interval);
     };
-  }, [fetchLevels, fetchRooms, refreshAll]);
+  }, [fetchLevels, fetchRooms, fetchAnnouncements, refreshAll]);
 
   // Auth Handlers
   const handleLogin = (username: string) => {
@@ -295,6 +316,48 @@ const handleAuthError = (err: any) => {
     }
   };
 
+  const handleSaveAnnouncement = async (data: {
+    id?: string;
+    title: string;
+    content?: string;
+    imageUrl?: string;
+    isPinned: boolean;
+  }) => {
+    try {
+      if (data.id) {
+        await api.updateAnnouncement(data.id, {
+          title: data.title,
+          content: data.content,
+          imageUrl: data.imageUrl,
+          isPinned: data.isPinned,
+        });
+      } else {
+        await api.createAnnouncement({
+          title: data.title,
+          content: data.content,
+          imageUrl: data.imageUrl,
+          isPinned: data.isPinned,
+        });
+      }
+      await fetchAnnouncements();
+    } catch (err: any) {
+      if (handleAuthError(err)) return;
+      alert(err.message || 'Failed to save announcement');
+      throw err;
+    }
+  };
+
+  const handleDeleteAnnouncement = async (id: string) => {
+    try {
+      await api.deleteAnnouncement(id);
+      await fetchAnnouncements();
+    } catch (err: any) {
+      if (handleAuthError(err)) return;
+      alert(err.message || 'Failed to delete announcement');
+      throw err;
+    }
+  };
+
   const handleResetData = async () => {
     try {
       await api.resetDemo();
@@ -327,6 +390,11 @@ const handleAuthError = (err: any) => {
             levelStats={levelStats}
             formQuota={formQuota}
             examRooms={examRooms}
+            announcements={announcements}
+            isAdmin={adminUser.isAuthenticated}
+            onPostAnnouncement={() => setPublicAnnouncementModal({ isOpen: true, announcement: null })}
+            onEditAnnouncement={(announcement) => setPublicAnnouncementModal({ isOpen: true, announcement })}
+            onDeleteAnnouncement={handleDeleteAnnouncement}
             lang={lang}
             examYear={examYear}
             examDate={examDate}
@@ -356,9 +424,21 @@ const handleAuthError = (err: any) => {
             examDate={examDate}
             campusMap={campusMap}
             onUpdateCampusMap={handleUpdateCampusMap}
+            announcements={announcements}
+            onSaveAnnouncement={handleSaveAnnouncement}
+            onDeleteAnnouncement={handleDeleteAnnouncement}
           />
         )}
       </main>
+
+      {/* Modal for adding/editing announcements from public view when admin */}
+      <AddEditAnnouncementModal
+        announcement={publicAnnouncementModal.announcement}
+        isOpen={publicAnnouncementModal.isOpen}
+        onClose={() => setPublicAnnouncementModal({ isOpen: false, announcement: null })}
+        onSave={handleSaveAnnouncement}
+        lang={lang}
+      />
 
 {viewMode === 'public' ? (
           <footer className="bg-slate-900 text-slate-400 py-6 sm:py-8 border-t border-slate-800 text-xs">

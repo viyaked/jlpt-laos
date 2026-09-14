@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, type FC } from 'react';
-import type { LevelStat, ExamRoom, Language, FormQuotaStat } from '../types';
+import type { LevelStat, ExamRoom, Language, FormQuotaStat, Announcement } from '../types';
 import { translations, formatRoomName } from '../i18n';
 import { api } from '../api';
 import { RosterModal } from './RosterModal';
@@ -14,12 +14,18 @@ import {
   LevelStatsGrid,
   RoomFilters,
   RoomGrid,
+  InformationBoard,
 } from './public';
 
 interface PublicViewProps {
   levelStats: LevelStat[];
   formQuota: FormQuotaStat;
   examRooms: ExamRoom[];
+  announcements?: Announcement[];
+  isAdmin?: boolean;
+  onPostAnnouncement?: () => void;
+  onEditAnnouncement?: (announcement: Announcement) => void;
+  onDeleteAnnouncement?: (id: string) => void;
   lang: Language;
   examYear?: string;
   examDate?: string;
@@ -30,6 +36,11 @@ export const PublicView: FC<PublicViewProps> = ({
   levelStats,
   formQuota,
   examRooms,
+  announcements = [],
+  isAdmin = false,
+  onPostAnnouncement,
+  onEditAnnouncement,
+  onDeleteAnnouncement,
   lang,
   examYear: _examYear = '2026',
   examDate = '2026-07-05',
@@ -101,9 +112,28 @@ export const PublicView: FC<PublicViewProps> = ({
     });
   }, [lang]);
 
+  const handleViewPoster = useCallback((imageUrl: string, title: string) => {
+    setPreviewPhoto({
+      isOpen: true,
+      url: imageUrl,
+      title,
+      subtitle: t.infoBoardTitle,
+    });
+  }, [t.infoBoardTitle]);
+
   return (
     <div className="space-y-6 sm:space-y-8 pb-8 sm:pb-12 animate-fadeIn">
       <AnnouncementBanner lang={lang} examDate={examDate} />
+
+      <InformationBoard
+        announcements={announcements}
+        lang={lang}
+        isAdmin={isAdmin}
+        onPostClick={onPostAnnouncement}
+        onEditClick={onEditAnnouncement}
+        onDeleteClick={onDeleteAnnouncement}
+        onViewPoster={handleViewPoster}
+      />
 
       {formQuota.registrationOpen && (
         <section className="space-y-6">

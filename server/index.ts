@@ -7,6 +7,7 @@ import authRouter from './routes/auth';
 import levelsRouter from './routes/levels';
 import roomsRouter from './routes/rooms';
 import applicantsRouter from './routes/applicants';
+import announcementsRouter from './routes/announcements';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -29,6 +30,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/levels', levelsRouter);
 app.use('/api/rooms', roomsRouter);
 app.use('/api/applicants', applicantsRouter);
+app.use('/api/announcements', announcementsRouter);
 
 // Reset demo endpoint
 app.post('/api/reset-demo', (req, res) => {
@@ -36,6 +38,7 @@ app.post('/api/reset-demo', (req, res) => {
   broadcastEvent('levels_updated');
   broadcastEvent('rooms_updated');
   broadcastEvent('applicants_updated');
+  broadcastEvent('announcements_updated');
   res.json({ success: true, message: 'Database reset to default seed data' });
 });
 

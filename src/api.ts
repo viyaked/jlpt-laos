@@ -1,4 +1,4 @@
-import type { ExamRoom, JLPTLevel, FormQuotaStat, LevelsResponse, RoomSearchResult } from './types';
+import type { ExamRoom, JLPTLevel, FormQuotaStat, LevelsResponse, RoomSearchResult, Announcement } from './types';
 
 const TOKEN_KEY = 'jlpt_jwt_token';
 
@@ -426,6 +426,79 @@ export const api = {
     return res.json();
   },
 
+  // Announcements
+  async getAnnouncements(): Promise<Announcement[]> {
+    const res = await fetch('/api/announcements');
+    if (!res.ok) throw new Error('Failed to fetch announcements');
+    const data = await res.json();
+    return data.map((a: any) => ({
+      id: a.id,
+      title: a.title,
+      content: a.content || '',
+      imageUrl: a.imageUrl || '',
+      isPinned: Boolean(a.isPinned),
+      createdAt: a.createdAt,
+      updatedAt: a.updatedAt,
+    }));
+  },
+
+  async createAnnouncement(announcementData: {
+    title: string;
+    content?: string;
+    imageUrl?: string;
+    isPinned?: boolean;
+  }): Promise<Announcement> {
+    const res = await fetch('/api/announcements', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify(announcementData),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to create announcement');
+    }
+    return res.json();
+  },
+
+  async updateAnnouncement(
+    id: string,
+    announcementData: {
+      title?: string;
+      content?: string;
+      imageUrl?: string;
+      isPinned?: boolean;
+    }
+  ): Promise<Announcement> {
+    const res = await fetch(`/api/announcements/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify(announcementData),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update announcement');
+    }
+    return res.json();
+  },
+
+  async deleteAnnouncement(id: string): Promise<{ success: boolean }> {
+    const res = await fetch(`/api/announcements/${id}`, {
+      method: 'DELETE',
+      headers: { ...authHeaders() },
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to delete announcement');
+    }
+    return res.json();
+  },
+
   // Reset Demo
   async resetDemo() {
     const res = await fetch('/api/reset-demo', {
@@ -452,6 +525,7 @@ export function subscribeToSSE(onUpdate: (event: string, data: any) => void): ()
   eventSource.addEventListener('levels_updated', handleEvent('levels_updated'));
   eventSource.addEventListener('rooms_updated', handleEvent('rooms_updated'));
   eventSource.addEventListener('applicants_updated', handleEvent('applicants_updated'));
+  eventSource.addEventListener('announcements_updated', handleEvent('announcements_updated'));
 
   return () => {
     eventSource.close();

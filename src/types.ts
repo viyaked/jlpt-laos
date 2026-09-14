@@ -67,3 +67,13 @@ export interface AdminUser {
   username: string;
   role: string;
 }
+
+export interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  imageUrl: string;
+  isPinned: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}

@@ -5,3 +5,4 @@ export * from './ToastNotification';
 export * from './QuotaCards';
 export * from './RoomTable';
 export * from './AdminSectionHeader';
+export * from './AnnouncementManager';

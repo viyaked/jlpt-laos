@@ -1,11 +1,12 @@
 import { useState, type FC } from 'react';
-import type { LevelStat, ExamRoom, AdminUser, Language, JLPTLevel, FormQuotaStat } from '../types';
+import type { LevelStat, ExamRoom, AdminUser, Language, JLPTLevel, FormQuotaStat, Announcement } from '../types';
 import { translations, formatRoomName } from '../i18n';
 import { api } from '../api';
 import { EditQuotaModal } from './EditQuotaModal';
 import { EditGlobalQuotaModal } from './EditGlobalQuotaModal';
 import { EditExamYearModal } from './EditExamYearModal';
 import { AddEditRoomModal } from './AddEditRoomModal';
+import { AddEditAnnouncementModal } from './AddEditAnnouncementModal';
 import { ManageRoomExamineesModal } from './ManageRoomExamineesModal';
 import { ChangeAdminPasswordModal } from './ChangeAdminPasswordModal';
 import { CampusMapModal } from './CampusMapModal';
@@ -20,6 +21,7 @@ import {
   LevelAdjustmentCard,
   RoomTable,
   AddRoomButton,
+  AnnouncementManager,
 } from './admin';
 
 interface AdminViewProps {
@@ -48,6 +50,9 @@ interface AdminViewProps {
   examDate?: string;
   campusMap?: string;
   onUpdateCampusMap?: (map: string) => Promise<void>;
+  announcements?: Announcement[];
+  onSaveAnnouncement?: (data: { id?: string; title: string; content?: string; imageUrl?: string; isPinned: boolean }) => Promise<void>;
+  onDeleteAnnouncement?: (id: string) => Promise<void>;
 }
 
 export const AdminView: FC<AdminViewProps> = ({
@@ -73,6 +78,9 @@ export const AdminView: FC<AdminViewProps> = ({
   examDate = '2026-07-05',
   campusMap = '',
   onUpdateCampusMap,
+  announcements = [],
+  onSaveAnnouncement,
+  onDeleteAnnouncement,
 }) => {
   const t = translations[lang];
 
@@ -81,6 +89,13 @@ export const AdminView: FC<AdminViewProps> = ({
   const [isExamYearModalOpen, setIsExamYearModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [isCampusMapModalOpen, setIsCampusMapModalOpen] = useState(false);
+  const [announcementModalData, setAnnouncementModalData] = useState<{
+    isOpen: boolean;
+    announcement: Announcement | null;
+  }>({
+    isOpen: false,
+    announcement: null,
+  });
   const [previewPhoto, setPreviewPhoto] = useState<{ isOpen: boolean; url: string; title: string; subtitle?: string }>({
     isOpen: false,
     url: '',
@@ -220,6 +235,27 @@ export const AdminView: FC<AdminViewProps> = ({
         />
       </section>
 
+      <AnnouncementManager
+        announcements={announcements}
+        lang={lang}
+        onAddClick={() => setAnnouncementModalData({ isOpen: true, announcement: null })}
+        onEditClick={(announcement) => setAnnouncementModalData({ isOpen: true, announcement })}
+        onDeleteClick={async (id) => {
+          if (onDeleteAnnouncement) {
+            await onDeleteAnnouncement(id);
+            triggerToast(t.announcementDeletedSuccess);
+          }
+        }}
+        onPhotoClick={(url, title) => {
+          setPreviewPhoto({
+            isOpen: true,
+            url,
+            title,
+            subtitle: t.infoBoardTitle,
+          });
+        }}
+      />
+
 
       <section className="space-y-4 pt-4 border-t border-slate-200">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -314,6 +350,20 @@ export const AdminView: FC<AdminViewProps> = ({
         onSave={(roomData: Omit<ExamRoom, 'id' | 'examinees'> & { id?: string }) => {
           onSaveRoom(roomData);
           triggerToast(t.saveSuccess);
+        }}
+        lang={lang}
+      />
+
+
+      <AddEditAnnouncementModal
+        announcement={announcementModalData.announcement}
+        isOpen={announcementModalData.isOpen}
+        onClose={() => setAnnouncementModalData({ isOpen: false, announcement: null })}
+        onSave={async (data) => {
+          if (onSaveAnnouncement) {
+            await onSaveAnnouncement(data);
+            triggerToast(t.announcementSavedSuccess);
+          }
         }}
         lang={lang}
       />
