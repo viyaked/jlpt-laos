@@ -34,12 +34,17 @@ app.use('/api/announcements', announcementsRouter);
 
 // Reset demo endpoint
 app.post('/api/reset-demo', (req, res) => {
-  seedDefaultData();
-  broadcastEvent('levels_updated');
-  broadcastEvent('rooms_updated');
-  broadcastEvent('applicants_updated');
-  broadcastEvent('announcements_updated');
-  res.json({ success: true, message: 'Database reset to default seed data' });
+  try {
+    seedDefaultData();
+    broadcastEvent('levels_updated');
+    broadcastEvent('rooms_updated');
+    broadcastEvent('applicants_updated');
+    broadcastEvent('announcements_updated');
+    res.json({ success: true, message: 'Database reset to default seed data' });
+  } catch (err: any) {
+    console.error('Error in /api/reset-demo:', err);
+    res.status(500).json({ error: err.message || 'Failed to reset database' });
+  }
 });
 
 // In production, serve the built Vite frontend

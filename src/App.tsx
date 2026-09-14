@@ -88,10 +88,12 @@ export function App() {
     }
   }, []);
 
-  const refreshAll = useCallback(() => {
-    fetchLevels();
-    fetchRooms();
-    fetchAnnouncements();
+  const refreshAll = useCallback(async () => {
+    await Promise.allSettled([
+      fetchLevels(),
+      fetchRooms(),
+      fetchAnnouncements(),
+    ]);
   }, [fetchLevels, fetchRooms, fetchAnnouncements]);
 
   // Initial load
@@ -356,6 +358,7 @@ const handleAuthError = (err: any) => {
       await refreshAll();
     } catch (err: any) {
       alert(err.message || 'Failed to reset demo data');
+      throw err;
     }
   };
 

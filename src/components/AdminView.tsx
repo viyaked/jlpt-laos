@@ -23,6 +23,8 @@ import {
   AddRoomButton,
   AnnouncementManager,
 } from './admin';
+import { Modal, Button } from './ui';
+import { AlertTriangle, RotateCcw } from 'lucide-react';
 
 interface AdminViewProps {
   levelStats: LevelStat[];
@@ -44,7 +46,7 @@ interface AdminViewProps {
   onAddExamineeToRoom: (roomId: string, fullName: string) => void;
   onBatchAddExaminees: (roomId: string, examinees: { fullName: string }[]) => void;
   onRemoveExamineeFromRoom: (roomId: string, examineeId: string) => void;
-  onResetData: () => void;
+  onResetData: () => Promise<void> | void;
   lang: Language;
   examYear?: string;
   examDate?: string;
@@ -107,6 +109,8 @@ export const AdminView: FC<AdminViewProps> = ({
     room: null,
   });
   const [manageExamineesRoom, setManageExamineesRoom] = useState<ExamRoom | null>(null);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const [toastMessage, setToastMessage] = useState<string>('');
 
   const triggerToast = (msg: string) => {
@@ -197,12 +201,7 @@ export const AdminView: FC<AdminViewProps> = ({
         lang={lang}
         onCampusMapClick={() => setIsCampusMapModalOpen(true)}
         onChangePasswordClick={() => setIsChangePasswordModalOpen(true)}
-        onResetClick={() => {
-          if (window.confirm('Reset all applicant data and exam rooms to defaults?')) {
-            onResetData();
-            triggerToast(t.resetSuccess);
-          }
-        }}
+        onResetClick={() => setIsResetConfirmOpen(true)}
         onLogout={onLogout}
       />
 
@@ -426,6 +425,52 @@ export const AdminView: FC<AdminViewProps> = ({
         lang={lang}
       />
 
+      <Modal
+        isOpen={isResetConfirmOpen}
+        onClose={() => !isResetting && setIsResetConfirmOpen(false)}
+        title={t.resetConfirmTitle}
+        size="md"
+      >
+        <div className="space-y-4 py-1">
+          <div className="flex items-start gap-3 p-3.5 bg-red-50 text-red-900 rounded-xl border border-red-200">
+            <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+            <p className="text-sm leading-relaxed text-red-950 font-normal">
+              {t.resetConfirmDesc}
+            </p>
+          </div>
+          <div className="flex justify-end items-center gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsResetConfirmOpen(false)}
+              disabled={isResetting}
+            >
+              {t.cancelBtn}
+            </Button>
+            <Button
+              type="button"
+              variant="danger"
+              loading={isResetting}
+              disabled={isResetting}
+              leftIcon={<RotateCcw className="w-4 h-4" />}
+              onClick={async () => {
+                setIsResetting(true);
+                try {
+                  await onResetData();
+                  triggerToast(t.resetSuccess);
+                  setIsResetConfirmOpen(false);
+                } catch {
+                  // Error handled in onResetData / App.tsx
+                } finally {
+                  setIsResetting(false);
+                }
+              }}
+            >
+              {t.confirmResetBtn}
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       <AdminFooter lang={lang} examYear={examYear} />
     </div>

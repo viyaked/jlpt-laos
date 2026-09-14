@@ -503,8 +503,15 @@ export const api = {
   async resetDemo() {
     const res = await fetch('/api/reset-demo', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
     });
-    if (!res.ok) throw new Error('Failed to reset demo data');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to reset demo data');
+    }
     return res.json();
   },
 };

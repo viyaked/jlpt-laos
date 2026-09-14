@@ -298,6 +298,9 @@ export const translations = {
 
     // Reset Data
     resetToDefaultBtn: "ຣີເຊັດຂໍ້ມູນ",
+    resetConfirmTitle: "ຢືນຢັນການຣີເຊັດຂໍ້ມູນທັງໝົດ",
+    resetConfirmDesc: "ການດຳເນີນການນີ້ຈະຣີເຊັດຈຳນວນຜູ້ສະໝັກໃນທຸກລະດັບເປັນ 0, ຣີເຊັດຟອມທີ່ຂາຍແລ້ວເປັນ 0, ລຶບລາຍຊື່ຜູ້ສະໝັກທັງໝົດ ແລະ ຄືນຄ່າຫ້ອງສອບເສັງເປັນຄ່າເລີ່ມຕົ້ນ. ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການດຳເນີນການ?",
+    confirmResetBtn: "ຢືນຢັນຣີເຊັດຂໍ້ມູນ",
     resetSuccess: "ຣີເຊັດຂໍ້ມູນເປັນຄ່າເລີ່ມຕົ້ນຮຽບຮ້ອຍແລ້ວ!",
     saveSuccess: "ບັນທຶກຂໍ້ມູນສຳເລັດແລ້ວ!",
     quotaWarning: "ຈຳນວນຜູ້ສະໝັກບໍ່ສາມາດເກີນໂຄຕ້າໄດ້",
@@ -542,6 +545,9 @@ export const translations = {
 
     // Reset Data
     resetToDefaultBtn: "Reset Data",
+    resetConfirmTitle: "Confirm Reset All Data",
+    resetConfirmDesc: "This will reset all registered applicants and forms sold to 0, clear all applicant rosters, and restore default exam rooms. Are you sure you want to proceed?",
+    confirmResetBtn: "Confirm Reset Data",
     resetSuccess: "Demo data has been reset to defaults!",
     saveSuccess: "Changes saved successfully!",
     quotaWarning: "Registered count cannot exceed total quota",
