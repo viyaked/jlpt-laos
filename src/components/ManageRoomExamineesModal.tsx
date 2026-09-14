@@ -1,6 +1,7 @@
 import { useState, type FC, type FormEvent } from 'react';
 import type { ExamRoom, Language } from '../types';
 import { translations, formatRoomName } from '../i18n';
+import * as XLSX from 'xlsx';
 import {
   X,
   UserPlus,
@@ -95,13 +96,35 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const text = event.target?.result as string;
-      setBatchText(text);
-      setBatchSuccess(t.csvUploadSuccess);
-    };
-    reader.readAsText(file, 'utf-8');
+
+    const ext = file.name.split('.').pop()?.toLowerCase();
+
+    if (ext === 'xlsx' || ext === 'xls') {
+      // Excel file
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = new Uint8Array(event.target?.result as ArrayBuffer);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+          const csv = XLSX.utils.sheet_to_csv(firstSheet);
+          setBatchText(csv);
+          setBatchSuccess(t.csvUploadSuccess);
+        } catch {
+          setBatchError('Failed to parse Excel file');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      // CSV file
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target?.result as string;
+        setBatchText(text);
+        setBatchSuccess(t.csvUploadSuccess);
+      };
+      reader.readAsText(file, 'utf-8');
+    }
   };
 
   return (
@@ -314,7 +337,7 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
                   <span>{t.uploadCsvBtn}</span>
                   <input
                     type="file"
-                    accept=".csv,text/csv,text/plain"
+                    accept=".csv,text/csv,text/plain,.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
                     onChange={handleFileUpload}
                     className="hidden"
                   />

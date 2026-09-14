@@ -12,7 +12,6 @@
     "start": "NODE_ENV=production tsx server/index.ts",
     "preview": "vite preview"
   },
-
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "bcryptjs": "^3.0.3",
@@ -26,7 +25,8 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "tailwindcss": "^4.3.3",
-    "tsx": "^4.23.13"
+    "tsx": "^4.23.13",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
