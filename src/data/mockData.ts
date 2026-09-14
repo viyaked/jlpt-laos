@@ -8,6 +8,7 @@ export const initialFormQuota: FormQuotaStat = {
   remainingSeats: 350,
   isFormsFull: false,
   isSeatsFull: false,
+  registrationOpen: true,
 };
 
 export const initialLevelStats: LevelStat[] = [

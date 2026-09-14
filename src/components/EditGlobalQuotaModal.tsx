@@ -1,14 +1,15 @@
 import { useState, useEffect, type FC, type FormEvent } from 'react';
 import type { Language } from '../types';
 import { translations } from '../i18n';
-import { X, AlertCircle, Save, Layers, TrendingUp } from 'lucide-react';
+import { X, AlertCircle, Save, Layers, TrendingUp, ToggleLeft, ToggleRight } from 'lucide-react';
 
 interface EditGlobalQuotaModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentTotalQuota: number;
   currentFormsSold: number;
-  onSave: (newTotalQuota: number, newFormsSold: number) => void;
+  currentRegistrationOpen: boolean;
+  onSave: (newTotalQuota: number, newFormsSold: number, newRegistrationOpen: boolean) => void;
   lang: Language;
 }
 
@@ -17,18 +18,21 @@ export const EditGlobalQuotaModal: FC<EditGlobalQuotaModalProps> = ({
   onClose,
   currentTotalQuota,
   currentFormsSold,
+  currentRegistrationOpen,
   onSave,
   lang,
 }) => {
   const [totalQuota, setTotalQuota] = useState(currentTotalQuota);
   const [formsSold, setFormsSold] = useState(currentFormsSold);
+  const [registrationOpen, setRegistrationOpen] = useState(currentRegistrationOpen);
   const [error, setError] = useState('');
 
   useEffect(() => {
     setTotalQuota(currentTotalQuota);
     setFormsSold(currentFormsSold);
+    setRegistrationOpen(currentRegistrationOpen);
     setError('');
-  }, [currentTotalQuota, currentFormsSold, isOpen]);
+  }, [currentTotalQuota, currentFormsSold, currentRegistrationOpen, isOpen]);
 
   if (!isOpen) return null;
   const t = translations[lang];
@@ -55,7 +59,7 @@ export const EditGlobalQuotaModal: FC<EditGlobalQuotaModalProps> = ({
       );
       return;
     }
-    onSave(totalQuota, formsSold);
+    onSave(totalQuota, formsSold, registrationOpen);
     onClose();
   };
 
@@ -159,6 +163,44 @@ export const EditGlobalQuotaModal: FC<EditGlobalQuotaModalProps> = ({
                 {t.formUnit}
               </span>
             </div>
+          </div>
+
+          {/* 4. Registration Status Toggle */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-bold text-purple-900 flex items-center gap-1.5">
+                <ToggleRight className="w-3.5 h-3.5 text-purple-600" />
+                <span>{t.registrationStatusLabel}</span>
+              </label>
+              <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                registrationOpen ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+              }`}>
+                {registrationOpen ? t.statusOpen : t.statusFull}
+              </span>
+            </div>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setRegistrationOpen(!registrationOpen)}
+                className={`relative w-14 h-8 rounded-full transition-colors flex items-center ${
+                  registrationOpen ? 'bg-emerald-600' : 'bg-rose-400'
+                }`}
+                aria-label={registrationOpen ? t.statusOpen : t.statusFull}
+              >
+                <div className={`absolute w-6 h-6 bg-white rounded-full shadow-md transition-transform ${
+                  registrationOpen ? 'translate-x-7' : 'translate-x-1'
+                }`}>
+                  {registrationOpen ? (
+                    <ToggleRight className="w-4 h-4 text-emerald-600 m-auto" />
+                  ) : (
+                    <ToggleLeft className="w-4 h-4 text-rose-600 m-auto" />
+                  )}
+                </div>
+              </button>
+            </div>
+            <span className="text-[11px] text-slate-500 mt-1 block">
+              {t.registrationStatusDesc}
+            </span>
           </div>
 
           {/* Action Buttons */}

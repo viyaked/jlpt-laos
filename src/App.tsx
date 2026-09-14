@@ -156,10 +156,15 @@ const handleAuthError = (err: any) => {
     }
   };
 
-  const handleUpdateGlobalQuota = async (totalQuota: number, formsSold?: number) => {
+  const handleUpdateGlobalQuota = async (totalQuota: number, formsSold?: number, registrationOpen?: boolean) => {
     try {
-      const res = await api.updateGlobalQuota(totalQuota, formsSold ?? 0);
-      setFormQuota(res.formQuota);
+      if (registrationOpen !== undefined) {
+        const res = await api.setRegistrationOpen(registrationOpen);
+        setFormQuota(res.formQuota);
+      } else {
+        const res = await api.updateGlobalQuota(totalQuota, formsSold ?? 0);
+        setFormQuota(res.formQuota);
+      }
       await fetchLevels();
     } catch (err: any) {
       if (handleAuthError(err)) return;

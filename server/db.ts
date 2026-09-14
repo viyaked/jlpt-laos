@@ -99,6 +99,12 @@ export function initDatabase() {
     db.prepare('INSERT INTO system_settings (key, value) VALUES (?, ?)').run('exam_date', '2026-07-05');
   }
 
+  // Initialize registration_open setting (default true)
+  const existingRegOpen = db.prepare('SELECT value FROM system_settings WHERE key = ?').get('registration_open');
+  if (!existingRegOpen) {
+    db.prepare('INSERT INTO system_settings (key, value) VALUES (?, ?)').run('registration_open', 'true');
+  }
+
   // Seed default admin user if not exists
   const existingAdmin = db.prepare('SELECT id FROM users WHERE username = ?').get('admin');
   if (!existingAdmin) {
@@ -158,6 +164,15 @@ export function setExamDate(date: string): void {
   setSystemSetting('exam_date', date);
 }
 
+export function getRegistrationOpen(): boolean {
+  const val = getSystemSetting('registration_open', 'true');
+  return val === 'true';
+}
+
+export function setRegistrationOpen(open: boolean): void {
+  setSystemSetting('registration_open', open ? 'true' : 'false');
+}
+
 export function getFormsSold(): number {
   const soldStr = getSystemSetting('forms_sold', '');
   if (soldStr !== '') {
@@ -171,7 +186,7 @@ export function setFormsSold(count: number): void {
   setSystemSetting('forms_sold', String(Math.max(0, count)));
 }
 
-export function getTotalFormQuota(): { totalQuota: number; formsSold: number; totalRegistered: number; remainingForms: number; remainingSeats: number; isFormsFull: boolean; isSeatsFull: boolean } {
+export function getTotalFormQuota(): { totalQuota: number; formsSold: number; totalRegistered: number; remainingForms: number; remainingSeats: number; isFormsFull: boolean; isSeatsFull: boolean; registrationOpen: boolean } {
   const quotaStr = getSystemSetting('total_form_quota', '500');
   const totalQuota = parseInt(quotaStr, 10) || 500;
   const formsSold = getFormsSold();
@@ -188,6 +203,7 @@ export function getTotalFormQuota(): { totalQuota: number; formsSold: number; to
     remainingSeats,
     isFormsFull: remainingForms <= 0,
     isSeatsFull: remainingSeats <= 0,
+    registrationOpen: getRegistrationOpen(),
   };
 }
 

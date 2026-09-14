@@ -80,9 +80,14 @@ export function GlobalQuotaCard({ formQuota, lang, onEditClick }: GlobalQuotaCar
           </p>
         </div>
 
-        <Button variant="secondary" size="sm" leftIcon={<Sliders className="w-3.5 h-3.5" />} onClick={onEditClick}>
-          {t.editGlobalQuotaBtn}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Badge variant={formQuota.registrationOpen ? 'success' : 'danger'} size="sm" dot>
+            {formQuota.registrationOpen ? t.statusOpen : t.statusFull}
+          </Badge>
+          <Button variant="secondary" size="sm" leftIcon={<Sliders className="w-3.5 h-3.5" />} onClick={onEditClick}>
+            {t.editGlobalQuotaBtn}
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-4">

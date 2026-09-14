@@ -37,6 +37,7 @@ export const api = {
         remainingSeats: data.formQuota?.remainingSeats ?? 0,
         isFormsFull: data.formQuota?.isFormsFull ?? false,
         isSeatsFull: data.formQuota?.isSeatsFull ?? false,
+        registrationOpen: data.formQuota?.registrationOpen ?? true,
       },
       levels: (data.levels || []).map((d: any) => ({
         level: d.level,
@@ -215,6 +216,23 @@ export const api = {
     if (!res.ok) {
       const err = await res.json();
       throw new Error(err.error || 'Failed to update forms sold');
+    }
+
+    return res.json();
+  },
+
+  async setRegistrationOpen(registrationOpen: boolean): Promise<{ formQuota: FormQuotaStat }> {
+    const res = await fetch('/api/levels/registration', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify({ registrationOpen }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update registration status');
     }
     return res.json();
   },

@@ -30,7 +30,7 @@ interface AdminViewProps {
   onLogin: (username: string) => void;
   onLogout: () => void;
   onIncrementRegistered: (level: JLPTLevel) => void;
-  onUpdateGlobalQuota: (totalQuota: number, formsSold?: number) => void;
+  onUpdateGlobalQuota: (totalQuota: number, formsSold?: number, registrationOpen?: boolean) => void;
   onUpdateExamSchedule: (newYear: string, newDate: string) => void;
   onUpdateLevel?: (
     level: string,
@@ -269,8 +269,9 @@ export const AdminView: FC<AdminViewProps> = ({
         onClose={() => setIsGlobalQuotaModalOpen(false)}
         currentTotalQuota={formQuota.totalQuota}
         currentFormsSold={formQuota.formsSold}
-        onSave={(newTotalQuota: number, newFormsSold: number) => {
-          onUpdateGlobalQuota(newTotalQuota, newFormsSold);
+        currentRegistrationOpen={formQuota.registrationOpen}
+        onSave={(newTotalQuota: number, newFormsSold: number, newRegistrationOpen: boolean) => {
+          onUpdateGlobalQuota(newTotalQuota, newFormsSold, newRegistrationOpen);
           triggerToast(t.saveSuccess);
         }}
         lang={lang}

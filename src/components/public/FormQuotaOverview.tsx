@@ -11,7 +11,7 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
   const t = translations[lang];
 
   const remainingForms = formQuota.remainingForms;
-  const isFull = formQuota.isFormsFull || remainingForms <= 0;
+  const registrationOpen = formQuota.registrationOpen;
 
   return (
     <Card variant="default" padding="none" className="p-4 sm:p-5 md:p-6 animate-slideUp">
@@ -25,23 +25,23 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
           </div>
         </div>
 
-        {isFull ? (
-          <Badge variant="danger" size="sm" dot>
-            {t.statusFull}
-          </Badge>
-        ) : (
+        {registrationOpen ? (
           <Badge variant="success" size="sm" dot>
             {t.statusOpen}
+          </Badge>
+        ) : (
+          <Badge variant="danger" size="sm" dot>
+            {t.statusFull}
           </Badge>
         )}
       </div>
 
-      <div className={`p-4 sm:p-5 rounded-xl border ${isFull ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-emerald-50 border-emerald-100 text-emerald-800'}`}>
+      <div className={`p-4 sm:p-5 rounded-xl border ${registrationOpen ? 'bg-emerald-50 border-emerald-100 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'}`}>
         <span className="text-xs font-semibold block mb-1">
           {t.remainingFormsLabel}
         </span>
         <div className="flex items-baseline gap-1.5">
-          <span className={`text-3xl sm:text-4xl font-black tracking-tight ${isFull ? 'text-rose-700' : 'text-emerald-700'}`}>
+          <span className={`text-3xl sm:text-4xl font-black tracking-tight ${registrationOpen ? 'text-emerald-700' : 'text-rose-700'}`}>
             {remainingForms}
           </span>
           <span className="text-xs font-medium opacity-80">

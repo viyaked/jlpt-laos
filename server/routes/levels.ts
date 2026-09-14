@@ -52,6 +52,7 @@ router.get('/', (req, res) => {
       remainingSeats: formQuota.remainingSeats,
       isFormsFull: formQuota.isFormsFull,
       isSeatsFull: formQuota.isSeatsFull,
+      registrationOpen: formQuota.registrationOpen,
     },
     levels: formattedLevels,
   });
@@ -184,6 +185,34 @@ router.put('/sold', requireAdminAuth, (req, res) => {
       remainingSeats: formQuota.remainingSeats,
       isFormsFull: formQuota.isFormsFull,
       isSeatsFull: formQuota.isSeatsFull,
+    },
+  });
+});
+
+// Admin: Toggle Registration Open/Closed
+router.put('/registration', requireAdminAuth, (req, res) => {
+  const { registrationOpen } = req.body;
+  if (typeof registrationOpen !== 'boolean') {
+    return res.status(400).json({ error: 'registrationOpen must be a boolean' });
+  }
+
+  setRegistrationOpen(registrationOpen);
+  const formQuota = getTotalFormQuota();
+
+  broadcastEvent('levels_updated', { formQuota });
+
+  res.json({
+    success: true,
+    registrationOpen,
+    formQuota: {
+      totalQuota: formQuota.totalQuota,
+      formsSold: formQuota.formsSold,
+      totalRegistered: formQuota.totalRegistered,
+      remainingForms: formQuota.remainingForms,
+      remainingSeats: formQuota.remainingSeats,
+      isFormsFull: formQuota.isFormsFull,
+      isSeatsFull: formQuota.isSeatsFull,
+      registrationOpen: formQuota.registrationOpen,
     },
   });
 });

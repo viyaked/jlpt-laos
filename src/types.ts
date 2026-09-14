@@ -10,6 +10,7 @@ export interface FormQuotaStat {
   remainingSeats: number;    // Seats available for registration (across all levels)
   isFormsFull: boolean;      // All forms sold
   isSeatsFull: boolean;      // All seats filled
+  registrationOpen: boolean; // Manual toggle for registration status
 }
 
 export interface LevelStat {
