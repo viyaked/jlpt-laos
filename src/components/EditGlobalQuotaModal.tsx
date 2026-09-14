@@ -1,7 +1,7 @@
 import { useState, useEffect, type FC, type FormEvent } from 'react';
 import type { Language } from '../types';
 import { translations } from '../i18n';
-import { X, AlertCircle, Save, Layers, TrendingUp, ToggleLeft, ToggleRight } from 'lucide-react';
+import { X, AlertCircle, Save, Layers, TrendingUp, ToggleRight } from 'lucide-react';
 
 interface EditGlobalQuotaModalProps {
   isOpen: boolean;
@@ -190,11 +190,6 @@ export const EditGlobalQuotaModal: FC<EditGlobalQuotaModalProps> = ({
                 <div className={`absolute w-6 h-6 bg-white rounded-full shadow-md transition-transform ${
                   registrationOpen ? 'translate-x-7' : 'translate-x-1'
                 }`}>
-                  {registrationOpen ? (
-                    <ToggleRight className="w-4 h-4 text-emerald-600 m-auto" />
-                  ) : (
-                    <ToggleLeft className="w-4 h-4 text-rose-600 m-auto" />
-                  )}
                 </div>
               </button>
             </div>
