@@ -1,17 +1,15 @@
 import { Clock } from 'lucide-react';
-import type { LevelStat, FormQuotaStat, Language } from '../../types';
+import type { LevelStat, Language } from '../../types';
 import { translations } from '../../i18n';
-import { Card, Badge } from '../ui';
+import { Card } from '../ui';
 
 interface LevelStatsGridProps {
   levelStats: LevelStat[];
-  formQuota: FormQuotaStat;
   lang: Language;
 }
 
-export function LevelStatsGrid({ levelStats, formQuota, lang }: LevelStatsGridProps) {
+export function LevelStatsGrid({ levelStats, lang }: LevelStatsGridProps) {
   const t = translations[lang];
-  const totalRegistered = formQuota.totalRegistered;
 
   return (
     <div className="space-y-3 animate-slideUp">
@@ -27,9 +25,8 @@ export function LevelStatsGrid({ levelStats, formQuota, lang }: LevelStatsGridPr
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         {levelStats.map((stat) => {
-          const levelPercentOfTotal = totalRegistered > 0
-            ? Math.round((stat.registered / totalRegistered) * 100)
-            : 0;
+          const remaining = Math.max(0, stat.quota - stat.registered);
+          const isFull = remaining <= 0;
 
           return (
             <Card key={stat.level} variant="default" padding="sm" className="flex flex-col justify-between hover:shadow-md transition-shadow">
@@ -43,23 +40,25 @@ export function LevelStatsGrid({ levelStats, formQuota, lang }: LevelStatsGridPr
                       JLPT {stat.level}
                     </span>
                   </div>
-                  <Badge variant="outline" size="xs" className="bg-slate-100 text-slate-600 border-slate-200 shrink-0">
-                    {levelPercentOfTotal}% {t.percentOfTotal}
-                  </Badge>
                 </div>
 
                 <div className="bg-slate-50 border border-slate-100 rounded-lg p-3 my-2">
                   <span className="text-[11px] font-medium text-slate-600 block">
-                    {t.registeredInLevel}
+                    {t.remainingCount}
                   </span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-black text-slate-900">
-                      {stat.registered}
+                    <span className={`text-2xl font-black ${isFull ? 'text-rose-600' : 'text-emerald-700'}`}>
+                      {remaining}
                     </span>
                     <span className="text-[11px] text-slate-500">
-                      {t.personUnit}
+                      {t.slotsUnit}
                     </span>
                   </div>
+                  {isFull && (
+                    <span className="text-[11px] text-rose-600 font-medium mt-1 block">
+                      {t.statusFull}
+                    </span>
+                  )}
                 </div>
               </div>
 

@@ -8,11 +8,11 @@ export const initialFormQuota: FormQuotaStat = {
 };
 
 export const initialLevelStats: LevelStat[] = [
-  { level: 'N5', registered: 0, fee: 300000, testTime: '09:00 - 11:30' },
-  { level: 'N4', registered: 0, fee: 300000, testTime: '09:00 - 11:45' },
-  { level: 'N3', registered: 0, fee: 350000, testTime: '13:30 - 16:30' },
-  { level: 'N2', registered: 0, fee: 350000, testTime: '13:30 - 16:45' },
-  { level: 'N1', registered: 0, fee: 350000, testTime: '13:30 - 17:00' },
+  { level: 'N5', registered: 0, quota: 110, fee: 300000, testTime: '09:00 - 11:30' },
+  { level: 'N4', registered: 0, quota: 105, fee: 300000, testTime: '09:00 - 11:45' },
+  { level: 'N3', registered: 0, quota: 60, fee: 350000, testTime: '13:30 - 16:30' },
+  { level: 'N2', registered: 0, quota: 55, fee: 350000, testTime: '13:30 - 16:45' },
+  { level: 'N1', registered: 0, quota: 25, fee: 350000, testTime: '13:30 - 17:00' },
 ];
 
 export const initialExamRooms: ExamRoom[] = [

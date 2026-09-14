@@ -38,6 +38,7 @@ export const api = {
       levels: (data.levels || []).map((d: any) => ({
         level: d.level,
         registered: d.registeredCount,
+        quota: d.total_quota,
         fee: d.fee,
         testTime: d.testTime,
       })),

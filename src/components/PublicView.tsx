@@ -107,7 +107,7 @@ export const PublicView: FC<PublicViewProps> = ({
 
       <section className="space-y-6">
         <FormQuotaOverview formQuota={formQuota} lang={lang} />
-        <LevelStatsGrid levelStats={levelStats} formQuota={formQuota} lang={lang} />
+        <LevelStatsGrid levelStats={levelStats} lang={lang} />
       </section>
 
       <section className="space-y-4 pt-4 border-t border-slate-200">

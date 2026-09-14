@@ -12,6 +12,7 @@ export interface FormQuotaStat {
 export interface LevelStat {
   level: JLPTLevel;
   registered: number;
+  quota: number;
   fee: number; // in LAK
   testTime: string;
 }
