@@ -30,7 +30,7 @@ export const initialExamRooms: ExamRoom[] = [
   { id: 'room-annex3',     code: 'ຫ້ອງ Annex 3',         building: 'Annex Building (ຊັ້ນທີ 1)', floor: 'ຊັ້ນທີ 1', level: 'N4', capacity: 35, examinees: [] },
   // ── N3 ─────────────────────────────────────────────────────
   { id: 'room-seminar1',   code: 'ຫ້ອງ Seminar 1',       building: 'ອາຄານຂວາ',                  floor: '-',         level: 'N3', capacity: 30, examinees: [] },
-  { id: 'room-laonea',     code: 'ຫ້ອງລະເນາປະສົງ',       building: 'ອາຄານຂວາ',                  floor: '-',         level: 'N3', capacity: 30, examinees: [] },
+  { id: 'room-laonea',     code: 'ຫ້ອງອະເນກປະສົງ',       building: 'ອາຄານຂວາ',                  floor: '-',         level: 'N3', capacity: 30, examinees: [] },
   // ── N2 ─────────────────────────────────────────────────────
   { id: 'room-seminar2',   code: 'ຫ້ອງ Seminar 2',       building: 'ອາຄານຫຼັກ',                  floor: '-',         level: 'N2', capacity: 30, examinees: [] },
   { id: 'room-incubation', code: 'ຫ້ອງ Incubation Room', building: 'ອາຄານຂວາ',                  floor: '-',         level: 'N2', capacity: 25, examinees: [] },
