@@ -1,22 +1,15 @@
-import { Calendar, Users, Ticket } from 'lucide-react';
-import type { FormQuotaStat, Language } from '../../types';
+import { Calendar } from 'lucide-react';
+import type { Language } from '../../types';
 import { translations, formatExamDate } from '../../i18n';
 
 interface AnnouncementBannerProps {
-  formQuota: FormQuotaStat;
   lang: Language;
   examDate: string;
 }
 
-export function AnnouncementBanner({ formQuota, lang, examDate }: AnnouncementBannerProps) {
+export function AnnouncementBanner({ lang, examDate }: AnnouncementBannerProps) {
   const t = translations[lang];
   const formattedExamDate = formatExamDate(examDate, lang);
-
-  const formsSold = formQuota.formsSold;
-  const totalRegistered = formQuota.totalRegistered;
-  const totalQuota = formQuota.totalQuota;
-  const remainingForms = formQuota.remainingForms;
-  const isFull = formQuota.isFormsFull || remainingForms <= 0;
 
   return (
     <section className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 border border-slate-800 relative overflow-hidden animate-fadeIn">
@@ -33,46 +26,15 @@ export function AnnouncementBanner({ formQuota, lang, examDate }: AnnouncementBa
           {t.publicWelcomeSubtitle}
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 pt-4 border-t border-slate-700/80">
-          <div>
-            <span className="text-xs text-slate-400 block">{t.examDateLabel}</span>
-            <span className="font-semibold text-sm sm:text-base text-white flex items-center gap-1.5 mt-1">
-              <Calendar className="w-4 h-4 text-red-400" aria-hidden="true" />
-              {formattedExamDate.shortDate}
-            </span>
-            <span className="text-[11px] text-slate-300 block truncate mt-0.5">
-              {formattedExamDate.longDate}
-            </span>
-          </div>
-          <div>
-            <span className="text-xs text-slate-400 block">{t.usedFormsLabel}</span>
-            <span className="font-bold text-lg sm:text-xl text-blue-400 flex items-center gap-1.5 mt-0.5">
-              <Users className="w-4 h-4" aria-hidden="true" />
-              {formsSold} <span className="text-xs font-normal text-slate-300">{t.formUnit}</span>
-            </span>
-          </div>
-          <div>
-            <span className="text-xs text-slate-400 block">{t.totalRegisteredLabel}</span>
-            <span className="font-bold text-lg sm:text-xl text-amber-400 flex items-center gap-1.5 mt-0.5">
-              <Users className="w-4 h-4" aria-hidden="true" />
-              {totalRegistered} <span className="text-xs font-normal text-slate-300">{t.personUnit}</span>
-            </span>
-          </div>
-          <div>
-            <span className="text-xs text-slate-400 block">{t.remainingFormsLabel}</span>
-            <span className={`font-bold text-lg sm:text-xl flex items-center gap-1.5 mt-0.5 ${
-              isFull ? 'text-rose-400' : 'text-emerald-400'
-            }`}>
-              <Ticket className="w-4 h-4" aria-hidden="true" />
-              {remainingForms} <span className="text-xs font-normal text-slate-300">{t.formUnit}</span>
-            </span>
-          </div>
-          <div>
-            <span className="text-xs text-slate-400 block">{t.totalFormsLabel}</span>
-            <span className="font-bold text-lg sm:text-xl text-slate-200 mt-0.5 block">
-              {totalQuota} <span className="text-xs font-normal text-slate-400">{t.formUnit}</span>
-            </span>
-          </div>
+        <div className="pt-4 border-t border-slate-700/80">
+          <span className="text-xs text-slate-400 block mb-1">{t.examDateLabel}</span>
+          <span className="font-semibold text-sm sm:text-base text-white flex items-center gap-1.5 mt-1">
+            <Calendar className="w-4 h-4 text-red-400" aria-hidden="true" />
+            {formattedExamDate.shortDate}
+          </span>
+          <span className="text-[11px] text-slate-300 block truncate mt-0.5">
+            {formattedExamDate.longDate}
+          </span>
         </div>
       </div>
     </section>
