@@ -94,11 +94,12 @@ export const PublicView: FC<PublicViewProps> = ({
     setSelectedRoom(room);
   }, []);
 
-  const handlePhotoClick = useCallback((room: ExamRoom, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handlePhotoClick = useCallback((room: ExamRoom, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (!room.imageUrl) return;
     setPreviewPhoto({
       isOpen: true,
-      url: room.imageUrl!,
+      url: room.imageUrl,
       title: formatRoomName(room.code, lang),
       subtitle: `${room.building} • ${room.floor} (JLPT ${room.level})`,
     });
@@ -175,6 +176,7 @@ export const PublicView: FC<PublicViewProps> = ({
         room={selectedRoom}
         isOpen={Boolean(selectedRoom)}
         onClose={() => setSelectedRoom(null)}
+        onViewPhoto={handlePhotoClick}
         lang={lang}
       />
 
