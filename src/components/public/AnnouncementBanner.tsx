@@ -19,20 +19,9 @@ export function AnnouncementBanner({ lang, examDate }: AnnouncementBannerProps) 
           <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" aria-hidden="true" />
           <span>{t.realtimeBadge}</span>
         </div>
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white mb-2">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white mb-6">
           {t.publicWelcomeTitle}
         </h2>
-        <p className="text-sm sm:text-base text-slate-200 mb-6 leading-relaxed">
-          {lang === 'lo' ? (
-            <>
-              <strong className="font-bold text-white">ຄົ້ນຫາດ້ວຍຊື່ຂອງທ່ານ</strong> ເພື່ອກວດເບິ່ງຫ້ອງສອບເສັງ. <strong className="font-bold text-slate-100">ຊື່ຜູ້ສອບຄົນອື່ນບໍ່ຖືກສະແດງຕໍ່ສາທາລະນະ.</strong>
-            </>
-          ) : (
-            <>
-              <strong className="font-bold text-white">Search with your name</strong> to find your assigned exam room. <strong className="font-bold text-slate-100">Other examinees' names are never displayed publicly.</strong>
-            </>
-          )}
-        </p>
 
         <div className="pt-4 border-t border-slate-700/80">
           <span className="text-xs text-slate-300 font-bold block mb-1">{t.examDateLabel}</span>
