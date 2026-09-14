@@ -155,13 +155,13 @@ export const translations = {
     clickToEnlarge: "ກົດເພື່ອເບິ່ງຮູບຂະໜາດເຕັມ",
     imageViewerTitle: "ຮູບພາບສະຖານທີ່",
 
-    // Rooms Section
+// Rooms Section
     roomsSectionTitle: "ລາຍການຫ້ອງສອບເສັງທັງໝົດ",
-    roomsSectionSubtitle: "ໃຊ້ຊື່ຂອງທ່ານຄົ້ນຫາຫ້ອງສອບເສັງ. ລາຍລະອຽດຫ້ອງເປີດເຜີຍໄດ້, ແຕ່ຊື່ຜູ້ສອບທັງໝົດເປັນຂໍ້ມູນສ່ວນຕົວ.",
+    roomsSectionSubtitle: "ໃຊ້ຊື່ເຕັມຂອງທ່ານຄົ້ນຫາຫ້ອງສອບເສັງ. ຫ້ອງສອບສົ່ງເຊັນ ຈະສະແດງເມື່ອທ່ານຄົ້ນຄົ້ນຫາ.",
     filterAllLevels: "ທຸກລະດັບ (N1 - N5)",
     filterAllBuildings: "ທຸກອາຄານ",
-    searchByNameOrRoom: "ຄົ້ນຫາຊື່ຜູ້ສອບເສັງ...",
-    searchByNameHint: "ພິມຊື່ ຫຼື ນາມສະກຸນຂອງທ່ານ ເພື່ອກວດເບິ່ງຫ້ອງສອບ",
+    searchByNameOrRoom: "ຄົ້ນຫາດ້ວຍຊື່ເຕັມຂອງທ່ານ...",
+    searchByNameHint: "ພິມຊື່ເຕັມຂອງທ່ານ ເພື່ອກວດເບິ່ງຫ້ອງສອບຂອງທ່ານ",
     buildingLabel: "ອາຄານ",
     floorLabel: "ຊັ້ນ",
     levelLabel: "ລະດັບ",
@@ -370,11 +370,11 @@ export const translations = {
 
     // Rooms Section
     roomsSectionTitle: "Examination Rooms Directory",
-    roomsSectionSubtitle: "Use your name to find your assigned exam room. Room details are public; examinee names remain private.",
+    roomsSectionSubtitle: "Use your full name to find your assigned exam room. Rooms are hidden until you search.",
     filterAllLevels: "All Levels (N1 - N5)",
     filterAllBuildings: "All Buildings",
-    searchByNameOrRoom: "Search by candidate name...",
-    searchByNameHint: "Enter your name or surname to find your room",
+    searchByNameOrRoom: "Search by your full name...",
+    searchByNameHint: "Enter your full name to find your exam room",
     buildingLabel: "Building",
     floorLabel: "Floor",
     levelLabel: "Level",

@@ -81,7 +81,7 @@ export const PublicView: FC<PublicViewProps> = ({
     const query = searchQuery.trim();
 
     if (!query) {
-      return matchLevel && matchBuilding;
+      return false; // Hide all rooms when no search query
     }
 
     return matchLevel && matchBuilding && matchedRoomIds.has(room.id);
