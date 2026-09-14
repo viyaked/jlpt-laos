@@ -105,10 +105,12 @@ export const PublicView: FC<PublicViewProps> = ({
     <div className="space-y-6 sm:space-y-8 pb-8 sm:pb-12 animate-fadeIn">
       <AnnouncementBanner lang={lang} examDate={examDate} />
 
-      <section className="space-y-6">
-        <FormQuotaOverview formQuota={formQuota} lang={lang} />
-        <LevelStatsGrid levelStats={levelStats} lang={lang} />
-      </section>
+      {formQuota.registrationOpen && (
+        <section className="space-y-6">
+          <FormQuotaOverview formQuota={formQuota} lang={lang} />
+          <LevelStatsGrid levelStats={levelStats} lang={lang} />
+        </section>
+      )}
 
       <section className="space-y-4 pt-4 border-t border-slate-200">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
