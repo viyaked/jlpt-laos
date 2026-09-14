@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear, getExamDate, setExamDate, getFormsSold, setFormsSold, getCampusMap, setCampusMap, setRegistrationOpen, getRegistrationOpen } from '../db';
+import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear, getExamDate, setExamDate, setFormsSold, getCampusMap, setCampusMap, setRegistrationOpen, getRegistrationOpen } from '../db';
 import { requireAdminAuth } from '../auth';
 import { broadcastEvent } from '../events';
 
@@ -277,9 +277,6 @@ router.put('/:level', requireAdminAuth, (req, res) => {
       return res.status(400).json({ error: 'registeredCount must be a valid non-negative number' });
     }
     newRegistered = registeredCount;
-    const diff = newRegistered - current.registered_count;
-    const currentSold = getFormsSold();
-    setFormsSold(Math.max(0, currentSold + diff));
   }
 
   if (fee !== undefined) {
