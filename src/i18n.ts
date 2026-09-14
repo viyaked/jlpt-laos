@@ -135,7 +135,7 @@ export const translations = {
     filledPercent: "ລົງທະບຽນແລ້ວ",
     seatsLeft: "ບ່ອນນັ່ງທີ່ເຫຼືອ",
     personUnit: "ຄົນ",
-    slotsUnit: "ໃບ",
+    slotsUnit: "ບ່ອນນັ່ງ",
     // Campus Map & Room Photos
     campusMapTitle: "ແຜນຜັງລວມສະຖານທີ່ສອບເສັງ",
     campusMapSubtitle: "ແຜນຜັງອາຄານ, ຈຸດລົງທະບຽນ ແລະ ຫ້ອງສອບເສັງທັງໝົດຂອງສະຖາບັນ",
