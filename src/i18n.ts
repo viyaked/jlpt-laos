@@ -332,10 +332,10 @@ export const translations = {
     quickTimePresets: "Suggested Times:",
     formUnit: "forms",
     registeredCount: "Registered Applicants",
-    remainingCount: "Remaining Slots",
+    remainingCount: "Remaining Seats",
     totalQuota: "Total Quota",
     filledPercent: "Capacity Filled",
-    seatsLeft: "Slots Available",
+    seatsLeft: "Seats Available",
     personUnit: "applicants",
     slotsUnit: "seats",
     // Campus Map & Room Photos
