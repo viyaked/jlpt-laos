@@ -41,7 +41,7 @@ export function RoomCard({
               <span className="font-bold text-lg sm:text-xl text-slate-900 group-hover:text-red-700 transition-colors truncate">
                 {roomName}
               </span>
-              <Badge variant="outline" size="sm" className="bg-slate-100 text-slate-700 border-slate-200 shrink-0">
+              <Badge variant="outline" size="sm" className="bg-slate-100 text-slate-900 border-slate-300 shrink-0 font-bold">
                 JLPT {room.level}
               </Badge>
             </div>
@@ -58,31 +58,31 @@ export function RoomCard({
               alt={room.code}
               className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-200"
             />
-            <div className="absolute bottom-2 right-2 bg-slate-950/75 backdrop-blur-xs text-white text-[10px] sm:text-xs px-2 py-0.5 rounded-full flex items-center gap-1 font-medium">
+            <div className="absolute bottom-2 right-2 bg-slate-950/75 backdrop-blur-xs text-white text-[10px] sm:text-xs px-2 py-0.5 rounded-full flex items-center gap-1 font-bold">
               <ImageIcon className="w-3 h-3 text-red-400" aria-hidden="true" />
               <span>{t.viewRoomPhotoBtn}</span>
             </div>
           </div>
         )}
 
-        <div className="space-y-1.5 mb-4 text-xs sm:text-sm text-slate-600">
+        <div className="space-y-1.5 mb-4 text-xs sm:text-sm text-slate-700">
           <div className="flex items-center gap-2">
-            <Building className="w-4 h-4 text-slate-400 shrink-0" aria-hidden="true" />
+            <Building className="w-4 h-4 text-slate-500 shrink-0" aria-hidden="true" />
             <span>
-              <strong className="font-semibold text-slate-700">{t.buildingLabel}:</strong> {room.building}
+              <strong className="font-bold text-slate-900">{t.buildingLabel}:</strong> <span className="font-bold text-slate-900">{room.building}</span>
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-slate-400 shrink-0" aria-hidden="true" />
+            <Layers className="w-4 h-4 text-slate-500 shrink-0" aria-hidden="true" />
             <span>
-              <strong className="font-semibold text-slate-700">{t.floorLabel}:</strong> {room.floor}
+              <strong className="font-bold text-slate-900">{t.floorLabel}:</strong> <span className="font-bold text-slate-900">{room.floor}</span>
             </span>
           </div>
         </div>
 
         {isMatched && (
-          <div className="bg-emerald-100 text-emerald-900 p-2 rounded-lg text-xs sm:text-sm font-medium mb-3 border border-emerald-200 flex items-center gap-1.5 animate-fadeIn">
-            <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />
+          <div className="bg-emerald-100 text-emerald-950 p-2.5 rounded-lg text-xs sm:text-sm font-bold mb-3 border border-emerald-300 flex items-center gap-2 animate-fadeIn shadow-xs">
+            <CheckCircle2 className="w-4.5 h-4.5 text-emerald-700 shrink-0" aria-hidden="true" />
             <span>{t.roomAssignmentFound}</span>
           </div>
         )}
@@ -93,7 +93,7 @@ export function RoomCard({
         size="sm"
         fullWidth
         leftIcon={<ExternalLink className="w-4 h-4" />}
-        className="group-hover:bg-red-700 group-hover:text-white transition-colors py-2.5"
+        className="group-hover:bg-red-700 group-hover:text-white transition-colors py-2.5 font-bold"
       >
         {t.viewRoomDetailsBtn}
       </Button>

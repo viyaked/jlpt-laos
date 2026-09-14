@@ -72,13 +72,23 @@ export function RoomFilters({
         </div>
       </div>
 
-      <div className="text-[11px] text-slate-500 flex items-center gap-1.5 italic">
-        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <div className="text-xs text-slate-600 flex items-center gap-1.5">
+        <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="10" strokeWidth="2" />
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 16v-4" />
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8h.01" />
         </svg>
-        <span>{t.searchByNameHint}</span>
+        <span>
+          {lang === 'lo' ? (
+            <>
+              <strong className="font-bold text-slate-800">ພິມຊື່ເຕັມຂອງທ່ານ</strong> ເພື່ອກວດເບິ່ງຫ້ອງສອບຂອງທ່ານ
+            </>
+          ) : (
+            <>
+              <strong className="font-bold text-slate-800">Enter your full name</strong> to find your exam room
+            </>
+          )}
+        </span>
       </div>
     </div>
   );

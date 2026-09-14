@@ -37,14 +37,14 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
       </div>
 
       <div className={`p-4 sm:p-5 rounded-xl border ${registrationOpen ? 'bg-emerald-50 border-emerald-100 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'}`}>
-        <span className="text-xs font-semibold block mb-1">
+        <span className="text-xs font-bold block mb-1">
           {t.remainingFormsLabel}
         </span>
         <div className="flex items-baseline gap-1.5">
           <span className={`text-3xl sm:text-4xl font-black tracking-tight ${registrationOpen ? 'text-emerald-700' : 'text-rose-700'}`}>
             {remainingForms}
           </span>
-          <span className="text-xs font-medium opacity-80">
+          <span className="text-xs font-bold opacity-90">
             {t.formUnit}
           </span>
         </div>

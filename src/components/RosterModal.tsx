@@ -36,25 +36,25 @@ export const RosterModal = ({ room, isOpen, onClose, lang }: RosterModalProps) =
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div className="rounded-lg bg-slate-50 border border-slate-200 p-3">
-              <span className="text-xs text-slate-500 block">{t.levelLabel}</span>
-              <strong>JLPT {room.level}</strong>
+              <span className="text-xs text-slate-600 block font-semibold">{t.levelLabel}</span>
+              <strong className="font-bold text-base text-slate-900">JLPT {room.level}</strong>
             </div>
             <div className="rounded-lg bg-slate-50 border border-slate-200 p-3">
-              <span className="text-xs text-slate-500 block">{t.buildingLabel}</span>
-              <strong>{room.building}</strong>
+              <span className="text-xs text-slate-600 block font-semibold">{t.buildingLabel}</span>
+              <strong className="font-bold text-base text-slate-900">{room.building}</strong>
             </div>
             <div className="rounded-lg bg-slate-50 border border-slate-200 p-3">
-              <span className="text-xs text-slate-500 block">{t.floorLabel}</span>
-              <strong>{room.floor}</strong>
+              <span className="text-xs text-slate-600 block font-semibold">{t.floorLabel}</span>
+              <strong className="font-bold text-base text-slate-900">{room.floor}</strong>
             </div>
           </div>
 
-          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-900">
-            <div className="flex items-start gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" aria-hidden="true" />
+          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3.5 text-xs sm:text-sm text-emerald-950">
+            <div className="flex items-start gap-2.5">
+              <ShieldCheck className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" aria-hidden="true" />
               <div>
-                <strong className="block mb-1">{t.roomDetailsPrivacyTitle}</strong>
-                <span>{t.roomDetailsPrivacyDesc}</span>
+                <strong className="block mb-1 font-bold text-emerald-950 text-sm">{t.roomDetailsPrivacyTitle}</strong>
+                <span className="font-medium text-emerald-900 leading-relaxed">{t.roomDetailsPrivacyDesc}</span>
               </div>
             </div>
           </div>

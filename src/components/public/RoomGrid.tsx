@@ -24,11 +24,19 @@ export function RoomGrid({
     return (
       <div className="bg-white rounded-xl border border-slate-200 p-12 text-center animate-fadeIn">
         <AlertCircle className="w-10 h-10 text-slate-400 mx-auto mb-3" aria-hidden="true" />
-        <h4 className="font-semibold text-slate-800 text-base mb-1">
+        <h4 className="font-bold text-slate-900 text-base sm:text-lg mb-1.5">
           {t.noRoomsFound}
         </h4>
-        <p className="text-xs text-slate-500">
-          {t.searchByNameHint}
+        <p className="text-xs sm:text-sm text-slate-600">
+          {lang === 'lo' ? (
+            <>
+              ກະລຸນາ <strong className="font-bold text-slate-900">ພິມຊື່ເຕັມຂອງທ່ານ</strong> ເພື່ອກວດເບິ່ງຫ້ອງສອບເສັງ
+            </>
+          ) : (
+            <>
+              Please <strong className="font-bold text-slate-900">enter your full name</strong> to find your exam room
+            </>
+          )}
         </p>
       </div>
     );

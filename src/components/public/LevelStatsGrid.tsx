@@ -43,33 +43,33 @@ export function LevelStatsGrid({ levelStats, lang }: LevelStatsGridProps) {
                 </div>
 
                 <div className="bg-slate-50 border border-slate-100 rounded-lg p-3 my-2">
-                  <span className="text-[11px] font-medium text-slate-600 block">
+                  <span className="text-xs font-bold text-slate-700 block">
                     {t.remainingCount}
                   </span>
                   <div className="flex items-baseline gap-1 mt-1">
                     <span className={`text-2xl font-black ${isFull ? 'text-rose-600' : 'text-emerald-700'}`}>
                       {remaining}
                     </span>
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-xs font-bold text-slate-600">
                       {t.slotsUnit}
                     </span>
                   </div>
                   {isFull && (
-                    <span className="text-[11px] text-rose-600 font-medium mt-1 block">
+                    <span className="text-xs text-rose-700 font-bold mt-1 block">
                       {t.statusFull}
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 space-y-1 text-[11px] text-slate-500">
-                <div className="flex items-center justify-between">
+              <div className="pt-3 border-t border-slate-100 space-y-1 text-xs text-slate-600">
+                <div className="flex items-center justify-between font-bold text-slate-700">
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-slate-400" aria-hidden="true" />
+                    <Clock className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
                     <span>{stat.testTime}</span>
                   </span>
                 </div>
-                <div className="flex items-center justify-between font-mono text-slate-700 font-semibold">
+                <div className="flex items-center justify-between font-mono text-slate-900 font-bold">
                   <span>{stat.fee.toLocaleString()} LAK</span>
                 </div>
               </div>

@@ -1,36 +1,53 @@
 @import "tailwindcss";
 
+/* Phetsarath OT Regular (400) */
 @font-face {
   font-family: 'Phetsarath OT';
   src: local('Phetsarath OT'),
        local('PhetsarathOT'),
+       url('/fonts/PhetsarathOT-Regular.woff2?v=4103') format('woff2'),
        url('/fonts/PhetsarathOT-Regular.ttf') format('truetype');
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 400;
   font-display: swap;
   unicode-range: U+0E80-0EFF;
   size-adjust: 125%;
 }
 
+/* Phetsarath OT SemiBold (500-600) */
 @font-face {
   font-family: 'Phetsarath OT';
-  src: local('Phetsarath OT'),
-       local('PhetsarathOT'),
-       url('/fonts/PhetsarathOT-Regular.ttf') format('truetype');
-  font-style: italic;
-  font-weight: 100 900;
+  src: local('Phetsarath OT SemiBold'),
+       local('PhetsarathOT-SemiBold'),
+       url('/fonts/PhetsarathOT-SemiBold.woff2?v=4103') format('woff2');
+  font-style: normal;
+  font-weight: 500 600;
   font-display: swap;
   unicode-range: U+0E80-0EFF;
   size-adjust: 125%;
 }
 
+/* Phetsarath OT Bold (700-900) */
+@font-face {
+  font-family: 'Phetsarath OT';
+  src: local('Phetsarath OT Bold'),
+       local('PhetsarathOT-Bold'),
+       url('/fonts/PhetsarathOT-Bold.woff2?v=4103') format('woff2');
+  font-style: normal;
+  font-weight: 700 900;
+  font-display: swap;
+  unicode-range: U+0E80-0EFF;
+  size-adjust: 125%;
+}
+
+/* Lao System Fallback */
 @font-face {
   font-family: 'Lao System Fallback';
   src: local('Saysettha OT'),
        local('Noto Sans Lao'),
        local('Lao Sangam MN');
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 400 900;
   font-display: swap;
   unicode-range: U+0E80-0EFF;
   size-adjust: 120%;
