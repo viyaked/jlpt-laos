@@ -184,13 +184,14 @@ const handleAuthError = (err: any) => {
 
   const handleUpdateLevel = async (
     level: string,
-    data: { registered: number; fee: number; testTime: string }
+    data: { registered: number; fee: number; testTime: string; quota: number }
   ) => {
     try {
       await api.updateLevel(level, {
         registeredCount: data.registered,
         fee: data.fee,
         testTime: data.testTime,
+        quota: data.quota,
       });
       await fetchLevels();
     } catch (err: any) {

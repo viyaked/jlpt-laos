@@ -266,7 +266,7 @@ export const api = {
 
   async updateLevel(
     level: string,
-    data: number | { registeredCount?: number; fee?: number; testTime?: string }
+    data: number | { registeredCount?: number; fee?: number; testTime?: string; quota?: number }
   ) {
     const payload = typeof data === 'number' ? { registeredCount: data } : data;
     const res = await fetch(`/api/levels/${level}`, {

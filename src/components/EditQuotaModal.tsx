@@ -9,7 +9,7 @@ interface EditQuotaModalProps {
   onClose: () => void;
   onSave: (
     level: string,
-    data: { registered: number; fee: number; testTime: string }
+    data: { registered: number; fee: number; testTime: string; quota: number }
   ) => void;
   lang: Language;
 }
@@ -32,6 +32,7 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
   const [registered, setRegistered] = useState(stat ? stat.registered : 0);
   const [fee, setFee] = useState(stat ? stat.fee : 350000);
   const [testTime, setTestTime] = useState(stat ? stat.testTime : '09:00 - 11:30');
+  const [quota, setQuota] = useState(stat ? stat.quota : 100);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
       setRegistered(stat.registered);
       setFee(stat.fee);
       setTestTime(stat.testTime);
+      setQuota(stat.quota);
       setError('');
     }
   }, [stat]);
@@ -56,8 +58,16 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
       setError(lang === 'lo' ? 'ຄ່າສະໝັກບໍ່ສາມາດຕິດລົບໄດ້' : 'Fee cannot be negative');
       return;
     }
+    if (quota < 0) {
+      setError(lang === 'lo' ? 'ຄວາມຈຸຫ້ອງບໍ່ສາມາດຕິດລົບໄດ້' : 'Quota cannot be negative');
+      return;
+    }
     if (!testTime.trim()) {
       setError(lang === 'lo' ? 'ກະລຸນາລະບຸເວລາສອບເສັງ' : 'Please enter exam time');
+      return;
+    }
+    if (registered > quota) {
+      setError(lang === 'lo' ? 'ຈຳນວນຜູ້ສະໝັກບໍ່ສາມາດເກີນຄວາມຈຸຫ້ອງໄດ້' : 'Registered count cannot exceed quota');
       return;
     }
 
@@ -65,6 +75,7 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
       registered,
       fee,
       testTime: testTime.trim(),
+      quota,
     });
     onClose();
   };
@@ -183,6 +194,33 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Seat Quota Field */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                <Users className="w-3.5 h-3.5 text-emerald-600" />
+                <span>{t.totalQuota} ({t.slotsUnit})</span>
+              </label>
+              <span className="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
+                {Number(quota || 0).toLocaleString()} {t.slotsUnit}
+              </span>
+            </div>
+            <div className="relative">
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={quota}
+                onChange={(e) => setQuota(parseInt(e.target.value) || 0)}
+                className="w-full px-3 py-2 text-sm font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:bg-white focus:outline-none transition-all"
+                required
+              />
+            </div>
+            <p className="text-[11px] text-slate-400 mt-1">
+              {lang === 'lo' ? 'ຈຳນວນຜູ້ສອບທີ່ສະຖານທີ່ຈະຮັບໃນລະດັບນີ້' : 'Total number of examinees to accept for this level'}
+            </p>
           </div>
 
           {/* 3. Registered Applicants Count Field */}

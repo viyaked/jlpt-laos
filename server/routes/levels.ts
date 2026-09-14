@@ -215,7 +215,7 @@ router.post('/:level/increment', requireAdminAuth, (req, res) => {
 // Admin: Direct edit count, fee, and test time for a level
 router.put('/:level', requireAdminAuth, (req, res) => {
   const { level } = req.params;
-  const { registeredCount, fee, testTime } = req.body;
+  const { registeredCount, fee, testTime, quota } = req.body;
 
   const current = db.prepare('SELECT * FROM exam_levels WHERE level = ?').get(level) as any;
   if (!current) {
@@ -225,6 +225,7 @@ router.put('/:level', requireAdminAuth, (req, res) => {
   let newRegistered = current.registered_count;
   let newFee = current.fee;
   let newTestTime = current.test_time;
+  let newQuota = current.total_quota;
 
   if (registeredCount !== undefined) {
     if (typeof registeredCount !== 'number' || registeredCount < 0) {
@@ -250,18 +251,26 @@ router.put('/:level', requireAdminAuth, (req, res) => {
     newTestTime = testTime.trim();
   }
 
+  if (quota !== undefined) {
+    if (typeof quota !== 'number' || quota < 0) {
+      return res.status(400).json({ error: 'quota must be a valid non-negative number' });
+    }
+    newQuota = quota;
+  }
+
   db.prepare(`
     UPDATE exam_levels 
-    SET registered_count = ?, fee = ?, test_time = ?, updated_at = CURRENT_TIMESTAMP 
+    SET registered_count = ?, fee = ?, test_time = ?, total_quota = ?, updated_at = CURRENT_TIMESTAMP 
     WHERE level = ?
-  `).run(newRegistered, newFee, newTestTime, level);
+  `).run(newRegistered, newFee, newTestTime, newQuota, level);
 
   const updatedFormQuota = getTotalFormQuota();
   broadcastEvent('levels_updated', { 
     level, 
     registeredCount: newRegistered, 
     fee: newFee, 
-    testTime: newTestTime, 
+    testTime: newTestTime,
+    quota: newQuota,
     formQuota: updatedFormQuota 
   });
 
@@ -270,6 +279,7 @@ router.put('/:level', requireAdminAuth, (req, res) => {
     registeredCount: newRegistered,
     fee: newFee,
     testTime: newTestTime,
+    quota: newQuota,
     formQuota: updatedFormQuota,
   });
 });

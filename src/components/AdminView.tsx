@@ -34,7 +34,7 @@ interface AdminViewProps {
   onUpdateExamSchedule: (newYear: string, newDate: string) => void;
   onUpdateLevel?: (
     level: string,
-    data: { registered: number; fee: number; testTime: string }
+    data: { registered: number; fee: number; testTime: string; quota: number }
   ) => void;
   onUpdateLevelRegistered?: (level: string, registered: number) => void;
   onSaveRoom: (roomData: Omit<ExamRoom, 'id' | 'examinees'> & { id?: string }) => void;
@@ -293,7 +293,7 @@ export const AdminView: FC<AdminViewProps> = ({
         stat={editingStat}
         isOpen={Boolean(editingStat)}
         onClose={() => setEditingStat(null)}
-        onSave={(level: string, data: { registered: number; fee: number; testTime: string }) => {
+        onSave={(level: string, data: { registered: number; fee: number; testTime: string; quota: number }) => {
           if (onUpdateLevel) {
             onUpdateLevel(level, data);
           } else if (onUpdateLevelRegistered) {
