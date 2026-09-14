@@ -22,7 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-server/data/*.db*
+# SQLite WAL files ignored, keep base db committed for deployment persistence
 server/data/*.db-wal
 server/data/*.db-shm
 .env

@@ -261,16 +261,16 @@ export function seedDefaultData() {
 
     // 0. Settings
     setSystemSetting('total_form_quota', '500');
-    setSystemSetting('forms_sold', '0');
+    setSystemSetting('forms_sold', '434');
     setSystemSetting('exam_year', '2026');
     setSystemSetting('exam_date', '2026-07-05');
 
-    // 1. Levels  (fee: N4/N5 = 300,000 ກີບ | N1/N2/N3 = 350,000 ກີບ)
-    insertLevel.run('N5', 150, 0, 300000, '09:00 - 11:30');
-    insertLevel.run('N4', 120, 0, 300000, '09:00 - 11:45');
-    insertLevel.run('N3', 100, 0, 350000, '13:30 - 16:30');
-    insertLevel.run('N2', 80,  0, 350000, '13:30 - 16:45');
-    insertLevel.run('N1', 50,  0, 350000, '13:30 - 17:00');
+    // 1. Levels
+    insertLevel.run('N5', 150, 124, 350000, '09:00 - 11:30');
+    insertLevel.run('N4', 120, 98,  380000, '09:00 - 11:45');
+    insertLevel.run('N3', 100, 92,  420000, '13:30 - 16:30');
+    insertLevel.run('N2', 80,  81,  480000, '13:30 - 16:45');
+    insertLevel.run('N1', 50,  38,  550000, '13:30 - 17:00');
 
     // 2. Rooms — ຕາມແຜນທີ່ LJI Campus
     const rooms = [
