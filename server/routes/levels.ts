@@ -188,7 +188,7 @@ router.put('/sold', requireAdminAuth, (req, res) => {
   });
 });
 
-// Admin: +1 quick increment for a level (deducts from overall form quota)
+// Admin: +1 quick increment for a level (adds registered examinee, NOT forms sold)
 router.post('/:level/increment', requireAdminAuth, (req, res) => {
   const { level } = req.params;
   const current = db.prepare('SELECT registered_count FROM exam_levels WHERE level = ?').get(level) as any;
@@ -198,8 +198,8 @@ router.post('/:level/increment', requireAdminAuth, (req, res) => {
   }
 
   const formQuota = getTotalFormQuota();
-  if (formQuota.remaining <= 0) {
-    return res.status(400).json({ error: 'Total form quota is already full' });
+  if (formQuota.remainingSeats <= 0) {
+    return res.status(400).json({ error: 'Total seat quota is already full' });
   }
 
   const newRegistered = current.registered_count + 1;
@@ -208,9 +208,6 @@ router.post('/:level/increment', requireAdminAuth, (req, res) => {
     SET registered_count = ?, updated_at = CURRENT_TIMESTAMP 
     WHERE level = ?
   `).run(newRegistered, level);
-
-  const currentSold = getFormsSold();
-  setFormsSold(currentSold + 1);
 
   const updatedFormQuota = getTotalFormQuota();
   broadcastEvent('levels_updated', { level, registeredCount: newRegistered, formQuota: updatedFormQuota });
