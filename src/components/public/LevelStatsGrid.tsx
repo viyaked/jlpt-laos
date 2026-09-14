@@ -25,25 +25,25 @@ export function LevelStatsGrid({ levelStats, formQuota, lang }: LevelStatsGridPr
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         {levelStats.map((stat) => {
           const levelPercentOfTotal = totalRegistered > 0
             ? Math.round((stat.registered / totalRegistered) * 100)
             : 0;
 
           return (
-            <Card key={stat.level} variant="default" padding="md" className="flex flex-col justify-between hover:shadow-md transition-shadow">
+            <Card key={stat.level} variant="default" padding="sm" className="flex flex-col justify-between hover:shadow-md transition-shadow">
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="w-8 h-8 rounded-lg bg-slate-900 text-white font-black text-sm flex items-center justify-center shadow-xs">
+                    <span className="w-8 h-8 rounded-lg bg-slate-900 text-white font-black text-sm flex items-center justify-center shadow-xs shrink-0">
                       {stat.level}
                     </span>
                     <span className="text-xs font-bold text-slate-800">
                       JLPT {stat.level}
                     </span>
                   </div>
-                  <Badge variant="outline" size="xs" className="bg-slate-100 text-slate-600 border-slate-200">
+                  <Badge variant="outline" size="xs" className="bg-slate-100 text-slate-600 border-slate-200 shrink-0">
                     {levelPercentOfTotal}% {t.percentOfTotal}
                   </Badge>
                 </div>

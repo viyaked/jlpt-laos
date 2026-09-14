@@ -82,7 +82,15 @@ export function Modal({
     md: 'max-w-lg',
     lg: 'max-w-2xl',
     xl: 'max-w-4xl',
-    full: 'max-w-[90vw]',
+    full: 'max-w-full sm:max-w-[90vw]',
+  };
+
+  const maxHeights = {
+    sm: 'max-h-[70vh]',
+    md: 'max-h-[70vh]',
+    lg: 'max-h-[80vh]',
+    xl: 'max-h-[85vh]',
+    full: 'max-h-[90vh] sm:max-h-[80vh]',
   };
 
   return (
@@ -103,7 +111,7 @@ export function Modal({
         ref={contentRef}
         tabIndex={-1}
         className={`
-          relative w-full ${sizes[size]} bg-white rounded-2xl shadow-2xl
+          relative w-full ${sizes[size]} ${maxHeights[size]} bg-white rounded-2xl shadow-2xl
           animate-slideUp overflow-hidden
           ${className}
         `}

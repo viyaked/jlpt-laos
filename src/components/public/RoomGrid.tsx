@@ -35,7 +35,7 @@ export function RoomGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-slideUp" role="list">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 animate-slideUp" role="list">
       {rooms.map((room) => {
         const isMatched = matchedRoomIds.has(room.id);
 

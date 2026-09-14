@@ -102,7 +102,7 @@ export const PublicView: FC<PublicViewProps> = ({
   }, [lang]);
 
   return (
-    <div className="space-y-8 pb-12 animate-fadeIn">
+    <div className="space-y-6 sm:space-y-8 pb-8 sm:pb-12 animate-fadeIn">
       <AnnouncementBanner formQuota={formQuota} lang={lang} examDate={examDate} />
 
       <section className="space-y-6">

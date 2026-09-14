@@ -19,7 +19,8 @@ export const RosterModal = ({ room, isOpen, onClose, lang }: RosterModalProps) =
       onClose={onClose}
       title={room ? formatRoomName(room.code, lang) : undefined}
       description={room ? `JLPT ${room.level} • ${room.building} • ${room.floor}` : undefined}
-      size="md"
+      size="full"
+      className="rounded-none sm:rounded-2xl"
     >
       {room && (
         <div className="space-y-4">

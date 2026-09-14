@@ -27,7 +27,7 @@ export function RoomFilters({
   const t = translations[lang];
 
   return (
-    <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-3 animate-slideUp">
+    <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-3 animate-slideUp">
       <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
         <div className="sm:col-span-6 relative">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
@@ -36,7 +36,7 @@ export function RoomFilters({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder={t.searchByNameOrRoom}
-            className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600"
+            className="w-full pl-9 pr-4 py-3 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600"
             aria-label={t.searchByNameOrRoom}
           />
         </div>
@@ -54,7 +54,7 @@ export function RoomFilters({
               { value: 'N5', label: 'JLPT N5' },
             ]}
             aria-label={t.levelLabel}
-            className="font-medium text-slate-700"
+            className="py-3 text-sm font-medium text-slate-700"
           />
         </div>
 
@@ -67,7 +67,7 @@ export function RoomFilters({
               ...buildings.map((b) => ({ value: b, label: b })),
             ]}
             aria-label={t.buildingLabel}
-            className="font-medium text-slate-700"
+            className="py-3 text-sm font-medium text-slate-700"
           />
         </div>
       </div>

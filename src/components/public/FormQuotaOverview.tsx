@@ -18,7 +18,7 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
   const isAlmostFull = !isFull && totalRemaining <= 30;
 
   return (
-    <Card variant="default" padding="lg" className="animate-slideUp">
+    <Card variant="default" padding="none" className="p-4 sm:p-5 md:p-6 animate-slideUp">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -50,13 +50,13 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 sm:p-4">
           <span className="text-xs font-semibold text-slate-600 block">
             {t.totalFormsLabel}
           </span>
           <div className="flex items-baseline gap-1.5 mt-2">
-            <span className="text-3xl font-black text-slate-900 tracking-tight">
+            <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               {totalQuota}
             </span>
             <span className="text-xs font-medium text-slate-500">
@@ -65,12 +65,12 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
           </div>
         </div>
 
-        <div className="bg-blue-50/70 border border-blue-100 rounded-xl p-4">
+        <div className="bg-blue-50/70 border border-blue-100 rounded-xl p-3 sm:p-4">
           <span className="text-xs font-semibold text-blue-900 block">
             {t.usedFormsLabel}
           </span>
           <div className="flex items-baseline gap-1.5 mt-2">
-            <span className="text-3xl font-black text-blue-800 tracking-tight">
+            <span className="text-2xl sm:text-3xl font-black text-blue-800 tracking-tight">
               {totalRegistered}
             </span>
             <span className="text-xs font-medium text-blue-600">
@@ -79,7 +79,7 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
           </div>
         </div>
 
-        <div className={`p-4 rounded-xl border ${
+        <div className={`p-3 sm:p-4 rounded-xl border ${
           isFull
             ? 'bg-rose-50 border-rose-200 text-rose-800'
             : 'bg-emerald-50/70 border-emerald-100 text-emerald-800'
@@ -88,7 +88,7 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
             {t.remainingFormsLabel}
           </span>
           <div className="flex items-baseline gap-1.5 mt-2">
-            <span className={`text-3xl font-black tracking-tight ${
+            <span className={`text-2xl sm:text-3xl font-black tracking-tight ${
               isFull ? 'text-rose-700' : 'text-emerald-700'
             }`}>
               {totalRemaining}
@@ -105,7 +105,7 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
           <span>{t.filledPercent}: <strong className="text-slate-900">{percentFilled}%</strong></span>
           <span>{totalRemaining} {t.formUnit} {t.seatsLeft}</span>
         </div>
-        <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden p-0.5 border border-slate-200">
+        <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden p-0.5 border border-slate-200">
           <div
             className={`h-full rounded-full transition-all duration-500 ${
               isFull ? 'bg-red-600' : isAlmostFull ? 'bg-amber-500' : 'bg-red-700'
