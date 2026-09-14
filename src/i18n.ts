@@ -126,7 +126,7 @@ export const translations = {
     quickTimePresets: "ເລືອກເວລາແນະນຳ:",
     formUnit: "ຟອມ",
     registeredCount: "ຈຳນວນຜູ້ສະໝັກແລ້ວ",
-    remainingCount: "ຈຳນວນໃບສະໝັກທີ່ເຫຼືອ",
+    remainingCount: "ຈຳນວນບ່ອນນັ່ງທີ່ຍັງເຫຼືອ",
     totalQuota: "ໂຄຕ້າທັງໝົດ",
     filledPercent: "ລົງທະບຽນແລ້ວ",
     seatsLeft: "ບ່ອນນັ່ງທີ່ເຫຼືອ",
