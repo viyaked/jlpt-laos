@@ -30,6 +30,7 @@ export interface LevelsResponse {
 
 export interface Examinee {
   id: string;
+  fullName?: string;
   firstName: string;
   lastName: string;
   registeredDate: string;

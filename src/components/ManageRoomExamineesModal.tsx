@@ -219,7 +219,7 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
                             {index + 1}
                           </td>
                           <td className="py-2.5 px-4 font-medium text-slate-900">
-                            {ex.firstName} {ex.lastName}
+                            {ex.fullName || `${ex.firstName} ${ex.lastName}`}
                           </td>
                           <td className="py-2.5 px-4 text-center">
                             <button
