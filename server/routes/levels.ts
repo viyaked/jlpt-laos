@@ -34,6 +34,7 @@ router.get('/', (req, res) => {
   const formattedLevels = levels.map((lvl) => ({
     level: lvl.level,
     registeredCount: lvl.registered_count,
+    total_quota: lvl.total_quota,
     fee: lvl.fee,
     testTime: lvl.test_time,
     updatedAt: lvl.updated_at,
