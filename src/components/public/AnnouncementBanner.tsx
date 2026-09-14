@@ -12,6 +12,7 @@ export function AnnouncementBanner({ formQuota, lang, examDate }: AnnouncementBa
   const t = translations[lang];
   const formattedExamDate = formatExamDate(examDate, lang);
 
+  const formsSold = formQuota.formsSold;
   const totalRegistered = formQuota.totalRegistered;
   const totalQuota = formQuota.totalQuota;
   const remainingForms = formQuota.remainingForms;
@@ -47,7 +48,14 @@ export function AnnouncementBanner({ formQuota, lang, examDate }: AnnouncementBa
             <span className="text-xs text-slate-400 block">{t.usedFormsLabel}</span>
             <span className="font-bold text-lg sm:text-xl text-blue-400 flex items-center gap-1.5 mt-0.5">
               <Users className="w-4 h-4" aria-hidden="true" />
-              {totalRegistered} <span className="text-xs font-normal text-slate-300">{t.formUnit}</span>
+              {formsSold} <span className="text-xs font-normal text-slate-300">{t.formUnit}</span>
+            </span>
+          </div>
+          <div>
+            <span className="text-xs text-slate-400 block">{t.totalRegisteredLabel}</span>
+            <span className="font-bold text-lg sm:text-xl text-amber-400 flex items-center gap-1.5 mt-0.5">
+              <Users className="w-4 h-4" aria-hidden="true" />
+              {totalRegistered} <span className="text-xs font-normal text-slate-300">{t.personUnit}</span>
             </span>
           </div>
           <div>
