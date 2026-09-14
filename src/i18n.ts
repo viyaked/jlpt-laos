@@ -3,13 +3,13 @@ import type { Language } from './types';
 export function getAnnualExamTitle(lang: Language, year: string = '2026'): string {
   return lang === 'lo'
     ? `ການສອບເສັງວັດລະດັບພາສາຍີ່ປຸ່ນ JLPT ປະຈຳປີ ${year}`
-    : `Annual Japanese Language Proficiency Test (JLPT) ${year}`;
+    : `Japanese Language Proficiency Test (JLPT) ${year}`;
 }
 
 export function getAnnualExamShort(lang: Language, year: string = '2026'): string {
   return lang === 'lo'
     ? `JLPT ປະຈຳປີ ${year}`
-    : `Annual JLPT ${year}`;
+    : `JLPT ${year}`;
 }
 
 export function formatExamDate(dateStr: string = '2026-07-05', lang: Language = 'lo'): { longDate: string; shortDate: string } {
@@ -306,8 +306,8 @@ export const translations = {
     // Header & Meta
     instituteName: "Lao-Japan Institute",
     instituteSubtitle: "",
-    annualExamTitle: "Annual Japanese Language Proficiency Test (JLPT) 2026",
-    annualExamShort: "Annual JLPT 2026",
+    annualExamTitle: "Japanese Language Proficiency Test (JLPT) 2026",
+    annualExamShort: "JLPT 2026",
     examDate: "Sunday, July 5, 2026",
     examDateLabel: "Exam Date",
     publicView: "Public Portal",
@@ -543,6 +543,6 @@ export const translations = {
     resetSuccess: "Demo data has been reset to defaults!",
     saveSuccess: "Changes saved successfully!",
     quotaWarning: "Registered count cannot exceed total quota",
-    footerText: "Lao-Japan Institute © 2026. Annual Japanese Language Proficiency Test (JLPT) Management System."
+    footerText: "Lao-Japan Institute © 2026. Japanese Language Proficiency Test (JLPT) Management System."
   }
 };
