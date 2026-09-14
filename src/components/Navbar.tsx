@@ -40,9 +40,6 @@ export const Navbar: FC<NavbarProps> = ({
             {examShort} &bull; {t.examDateLabel}: <strong className="text-white font-semibold">{formattedExamDate.longDate}</strong>
           </span>
         </div>
-        <div className="hidden sm:flex items-center gap-3 text-slate-400">
-          <span>{t.instituteSubtitle}</span>
-        </div>
       </div>
 
       {/* Main Navbar */}

@@ -63,7 +63,7 @@ export const translations = {
   lo: {
     // Header & Meta
     instituteName: "ສະຖາບັນລາວ-ຍີ່ປຸ່ນ",
-    instituteSubtitle: "ສູນສອບເສັງມາດຕະຖານສາກົນ",
+    instituteSubtitle: "",
     annualExamTitle: "ການສອບເສັງວັດລະດັບພາສາຍີ່ປຸ່ນ JLPT ປະຈຳປີ 2026",
     annualExamShort: "JLPT ປະຈຳປີ 2026",
     examDate: "ວັນອາທິດ, 5 ກໍລະກົດ 2026",
@@ -278,7 +278,7 @@ export const translations = {
   en: {
     // Header & Meta
     instituteName: "Lao-Japan Institute",
-    instituteSubtitle: "International Examination Center",
+    instituteSubtitle: "",
     annualExamTitle: "Annual Japanese Language Proficiency Test (JLPT) 2026",
     annualExamShort: "Annual JLPT 2026",
     examDate: "Sunday, July 5, 2026",
