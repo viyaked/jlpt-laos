@@ -22,10 +22,6 @@ interface PublicViewProps {
   formQuota: FormQuotaStat;
   examRooms: ExamRoom[];
   announcements?: Announcement[];
-  isAdmin?: boolean;
-  onPostAnnouncement?: () => void;
-  onEditAnnouncement?: (announcement: Announcement) => void;
-  onDeleteAnnouncement?: (id: string) => void;
   lang: Language;
   examYear?: string;
   examDate?: string;
@@ -37,10 +33,6 @@ export const PublicView: FC<PublicViewProps> = ({
   formQuota,
   examRooms,
   announcements = [],
-  isAdmin = false,
-  onPostAnnouncement,
-  onEditAnnouncement,
-  onDeleteAnnouncement,
   lang,
   examYear: _examYear = '2026',
   examDate = '2026-07-05',
@@ -128,10 +120,6 @@ export const PublicView: FC<PublicViewProps> = ({
       <InformationBoard
         announcements={announcements}
         lang={lang}
-        isAdmin={isAdmin}
-        onPostClick={onPostAnnouncement}
-        onEditClick={onEditAnnouncement}
-        onDeleteClick={onDeleteAnnouncement}
         onViewPoster={handleViewPoster}
       />
 

@@ -6,7 +6,6 @@ import { api, getAuthToken, subscribeToSSE } from './api';
 import { Navbar } from './components/Navbar';
 import { PublicView } from './components/PublicView';
 import { AdminView } from './components/AdminView';
-import { AddEditAnnouncementModal } from './components/AddEditAnnouncementModal';
 
 const STORAGE_KEY_LANG = 'jlpt_lang_v1';
 const STORAGE_KEY_AUTH = 'jlpt_admin_auth_v1';
@@ -50,13 +49,6 @@ export function App() {
   const [examDate, setExamDate] = useState<string>('2026-07-05');
   const [campusMap, setCampusMap] = useState<string>('');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [publicAnnouncementModal, setPublicAnnouncementModal] = useState<{
-    isOpen: boolean;
-    announcement: Announcement | null;
-  }>({
-    isOpen: false,
-    announcement: null,
-  });
 
   // Fetch live data from backend
   const fetchLevels = useCallback(async () => {
@@ -391,10 +383,6 @@ const handleAuthError = (err: any) => {
             formQuota={formQuota}
             examRooms={examRooms}
             announcements={announcements}
-            isAdmin={adminUser.isAuthenticated}
-            onPostAnnouncement={() => setPublicAnnouncementModal({ isOpen: true, announcement: null })}
-            onEditAnnouncement={(announcement) => setPublicAnnouncementModal({ isOpen: true, announcement })}
-            onDeleteAnnouncement={handleDeleteAnnouncement}
             lang={lang}
             examYear={examYear}
             examDate={examDate}
@@ -430,15 +418,6 @@ const handleAuthError = (err: any) => {
           />
         )}
       </main>
-
-      {/* Modal for adding/editing announcements from public view when admin */}
-      <AddEditAnnouncementModal
-        announcement={publicAnnouncementModal.announcement}
-        isOpen={publicAnnouncementModal.isOpen}
-        onClose={() => setPublicAnnouncementModal({ isOpen: false, announcement: null })}
-        onSave={handleSaveAnnouncement}
-        lang={lang}
-      />
 
 {viewMode === 'public' ? (
           <footer className="bg-slate-900 text-slate-400 py-6 sm:py-8 border-t border-slate-800 text-xs">
