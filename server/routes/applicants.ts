@@ -8,9 +8,10 @@ const router = Router();
 
 // Search exam rooms by examinee name (Public endpoint)
 // The response intentionally contains room metadata only; examinee names and IDs are never returned.
+// Requires full name (minimum 3 chars) - partial matches not allowed for privacy
 router.get('/search', (req, res) => {
   const query = String(req.query.q || '').trim();
-  if (!query) {
+  if (!query || query.length < 3) {
     return res.json([]);
   }
 
@@ -25,12 +26,11 @@ router.get('/search', (req, res) => {
       r.image_url
     FROM applicants a
     JOIN rooms r ON r.id = a.room_id
-    WHERE instr(lower(a.full_name), lower(?)) > 0
-       OR instr(lower(a.first_name), lower(?)) > 0
-       OR instr(lower(a.last_name), lower(?)) > 0
+    WHERE lower(a.full_name) = lower(?)
+       OR lower(a.first_name || ' ' || a.last_name) = lower(?)
     ORDER BY r.level ASC, r.code ASC
     LIMIT 30
-  `).all(query, query, query) as any[];
+  `).all(query, query) as any[];
 
   res.json(matches.map((m) => ({
     room: {
