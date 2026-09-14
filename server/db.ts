@@ -49,8 +49,9 @@ export function initDatabase() {
 
     CREATE TABLE IF NOT EXISTS applicants (
       id TEXT PRIMARY KEY,
-      first_name TEXT NOT NULL,
-      last_name TEXT NOT NULL,
+      full_name TEXT NOT NULL,
+      first_name TEXT,
+      last_name TEXT,
       room_id TEXT,
       registered_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE SET NULL
@@ -67,6 +68,19 @@ export function initDatabase() {
   const hasImageUrl = roomColumns.some((col: any) => col.name === 'image_url');
   if (!hasImageUrl) {
     db.exec("ALTER TABLE rooms ADD COLUMN image_url TEXT");
+  }
+
+  // Migration: Ensure full_name column exists in applicants table
+  const applicantColumns = db.prepare("PRAGMA table_info(applicants)").all() as any[];
+  const hasFullName = applicantColumns.some((col: any) => col.name === 'full_name');
+  if (!hasFullName) {
+    db.exec("ALTER TABLE applicants ADD COLUMN full_name TEXT");
+    // Backfill full_name from first_name + last_name for existing records
+    db.exec(`
+      UPDATE applicants 
+      SET full_name = COALESCE(first_name, '') || ' ' || COALESCE(last_name, '') 
+      WHERE full_name IS NULL OR full_name = ''
+    `);
   }
 
   // Initialize default system settings

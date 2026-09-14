@@ -25,9 +25,9 @@ router.get('/search', (req, res) => {
       r.image_url
     FROM applicants a
     JOIN rooms r ON r.id = a.room_id
-    WHERE instr(lower(a.first_name), lower(?)) > 0
+    WHERE instr(lower(a.full_name), lower(?)) > 0
+       OR instr(lower(a.first_name), lower(?)) > 0
        OR instr(lower(a.last_name), lower(?)) > 0
-       OR instr(lower(a.first_name || ' ' || a.last_name), lower(?)) > 0
     ORDER BY r.level ASC, r.code ASC
     LIMIT 30
   `).all(query, query, query) as any[];
@@ -47,21 +47,23 @@ router.get('/search', (req, res) => {
 
 // Admin: Add single applicant
 router.post('/', requireAdminAuth, (req, res) => {
-  const { firstName, lastName, roomId } = req.body;
-  if (!firstName || !lastName || !roomId) {
-    return res.status(400).json({ error: 'firstName, lastName, and roomId are required' });
+  const { fullName, firstName, lastName, roomId } = req.body;
+  const name = fullName || `${firstName || ''} ${lastName || ''}`.trim();
+  
+  if (!name || !roomId) {
+    return res.status(400).json({ error: 'fullName (or firstName/lastName) and roomId are required' });
   }
 
   const id = `ex-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
   db.prepare(`
-    INSERT INTO applicants (id, first_name, last_name, room_id)
-    VALUES (?, ?, ?, ?)
-  `).run(id, firstName.trim(), lastName.trim(), roomId);
+    INSERT INTO applicants (id, full_name, first_name, last_name, room_id)
+    VALUES (?, ?, ?, ?, ?)
+  `).run(id, name, firstName?.trim() || null, lastName?.trim() || null, roomId);
 
   broadcastEvent('applicants_updated', { roomId, applicantId: id });
   broadcastEvent('rooms_updated', { roomId });
 
-  res.status(201).json({ id, firstName, lastName, roomId });
+  res.status(201).json({ id, fullName: name, firstName, lastName, roomId });
 });
 
 // Admin: Batch Add applicants
@@ -72,19 +74,20 @@ router.post('/batch', requireAdminAuth, (req, res) => {
   }
 
   const insertStmt = db.prepare(`
-    INSERT INTO applicants (id, first_name, last_name, room_id)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO applicants (id, full_name, first_name, last_name, room_id)
+    VALUES (?, ?, ?, ?, ?)
   `);
 
   const inserted: any[] = [];
   const batchTx = db.transaction(() => {
     for (const app of applicants) {
-      if (!app.firstName) continue;
+      const name = app.fullName || `${app.firstName || ''} ${app.lastName || ''}`.trim();
+      if (!name) continue;
       const id = `ex-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-      const fn = String(app.firstName).trim();
-      const ln = String(app.lastName || '-').trim();
-      insertStmt.run(id, fn, ln, roomId);
-      inserted.push({ id, firstName: fn, lastName: ln });
+      const fn = app.firstName?.trim() || null;
+      const ln = app.lastName?.trim() || null;
+      insertStmt.run(id, name, fn, ln, roomId);
+      inserted.push({ id, fullName: name, firstName: fn, lastName: ln });
     }
   });
 
@@ -114,13 +117,14 @@ router.post('/import-csv', requireAdminAuth, (req, res) => {
   });
 
   const rows = parsed.data as Record<string, any>[];
-  const itemsToInsert: { firstName: string; lastName: string }[] = [];
+  const itemsToInsert: { fullName: string; firstName?: string; lastName?: string }[] = [];
 
   for (const row of rows) {
     // Look for first name / last name or full name in common Lao / English header forms
     const keys = Object.keys(row);
     let fn = '';
     let ln = '';
+    let fullName = '';
 
     for (const key of keys) {
       const lowerKey = key.trim().toLowerCase();
@@ -131,14 +135,19 @@ router.post('/import-csv', requireAdminAuth, (req, res) => {
       } else if (['lastname', 'last_name', 'last name', 'surname', 'ນາມສະກຸນ'].includes(lowerKey)) {
         ln = val;
       } else if (['fullname', 'full_name', 'name', 'ຊື່ ແລະ ນາມສະກຸນ', 'ຊື່ເຕັມ'].includes(lowerKey)) {
-        const parts = val.split(/\s+/);
-        if (parts.length > 1) {
-          fn = parts[0];
-          ln = parts.slice(1).join(' ');
-        } else {
-          fn = val;
-          ln = '-';
-        }
+        fullName = val;
+      }
+    }
+
+    // If fullName header found, use it; otherwise build from first/last
+    if (fullName) {
+      const parts = fullName.split(/\s+/);
+      if (parts.length > 1) {
+        fn = parts[0];
+        ln = parts.slice(1).join(' ');
+      } else {
+        fn = fullName;
+        ln = '-';
       }
     }
 
@@ -155,8 +164,9 @@ router.post('/import-csv', requireAdminAuth, (req, res) => {
       }
     }
 
-    if (fn) {
-      itemsToInsert.push({ firstName: fn, lastName: ln || '-' });
+    const name = fullName || `${fn} ${ln}`.trim();
+    if (name) {
+      itemsToInsert.push({ fullName: name, firstName: fn || null, lastName: ln || null });
     }
   }
 
@@ -165,16 +175,16 @@ router.post('/import-csv', requireAdminAuth, (req, res) => {
   }
 
   const insertStmt = db.prepare(`
-    INSERT INTO applicants (id, first_name, last_name, room_id)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO applicants (id, full_name, first_name, last_name, room_id)
+    VALUES (?, ?, ?, ?, ?)
   `);
 
   const inserted: any[] = [];
   const importTx = db.transaction(() => {
     for (const item of itemsToInsert) {
       const id = `ex-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-      insertStmt.run(id, item.firstName, item.lastName, roomId);
-      inserted.push({ id, firstName: item.firstName, lastName: item.lastName });
+      insertStmt.run(id, item.fullName, item.firstName || null, item.lastName || null, roomId);
+      inserted.push({ id, fullName: item.fullName, firstName: item.firstName, lastName: item.lastName });
     }
   });
 

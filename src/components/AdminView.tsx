@@ -39,8 +39,8 @@ interface AdminViewProps {
   onUpdateLevelRegistered?: (level: string, registered: number) => void;
   onSaveRoom: (roomData: Omit<ExamRoom, 'id' | 'examinees'> & { id?: string }) => void;
   onDeleteRoom: (roomId: string) => void;
-  onAddExamineeToRoom: (roomId: string, firstName: string, lastName: string) => void;
-  onBatchAddExaminees: (roomId: string, examinees: { firstName: string; lastName: string }[]) => void;
+  onAddExamineeToRoom: (roomId: string, fullName: string) => void;
+  onBatchAddExaminees: (roomId: string, examinees: { fullName: string }[]) => void;
   onRemoveExamineeFromRoom: (roomId: string, examineeId: string) => void;
   onResetData: () => void;
   lang: Language;
@@ -321,12 +321,12 @@ export const AdminView: FC<AdminViewProps> = ({
         room={manageExamineesRoom}
         isOpen={Boolean(manageExamineesRoom)}
         onClose={() => setManageExamineesRoom(null)}
-        onAddExaminee={async (roomId: string, firstName: string, lastName: string) => {
-          await onAddExamineeToRoom(roomId, firstName, lastName);
+        onAddExaminee={async (roomId: string, fullName: string) => {
+          await onAddExamineeToRoom(roomId, fullName);
           await refreshRoomExaminees(roomId);
           triggerToast('Examinee added successfully');
         }}
-        onBatchAddExaminees={async (roomId: string, examinees: { firstName: string; lastName: string }[]) => {
+        onBatchAddExaminees={async (roomId: string, examinees: { fullName: string }[]) => {
           await onBatchAddExaminees(roomId, examinees);
           await refreshRoomExaminees(roomId);
           triggerToast(`Batch added ${examinees.length} examinees`);

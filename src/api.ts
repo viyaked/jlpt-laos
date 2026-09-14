@@ -347,14 +347,14 @@ export const api = {
   },
 
   // Admin Applicant Actions
-  async addApplicant(roomId: string, firstName: string, lastName: string) {
+  async addApplicant(roomId: string, fullName: string) {
     const res = await fetch('/api/applicants', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         ...authHeaders(),
       },
-      body: JSON.stringify({ roomId, firstName, lastName }),
+      body: JSON.stringify({ roomId, fullName }),
     });
     if (!res.ok) {
       const err = await res.json();
@@ -363,7 +363,7 @@ export const api = {
     return res.json();
   },
 
-  async batchAddApplicants(roomId: string, applicants: { firstName: string; lastName: string }[]) {
+  async batchAddApplicants(roomId: string, applicants: { fullName: string }[]) {
     const res = await fetch('/api/applicants/batch', {
       method: 'POST',
       headers: {

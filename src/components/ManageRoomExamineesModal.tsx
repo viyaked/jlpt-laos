@@ -18,8 +18,8 @@ interface ManageRoomExamineesModalProps {
   room: ExamRoom | null;
   isOpen: boolean;
   onClose: () => void;
-  onAddExaminee: (roomId: string, firstName: string, lastName: string) => void;
-  onBatchAddExaminees: (roomId: string, examinees: { firstName: string; lastName: string }[]) => void;
+  onAddExaminee: (roomId: string, fullName: string) => void;
+  onBatchAddExaminees: (roomId: string, examinees: { fullName: string }[]) => void;
   onRemoveExaminee: (roomId: string, examineeId: string) => void;
   lang: Language;
 }
@@ -37,8 +37,7 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
   const [activeTab, setActiveTab] = useState<'list' | 'single' | 'batch'>('list');
 
   // Single add form
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [fullName, setFullName] = useState('');
   const [singleError, setSingleError] = useState('');
 
   // Batch add form
@@ -51,15 +50,14 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
 
   const handleSingleAdd = (e: FormEvent) => {
     e.preventDefault();
-    if (!firstName.trim() || !lastName.trim()) {
-      setSingleError('Please fill in both first name and last name');
+    if (!fullName.trim()) {
+      setSingleError(t.fullNameRequiredError);
       return;
     }
     if (room) {
-      onAddExaminee(room.id, firstName.trim(), lastName.trim());
+      onAddExaminee(room.id, fullName.trim());
     }
-    setFirstName('');
-    setLastName('');
+    setFullName('');
     setSingleError('');
     setActiveTab('list');
   };
@@ -69,20 +67,16 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
     e.preventDefault();
     const lines = batchText.split('\n').map((l) => l.trim()).filter(Boolean);
     if (lines.length === 0) {
-      setBatchError('Please enter at least one name');
+      setBatchError(t.batchAddError);
       return;
     }
 
-    const newExaminees: { firstName: string; lastName: string }[] = [];
+    const newExaminees: { fullName: string }[] = [];
     for (const line of lines) {
-      // Split by whitespace
-      const parts = line.split(/\s+/);
-      if (parts.length === 1) {
-        newExaminees.push({ firstName: parts[0], lastName: '-' });
-      } else {
-        const fn = parts[0];
-        const ln = parts.slice(1).join(' ');
-        newExaminees.push({ firstName: fn, lastName: ln });
+      // Use the full line as the full name
+      const name = line.trim();
+      if (name) {
+        newExaminees.push({ fullName: name });
       }
     }
 
@@ -91,7 +85,7 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
     }
     setBatchText('');
     setBatchError('');
-    setBatchSuccess(`Successfully added ${newExaminees.length} examinees!`);
+    setBatchSuccess(t.batchAddSuccess.replace('{count}', newExaminees.length.toString()));
     setTimeout(() => {
       setBatchSuccess('');
       setActiveTab('list');
@@ -253,28 +247,14 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {t.firstNameLabel} *
+                  {t.fullNameLabel} *
                 </label>
                 <input
                   type="text"
                   required
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="e.g. ວິໄລພອນ / Vilaiphone"
-                  className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {t.lastNameLabel} *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="e.g. ວົງສະຫວັນ / Vongsavanh"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder={t.fullNamePlaceholder}
                   className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
                 />
               </div>

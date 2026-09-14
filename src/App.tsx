@@ -261,11 +261,10 @@ const handleAuthError = (err: any) => {
 
   const handleAddExamineeToRoom = async (
     roomId: string,
-    firstName: string,
-    lastName: string
+    fullName: string
   ) => {
     try {
-      await api.addApplicant(roomId, firstName, lastName);
+      await api.addApplicant(roomId, fullName);
       await fetchRooms();
     } catch (err: any) {
       alert(err.message || 'Failed to add examinee');
@@ -274,7 +273,7 @@ const handleAuthError = (err: any) => {
 
   const handleBatchAddExaminees = async (
     roomId: string,
-    examinees: { firstName: string; lastName: string }[]
+    examinees: { fullName: string }[]
   ) => {
     try {
       await api.batchAddApplicants(roomId, examinees);
