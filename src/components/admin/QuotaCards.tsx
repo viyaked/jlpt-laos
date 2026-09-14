@@ -85,7 +85,7 @@ export function GlobalQuotaCard({ formQuota, lang, onEditClick }: GlobalQuotaCar
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-4">
         <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
@@ -111,15 +111,15 @@ export function GlobalQuotaCard({ formQuota, lang, onEditClick }: GlobalQuotaCar
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-semibold text-blue-900 block">
-                {t.usedFormsLabel}
+                {t.formsSoldLabel}
               </span>
               <Button variant="ghost" size="xs" leftIcon={<Edit2 className="w-3 h-3" />} onClick={onEditClick} className="text-blue-700 hover:text-blue-900">
-                {t.editDirectlyBtn}
+                {t.editFormsSoldBtn}
               </Button>
             </div>
             <div className="flex items-baseline gap-1 mt-1">
               <span className="text-2xl font-black text-blue-800">
-                {formQuota.totalRegistered}
+                {formQuota.formsSold}
               </span>
               <span className="text-xs text-blue-600 font-medium">
                 {t.formUnit}
@@ -128,8 +128,26 @@ export function GlobalQuotaCard({ formQuota, lang, onEditClick }: GlobalQuotaCar
           </div>
         </div>
 
+        <div className="bg-amber-50/70 border border-amber-100 p-3.5 rounded-xl flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-amber-900 block">
+                {t.totalRegisteredLabel}
+              </span>
+            </div>
+            <div className="flex items-baseline gap-1 mt-1">
+              <span className="text-2xl font-black text-amber-800">
+                {formQuota.totalRegistered}
+              </span>
+              <span className="text-xs text-amber-600 font-medium">
+                {t.personUnit}
+              </span>
+            </div>
+          </div>
+        </div>
+
         <div className={`p-3.5 rounded-xl border ${
-          formQuota.remaining <= 0
+          formQuota.isFormsFull
             ? 'bg-rose-50 border-rose-200 text-rose-800'
             : 'bg-emerald-50/70 border-emerald-100 text-emerald-800'
         }`}>
@@ -138,9 +156,9 @@ export function GlobalQuotaCard({ formQuota, lang, onEditClick }: GlobalQuotaCar
           </span>
           <div className="flex items-baseline gap-1 mt-1">
             <span className={`text-2xl font-black ${
-              formQuota.remaining <= 0 ? 'text-rose-700' : 'text-emerald-700'
+              formQuota.isFormsFull ? 'text-rose-700' : 'text-emerald-700'
             }`}>
-              {formQuota.remaining}
+              {formQuota.remainingForms}
             </span>
             <span className="text-xs font-medium opacity-80">
               {t.formUnit}
@@ -162,7 +180,7 @@ interface LevelAdjustmentCardProps {
 
 export function LevelAdjustmentCard({ levelStats, formQuota, lang, onIncrement, onEditClick }: LevelAdjustmentCardProps) {
   const t = translations[lang];
-  const isQuotaFull = formQuota.remaining <= 0;
+  const isFormsFull = formQuota.isFormsFull;
 
   return (
     <div className="animate-slideUp">
@@ -217,11 +235,11 @@ export function LevelAdjustmentCard({ levelStats, formQuota, lang, onIncrement, 
 
             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
               <Button
-                variant={isQuotaFull ? 'ghost' : 'danger'}
+                variant={isFormsFull ? 'ghost' : 'danger'}
                 size="sm"
                 leftIcon={<Plus className="w-3.5 h-3.5" />}
                 onClick={() => onIncrement(stat.level)}
-                disabled={isQuotaFull}
+                disabled={isFormsFull}
                 className="flex items-center justify-center gap-1"
               >
                 <span>{t.addOneBtn}</span>

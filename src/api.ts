@@ -31,9 +31,12 @@ export const api = {
       campusMap: data.campusMap || '',
       formQuota: {
         totalQuota: data.formQuota?.totalQuota ?? 500,
+        formsSold: data.formQuota?.formsSold ?? 0,
         totalRegistered: data.formQuota?.totalRegistered ?? 0,
-        remaining: data.formQuota?.remaining ?? 0,
-        isFull: data.formQuota?.isFull ?? false,
+        remainingForms: data.formQuota?.remainingForms ?? 0,
+        remainingSeats: data.formQuota?.remainingSeats ?? 0,
+        isFormsFull: data.formQuota?.isFormsFull ?? false,
+        isSeatsFull: data.formQuota?.isSeatsFull ?? false,
       },
       levels: (data.levels || []).map((d: any) => ({
         level: d.level,

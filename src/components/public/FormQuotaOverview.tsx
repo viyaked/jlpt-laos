@@ -11,11 +11,12 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
   const t = translations[lang];
 
   const totalRegistered = formQuota.totalRegistered;
+  const formsSold = formQuota.formsSold;
   const totalQuota = formQuota.totalQuota;
-  const totalRemaining = formQuota.remaining;
-  const percentFilled = Math.min(100, Math.round((totalRegistered / Math.max(1, totalQuota)) * 100));
-  const isFull = formQuota.isFull || totalRemaining <= 0;
-  const isAlmostFull = !isFull && totalRemaining <= 30;
+  const remainingForms = formQuota.remainingForms;
+  const percentFilled = Math.min(100, Math.round((formsSold / Math.max(1, totalQuota)) * 100));
+  const isFull = formQuota.isFormsFull || remainingForms <= 0;
+  const isAlmostFull = !isFull && remainingForms <= 30;
 
   return (
     <Card variant="default" padding="none" className="p-4 sm:p-5 md:p-6 animate-slideUp">
@@ -91,7 +92,7 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
             <span className={`text-2xl sm:text-3xl font-black tracking-tight ${
               isFull ? 'text-rose-700' : 'text-emerald-700'
             }`}>
-              {totalRemaining}
+              {remainingForms}
             </span>
             <span className="text-xs font-medium opacity-80">
               {t.formUnit}
@@ -103,7 +104,7 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
       <div className="space-y-2">
         <div className="flex justify-between text-xs font-medium text-slate-600">
           <span>{t.filledPercent}: <strong className="text-slate-900">{percentFilled}%</strong></span>
-          <span>{totalRemaining} {t.formUnit} {t.seatsLeft}</span>
+          <span>{remainingForms} {t.formUnit} {t.seatsLeft}</span>
         </div>
         <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden p-0.5 border border-slate-200">
           <div

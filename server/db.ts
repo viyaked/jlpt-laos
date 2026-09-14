@@ -150,20 +150,31 @@ export function getFormsSold(): number {
     const parsed = parseInt(soldStr, 10);
     if (!isNaN(parsed) && parsed >= 0) return parsed;
   }
-  const regRow = db.prepare('SELECT COALESCE(SUM(registered_count), 0) as total FROM exam_levels').get() as { total: number };
-  return regRow.total;
+  return 0;
 }
 
 export function setFormsSold(count: number): void {
   setSystemSetting('forms_sold', String(Math.max(0, count)));
 }
 
-export function getTotalFormQuota(): { totalQuota: number; totalRegistered: number; remaining: number } {
+export function getTotalFormQuota(): { totalQuota: number; formsSold: number; totalRegistered: number; remainingForms: number; remainingSeats: number; isFormsFull: boolean; isSeatsFull: boolean } {
   const quotaStr = getSystemSetting('total_form_quota', '500');
   const totalQuota = parseInt(quotaStr, 10) || 500;
-  const totalRegistered = getFormsSold();
-  const remaining = Math.max(0, totalQuota - totalRegistered);
-  return { totalQuota, totalRegistered, remaining };
+  const formsSold = getFormsSold();
+  const totalRegistered = db.prepare('SELECT COALESCE(SUM(registered_count), 0) as total FROM exam_levels').get() as { total: number };
+  const registered = totalRegistered.total;
+  const remainingForms = Math.max(0, totalQuota - formsSold);
+  const totalSeats = db.prepare('SELECT COALESCE(SUM(total_quota), 0) as total FROM exam_levels').get() as { total: number };
+  const remainingSeats = Math.max(0, totalSeats.total - registered);
+  return {
+    totalQuota,
+    formsSold,
+    totalRegistered: registered,
+    remainingForms,
+    remainingSeats,
+    isFormsFull: remainingForms <= 0,
+    isSeatsFull: remainingSeats <= 0,
+  };
 }
 
 export function seedDefaultData() {

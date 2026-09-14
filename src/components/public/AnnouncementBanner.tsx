@@ -14,8 +14,8 @@ export function AnnouncementBanner({ formQuota, lang, examDate }: AnnouncementBa
 
   const totalRegistered = formQuota.totalRegistered;
   const totalQuota = formQuota.totalQuota;
-  const totalRemaining = formQuota.remaining;
-  const isFull = formQuota.isFull || totalRemaining <= 0;
+  const remainingForms = formQuota.remainingForms;
+  const isFull = formQuota.isFormsFull || remainingForms <= 0;
 
   return (
     <section className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 border border-slate-800 relative overflow-hidden animate-fadeIn">
@@ -56,7 +56,7 @@ export function AnnouncementBanner({ formQuota, lang, examDate }: AnnouncementBa
               isFull ? 'text-rose-400' : 'text-emerald-400'
             }`}>
               <Ticket className="w-4 h-4" aria-hidden="true" />
-              {totalRemaining} <span className="text-xs font-normal text-slate-300">{t.formUnit}</span>
+              {remainingForms} <span className="text-xs font-normal text-slate-300">{t.formUnit}</span>
             </span>
           </div>
           <div>

@@ -267,9 +267,9 @@ export const AdminView: FC<AdminViewProps> = ({
         isOpen={isGlobalQuotaModalOpen}
         onClose={() => setIsGlobalQuotaModalOpen(false)}
         currentTotalQuota={formQuota.totalQuota}
-        totalRegistered={formQuota.totalRegistered}
-        onSave={(newQuota: number, newFormsSold?: number) => {
-          onUpdateGlobalQuota(newQuota, newFormsSold);
+        currentFormsSold={formQuota.formsSold}
+        onSave={(newTotalQuota: number, newFormsSold: number) => {
+          onUpdateGlobalQuota(newTotalQuota, newFormsSold);
           triggerToast(t.saveSuccess);
         }}
         lang={lang}

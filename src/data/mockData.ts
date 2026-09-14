@@ -2,9 +2,12 @@ import type { LevelStat, ExamRoom, FormQuotaStat } from '../types';
 
 export const initialFormQuota: FormQuotaStat = {
   totalQuota: 500,
+  formsSold: 0,
   totalRegistered: 0,
-  remaining: 500,
-  isFull: false,
+  remainingForms: 500,
+  remainingSeats: 350,
+  isFormsFull: false,
+  isSeatsFull: false,
 };
 
 export const initialLevelStats: LevelStat[] = [

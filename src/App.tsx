@@ -161,7 +161,7 @@ const handleAuthError = (err: any) => {
 
   const handleUpdateGlobalQuota = async (totalQuota: number, formsSold?: number) => {
     try {
-      const res = await api.updateGlobalQuota(totalQuota, formsSold);
+      const res = await api.updateGlobalQuota(totalQuota, formsSold ?? 0);
       setFormQuota(res.formQuota);
       await fetchLevels();
     } catch (err: any) {

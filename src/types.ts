@@ -3,10 +3,13 @@ export type Language = 'lo' | 'en';
 export type JLPTLevel = 'N1' | 'N2' | 'N3' | 'N4' | 'N5';
 
 export interface FormQuotaStat {
-  totalQuota: number;
-  totalRegistered: number;
-  remaining: number;
-  isFull: boolean;
+  totalQuota: number;        // Total application forms available
+  formsSold: number;         // Forms sold (distinct from registered applicants)
+  totalRegistered: number;   // Actual examinees registered
+  remainingForms: number;    // Forms available to sell
+  remainingSeats: number;    // Seats available for registration (across all levels)
+  isFormsFull: boolean;      // All forms sold
+  isSeatsFull: boolean;      // All seats filled
 }
 
 export interface LevelStat {

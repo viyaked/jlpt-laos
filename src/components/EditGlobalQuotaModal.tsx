@@ -7,7 +7,7 @@ interface EditGlobalQuotaModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentTotalQuota: number;
-  totalRegistered: number;
+  currentFormsSold: number;
   onSave: (newTotalQuota: number, newFormsSold: number) => void;
   lang: Language;
 }
@@ -16,19 +16,19 @@ export const EditGlobalQuotaModal: FC<EditGlobalQuotaModalProps> = ({
   isOpen,
   onClose,
   currentTotalQuota,
-  totalRegistered,
+  currentFormsSold,
   onSave,
   lang,
 }) => {
   const [totalQuota, setTotalQuota] = useState(currentTotalQuota);
-  const [formsSold, setFormsSold] = useState(totalRegistered);
+  const [formsSold, setFormsSold] = useState(currentFormsSold);
   const [error, setError] = useState('');
 
   useEffect(() => {
     setTotalQuota(currentTotalQuota);
-    setFormsSold(totalRegistered);
+    setFormsSold(currentFormsSold);
     setError('');
-  }, [currentTotalQuota, totalRegistered, isOpen]);
+  }, [currentTotalQuota, currentFormsSold, isOpen]);
 
   if (!isOpen) return null;
   const t = translations[lang];

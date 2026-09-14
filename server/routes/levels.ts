@@ -46,9 +46,12 @@ router.get('/', (req, res) => {
     campusMap,
     formQuota: {
       totalQuota: formQuota.totalQuota,
+      formsSold: formQuota.formsSold,
       totalRegistered: formQuota.totalRegistered,
-      remaining: formQuota.remaining,
-      isFull: formQuota.remaining <= 0,
+      remainingForms: formQuota.remainingForms,
+      remainingSeats: formQuota.remainingSeats,
+      isFormsFull: formQuota.isFormsFull,
+      isSeatsFull: formQuota.isSeatsFull,
     },
     levels: formattedLevels,
   });
@@ -149,9 +152,12 @@ router.put('/quota', requireAdminAuth, (req, res) => {
     success: true,
     formQuota: {
       totalQuota: formQuota.totalQuota,
+      formsSold: formQuota.formsSold,
       totalRegistered: formQuota.totalRegistered,
-      remaining: formQuota.remaining,
-      isFull: formQuota.remaining <= 0,
+      remainingForms: formQuota.remainingForms,
+      remainingSeats: formQuota.remainingSeats,
+      isFormsFull: formQuota.isFormsFull,
+      isSeatsFull: formQuota.isSeatsFull,
     },
   });
 });
@@ -172,9 +178,12 @@ router.put('/sold', requireAdminAuth, (req, res) => {
     success: true,
     formQuota: {
       totalQuota: formQuota.totalQuota,
+      formsSold: formQuota.formsSold,
       totalRegistered: formQuota.totalRegistered,
-      remaining: formQuota.remaining,
-      isFull: formQuota.remaining <= 0,
+      remainingForms: formQuota.remainingForms,
+      remainingSeats: formQuota.remainingSeats,
+      isFormsFull: formQuota.isFormsFull,
+      isSeatsFull: formQuota.isSeatsFull,
     },
   });
 });
