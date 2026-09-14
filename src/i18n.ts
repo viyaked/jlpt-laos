@@ -159,7 +159,7 @@ export const translations = {
 
 // Rooms Section
     roomsSectionTitle: "ລາຍການຫ້ອງສອບເສັງທັງໝົດ",
-    roomsSectionSubtitle: "ໃຊ້ຊື່ແລະ ນາມສະກຸນຂອງທ່ານຄົ້ນຫາຫ້ອງສອບເສັງ. ຫ້ອງສອບສົ່ງເຊັນ ຈະສະແດງເມື່ອທ່ານຄົ້ນຄົ້ນຫາ.",
+    roomsSectionSubtitle: "ໃຊ້ຊື່ແລະ ນາມສະກຸນຂອງທ່ານຄົ້ນຫາຫ້ອງສອບເສັງ.",
     filterAllLevels: "ທຸກລະດັບ (N1 - N5)",
     filterAllBuildings: "ທຸກອາຄານ",
     searchByNameOrRoom: "ຄົ້ນຫາດ້ວຍຊື່ແລະ ນາມສະກຸນຂອງທ່ານ...",
@@ -374,7 +374,7 @@ export const translations = {
 
     // Rooms Section
     roomsSectionTitle: "Examination Rooms Directory",
-    roomsSectionSubtitle: "Use your full name to find your assigned exam room. Rooms are hidden until you search.",
+    roomsSectionSubtitle: "Use your full name to find your assigned exam room.",
     filterAllLevels: "All Levels (N1 - N5)",
     filterAllBuildings: "All Buildings",
     searchByNameOrRoom: "Search by your full name...",
