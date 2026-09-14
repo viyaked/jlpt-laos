@@ -49,11 +49,12 @@ router.get('/:id/applicants', requireAdminAuth, (req, res) => {
   const applicants = db.prepare(`
     SELECT 
       id, 
+      full_name, 
       first_name, 
       last_name 
     FROM applicants 
     WHERE room_id = ?
-    ORDER BY first_name COLLATE NOCASE ASC, last_name COLLATE NOCASE ASC
+    ORDER BY full_name COLLATE NOCASE ASC
   `).all(id) as any[];
 
   res.json({
@@ -66,9 +67,9 @@ router.get('/:id/applicants', requireAdminAuth, (req, res) => {
       capacity: room.capacity,
       imageUrl: room.image_url || '',
     },
-    // Strictly First & Last Name only!
     applicants: applicants.map((a) => ({
       id: a.id,
+      fullName: a.full_name,
       firstName: a.first_name,
       lastName: a.last_name,
     })),

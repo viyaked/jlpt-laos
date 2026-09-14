@@ -195,6 +195,7 @@ router.post('/import-csv', requireAdminAuth, (req, res) => {
   res.json({
     success: true,
     importedCount: inserted.length,
+    applicants: inserted,
     message: `Successfully imported ${inserted.length} examinees from CSV.`,
   });
 });
