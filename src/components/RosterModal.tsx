@@ -47,10 +47,6 @@ export const RosterModal = ({ room, isOpen, onClose, lang }: RosterModalProps) =
               <span className="text-xs text-slate-500 block">{t.floorLabel}</span>
               <strong>{room.floor}</strong>
             </div>
-            <div className="rounded-lg bg-slate-50 border border-slate-200 p-3">
-              <span className="text-xs text-slate-500 block">{t.roomCapacity}</span>
-              <strong>{room.capacity} {t.personUnit}</strong>
-            </div>
           </div>
 
           <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-900">
