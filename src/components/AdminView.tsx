@@ -194,9 +194,7 @@ export const AdminView: FC<AdminViewProps> = ({
       <ToastNotification message={toastMessage} />
 
       <AdminHeader
-        examDate={examDate}
         lang={lang}
-        onExamYearClick={() => setIsExamYearModalOpen(true)}
         onCampusMapClick={() => setIsCampusMapModalOpen(true)}
         onChangePasswordClick={() => setIsChangePasswordModalOpen(true)}
         onResetClick={() => {

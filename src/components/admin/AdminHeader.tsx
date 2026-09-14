@@ -1,12 +1,10 @@
-import { ShieldCheck, RotateCcw, LogOut, Calendar, KeyRound, MapPin } from 'lucide-react';
+import { ShieldCheck, RotateCcw, LogOut, KeyRound, MapPin } from 'lucide-react';
 import type { Language } from '../../types';
-import { translations, formatExamDate } from '../../i18n';
+import { translations } from '../../i18n';
 import { Button, Badge } from '../ui';
 
 interface AdminHeaderProps {
-  examDate: string;
   lang: Language;
-  onExamYearClick: () => void;
   onCampusMapClick: () => void;
   onChangePasswordClick: () => void;
   onResetClick: () => void;
@@ -14,16 +12,13 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({
-  examDate,
   lang,
-  onExamYearClick,
   onCampusMapClick,
   onChangePasswordClick,
   onResetClick,
   onLogout,
 }: AdminHeaderProps) {
   const t = translations[lang];
-  const formattedExamDate = formatExamDate(examDate, lang);
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fadeIn">
@@ -54,15 +49,6 @@ export function AdminHeader({
           onClick={onCampusMapClick}
         >
           {t.manageCampusMapBtn}
-        </Button>
-
-        <Button
-          variant="primary"
-          size="sm"
-          leftIcon={<Calendar className="w-3.5 h-3.5" />}
-          onClick={onExamYearClick}
-        >
-          {t.editExamScheduleBtn} ({formattedExamDate.shortDate})
         </Button>
 
         <Button
