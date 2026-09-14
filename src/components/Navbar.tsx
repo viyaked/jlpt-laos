@@ -58,9 +58,6 @@ export const Navbar: FC<NavbarProps> = ({
                 <h1 className="font-bold text-base sm:text-lg tracking-tight text-white leading-tight truncate">
                   {t.instituteName}
                 </h1>
-                <span className="hidden md:inline-block px-1.5 py-0.5 rounded text-[10px] uppercase font-semibold bg-slate-800 text-red-400 border border-slate-700 shrink-0">
-                  日本語
-                </span>
               </div>
               <p className="text-xs sm:text-sm text-slate-300 font-normal leading-normal truncate">
                 {examTitle}
