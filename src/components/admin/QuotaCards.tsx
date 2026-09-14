@@ -297,8 +297,8 @@ export function LevelAdjustmentCard({
               }`}
             >
               <div>
-                {/* Level Title & Quick Edit Icon */}
-                <div className="flex items-start justify-between gap-2 mb-3">
+                {/* Level Title & Time Badge */}
+                <div className="flex items-center justify-between gap-2 mb-3">
                   <div className="flex items-center gap-2.5">
                     <span
                       className={`w-9 h-9 rounded-xl ${theme.badgeBg} font-black text-sm flex items-center justify-center shadow-xs shrink-0`}
@@ -309,22 +309,16 @@ export function LevelAdjustmentCard({
                       <h4 className="font-bold text-sm text-slate-900 leading-tight">
                         JLPT {stat.level}
                       </h4>
-                      <span className="text-[11px] text-slate-500 font-mono flex items-center gap-1 mt-0.5">
-                        <Clock className="w-3 h-3 text-slate-400 shrink-0" aria-hidden="true" />
-                        <span>{stat.testTime}</span>
+                      <span className="text-[11px] text-slate-500 font-medium">
+                        {lang === 'lo' ? 'ລະດັບ ' + stat.level : 'Level ' + stat.level}
                       </span>
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => onEditClick(stat)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 active:scale-95 transition-colors"
-                    title={t.editDirectlyBtn}
-                    aria-label={`Edit ${stat.level}`}
-                  >
-                    <Edit2 className="w-3.5 h-3.5" />
-                  </button>
+                  <span className="text-[11px] text-slate-600 font-mono bg-slate-100 border border-slate-200/60 px-2 py-1 rounded-lg flex items-center gap-1 shrink-0">
+                    <Clock className="w-3 h-3 text-slate-400 shrink-0" aria-hidden="true" />
+                    <span>{stat.testTime}</span>
+                  </span>
                 </div>
 
                 {/* Metrics Box */}
@@ -387,30 +381,27 @@ export function LevelAdjustmentCard({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-2 pt-2.5 border-t border-slate-100">
-                <Button
-                  variant={cannotAdd ? 'ghost' : 'primary'}
-                  size="sm"
-                  leftIcon={<Plus className="w-3.5 h-3.5" />}
+              <div className="space-y-2 pt-3 border-t border-slate-100 mt-auto">
+                <button
+                  type="button"
                   onClick={() => onIncrement(stat.level)}
                   disabled={cannotAdd}
-                  className="flex-1 justify-center shadow-xs"
+                  className="w-full h-10 px-3 inline-flex items-center justify-center gap-2 text-xs sm:text-sm font-bold rounded-xl bg-slate-900 text-white hover:bg-slate-800 active:scale-[0.98] disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed transition-all shadow-xs"
                 >
-                  <span className="truncate">
-                    {cannotAdd ? (lang === 'lo' ? 'ເຕັມແລ້ວ' : 'Full') : t.addOneBtn}
+                  <Plus className="w-4 h-4 shrink-0" />
+                  <span className="leading-tight">
+                    {cannotAdd ? (lang === 'lo' ? 'ບ່ອນນັ່ງເຕັມແລ້ວ (Full)' : 'Level Full') : t.addOneBtn}
                   </span>
-                </Button>
+                </button>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  leftIcon={<Edit2 className="w-3.5 h-3.5" />}
+                <button
+                  type="button"
                   onClick={() => onEditClick(stat)}
-                  title={t.editDirectlyBtn}
-                  className="px-2.5 text-slate-700 hover:text-slate-900 hover:border-slate-400 shrink-0"
+                  className="w-full h-9 px-3 inline-flex items-center justify-center gap-2 text-xs font-semibold rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-900 active:scale-[0.98] transition-all border border-slate-200 hover:border-slate-300"
                 >
-                  <span className="text-xs">{lang === 'lo' ? 'ແກ້ໄຂ' : 'Edit'}</span>
-                </Button>
+                  <Edit2 className="w-3.5 h-3.5 shrink-0 text-slate-500" />
+                  <span className="leading-tight">{t.editDirectlyBtn}</span>
+                </button>
               </div>
             </div>
           );
