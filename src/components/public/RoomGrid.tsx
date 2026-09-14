@@ -30,7 +30,7 @@ export function RoomGrid({
         <p className="text-xs sm:text-sm text-slate-600">
           {lang === 'lo' ? (
             <>
-              ກະລຸນາ <strong className="font-bold text-slate-900">ພິມຊື່ເຕັມຂອງທ່ານ</strong> ເພື່ອກວດເບິ່ງຫ້ອງສອບເສັງ
+              ກະລຸນາ <strong className="font-bold text-slate-900">ພິມຊື່ແລະ ນາມສະກຸນຂອງທ່ານ</strong> ເພື່ອກວດເບິ່ງຫ້ອງສອບເສັງ
             </>
           ) : (
             <>

@@ -81,7 +81,7 @@ export function RoomFilters({
         <span>
           {lang === 'lo' ? (
             <>
-              <strong className="font-bold text-slate-800">ພິມຊື່ເຕັມຂອງທ່ານ</strong> ເພື່ອກວດເບິ່ງຫ້ອງສອບຂອງທ່ານ
+              <strong className="font-bold text-slate-800">ພິມຊື່ແລະ ນາມສະກຸນຂອງທ່ານ</strong> ເພື່ອກວດເບິ່ງຫ້ອງສອບຂອງທ່ານ
             </>
           ) : (
             <>

@@ -134,7 +134,7 @@ router.post('/import-csv', requireAdminAuth, (req, res) => {
         fn = val;
       } else if (['lastname', 'last_name', 'last name', 'surname', 'ນາມສະກຸນ'].includes(lowerKey)) {
         ln = val;
-      } else if (['fullname', 'full_name', 'name', 'ຊື່ ແລະ ນາມສະກຸນ', 'ຊື່ເຕັມ'].includes(lowerKey)) {
+      } else if (['fullname', 'full_name', 'name', 'ຊື່ ແລະ ນາມສະກຸນ', 'ຊື່ແລະ ນາມສະກຸນ', 'ຊື່ເຕັມ'].includes(lowerKey)) {
         fullName = val;
       }
     }
