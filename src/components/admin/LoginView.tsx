@@ -1,4 +1,4 @@
-import { ShieldCheck, KeyRound, LogIn, Loader2 } from 'lucide-react';
+import { ShieldCheck, KeyRound, LogIn } from 'lucide-react';
 import type { Language } from '../../types';
 import { translations } from '../../i18n';
 import { Card, Input, Button } from '../ui';
@@ -72,9 +72,15 @@ export function LoginView({
               placeholder="••••••••"
             />
 
-            <Button type="submit" variant="primary" size="lg" fullWidth loading={loading}>
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
-              <span>{t.loginSubmitBtn}</span>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              fullWidth
+              loading={loading}
+              leftIcon={<LogIn className="w-5 h-5 shrink-0" />}
+            >
+              <span className="whitespace-nowrap">{t.loginSubmitBtn}</span>
             </Button>
           </form>
         </div>

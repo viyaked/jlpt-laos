@@ -2,7 +2,7 @@ import { useState, type FC, type FormEvent } from 'react';
 import type { Language } from '../types';
 import { translations } from '../i18n';
 import { api } from '../api';
-import { ShieldCheck, Lock, User, AlertCircle, X, Loader2 } from 'lucide-react';
+import { ShieldCheck, Lock, User, AlertCircle, X, Loader2, LogIn } from 'lucide-react';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -111,10 +111,14 @@ export const LoginModal: FC<LoginModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-2.5 bg-red-700 hover:bg-red-800 disabled:opacity-50 text-white font-semibold rounded-lg text-sm shadow-sm transition-colors flex items-center justify-center gap-2"
+              className="w-full py-2.5 bg-red-700 hover:bg-red-800 disabled:opacity-50 text-white font-semibold rounded-lg text-sm shadow-sm transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
             >
-              {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
-              <span>{t.loginSubmitBtn}</span>
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+              ) : (
+                <LogIn className="w-4 h-4 shrink-0" />
+              )}
+              <span className="whitespace-nowrap">{t.loginSubmitBtn}</span>
             </button>
 </div>
         </form>
