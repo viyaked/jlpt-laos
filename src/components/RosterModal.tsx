@@ -1,6 +1,6 @@
 import type { ExamRoom, Language } from '../types';
 import { translations, formatRoomName } from '../i18n';
-import { Image as ImageIcon, ShieldCheck } from 'lucide-react';
+import { Image as ImageIcon } from 'lucide-react';
 import { Button, Modal } from './ui';
 
 interface RosterModalProps {
@@ -46,16 +46,6 @@ export const RosterModal = ({ room, isOpen, onClose, lang }: RosterModalProps) =
             <div className="rounded-lg bg-slate-50 border border-slate-200 p-3">
               <span className="text-xs text-slate-600 block font-semibold">{t.floorLabel}</span>
               <strong className="font-bold text-base text-slate-900">{room.floor}</strong>
-            </div>
-          </div>
-
-          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3.5 text-xs sm:text-sm text-emerald-950">
-            <div className="flex items-start gap-2.5">
-              <ShieldCheck className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" aria-hidden="true" />
-              <div>
-                <strong className="block mb-1 font-bold text-emerald-950 text-sm">{t.roomDetailsPrivacyTitle}</strong>
-                <span className="font-medium text-emerald-900 leading-relaxed">{t.roomDetailsPrivacyDesc}</span>
-              </div>
             </div>
           </div>
 
