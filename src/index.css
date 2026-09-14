@@ -2,16 +2,43 @@
 
 @font-face {
   font-family: 'Phetsarath OT';
-  src: url('/fonts/PhetsarathOT-Regular.ttf') format('truetype');
+  src: local('Phetsarath OT'),
+       local('PhetsarathOT'),
+       url('/fonts/PhetsarathOT-Regular.ttf') format('truetype');
   font-style: normal;
-  font-weight: 400;
+  font-weight: 100 900;
   font-display: swap;
   unicode-range: U+0E80-0EFF;
+  size-adjust: 125%;
+}
+
+@font-face {
+  font-family: 'Phetsarath OT';
+  src: local('Phetsarath OT'),
+       local('PhetsarathOT'),
+       url('/fonts/PhetsarathOT-Regular.ttf') format('truetype');
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+0E80-0EFF;
+  size-adjust: 125%;
+}
+
+@font-face {
+  font-family: 'Lao System Fallback';
+  src: local('Saysettha OT'),
+       local('Noto Sans Lao'),
+       local('Lao Sangam MN');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+0E80-0EFF;
+  size-adjust: 120%;
 }
 
 @theme {
-  --font-sans: 'Inter', 'Phetsarath OT', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-lao: 'Phetsarath OT', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', 'Phetsarath OT', 'Lao System Fallback', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-lao: 'Phetsarath OT', 'Lao System Fallback', system-ui, -apple-system, sans-serif;
   
   --color-primary-50: #fef2f2;
   --color-primary-100: #fee2e2;
@@ -49,8 +76,8 @@
 }
 
 :root {
-  --font-sans: 'Inter', 'Phetsarath OT', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-lao: 'Phetsarath OT', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', 'Phetsarath OT', 'Lao System Fallback', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-lao: 'Phetsarath OT', 'Lao System Fallback', system-ui, -apple-system, sans-serif;
 }
 
 html {
