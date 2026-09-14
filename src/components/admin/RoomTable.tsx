@@ -120,7 +120,7 @@ export function RoomTable({
         striped
         hoverable
         bordered
-        emptyMessage={t.noRoomsFound}
+        emptyMessage={lang === 'lo' ? 'ຍັງບໍ່ທັນມີຫ້ອງສອບເສັງໃນລະບົບ' : 'No examination rooms in the system'}
       />
     </Card>
   );
