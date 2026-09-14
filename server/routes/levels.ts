@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear, getExamDate, setExamDate, getFormsSold, setFormsSold, getCampusMap, setCampusMap } from '../db';
+import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear, getExamDate, setExamDate, getFormsSold, setFormsSold, getCampusMap, setCampusMap, setRegistrationOpen, getRegistrationOpen } from '../db';
 import { requireAdminAuth } from '../auth';
 import { broadcastEvent } from '../events';
 
