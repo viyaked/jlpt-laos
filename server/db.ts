@@ -136,6 +136,8 @@ export function initDatabase() {
     db.prepare(`UPDATE rooms SET code = 'ຫ້ອງ ' || code WHERE code NOT LIKE 'ຫ້ອງ%' AND code NOT LIKE 'Room%'`).run();
     // Fix room name for multipurpose room
     db.prepare(`UPDATE rooms SET code = 'ຫ້ອງອະເນກປະສົງ' WHERE code = 'ຫ້ອງລະເນາປະສົງ' OR (id = 'room-laonea' AND code LIKE '%ປະສົງ%')`).run();
+    // Update building name from ອາຄານຂວາ to ອາຄານຫຼັກ
+    db.prepare(`UPDATE rooms SET building = 'ອາຄານຫຼັກ' WHERE building = 'ອາຄານຂວາ'`).run();
   }
 
   // Seed default announcement if empty
@@ -281,11 +283,11 @@ export function seedDefaultData() {
       { id: 'room-annex2',  code: 'ຫ້ອງ Annex 2',         building: 'Annex Building (ຊັ້ນທີ 1)', floor: 'ຊັ້ນທີ 1', level: 'N4', capacity: 35 },
       { id: 'room-annex3',  code: 'ຫ້ອງ Annex 3',         building: 'Annex Building (ຊັ້ນທີ 1)', floor: 'ຊັ້ນທີ 1', level: 'N4', capacity: 35 },
       // ── N3 ──────────────────────────────────────────────────
-      { id: 'room-seminar1',    code: 'ຫ້ອງ Seminar 1',           building: 'ອາຄານຂວາ',  floor: '-', level: 'N3', capacity: 30 },
-      { id: 'room-laonea',      code: 'ຫ້ອງອະເນກປະສົງ',           building: 'ອາຄານຂວາ',  floor: '-', level: 'N3', capacity: 30 },
+      { id: 'room-seminar1',    code: 'ຫ້ອງ Seminar 1',           building: 'ອາຄານຫຼັກ',  floor: '-', level: 'N3', capacity: 30 },
+      { id: 'room-laonea',      code: 'ຫ້ອງອະເນກປະສົງ',           building: 'ອາຄານຫຼັກ',  floor: '-', level: 'N3', capacity: 30 },
       // ── N2 ──────────────────────────────────────────────────
       { id: 'room-seminar2',    code: 'ຫ້ອງ Seminar 2',           building: 'ອາຄານຫຼັກ',  floor: '-', level: 'N2', capacity: 30 },
-      { id: 'room-incubation',  code: 'ຫ້ອງ Incubation Room',     building: 'ອາຄານຂວາ',  floor: '-', level: 'N2', capacity: 25 },
+      { id: 'room-incubation',  code: 'ຫ້ອງ Incubation Room',     building: 'ອາຄານຫຼັກ',  floor: '-', level: 'N2', capacity: 25 },
       // ── N1 ──────────────────────────────────────────────────
       { id: 'room-annex6',  code: 'ຫ້ອງ Annex 6',         building: 'Annex Building (ຊັ້ນທີ 2)', floor: 'ຊັ້ນທີ 2', level: 'N1', capacity: 25 },
     ];
