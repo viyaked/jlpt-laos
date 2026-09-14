@@ -127,9 +127,9 @@ router.put('/year', requireAdminAuth, (req, res) => {
   });
 });
 
-// Admin: Update Global Form Quota and/or Forms Sold
+// Admin: Update Global Form Quota, Forms Sold, and/or Registration Status
 router.put('/quota', requireAdminAuth, (req, res) => {
-  const { totalQuota, formsSold } = req.body;
+  const { totalQuota, formsSold, registrationOpen } = req.body;
 
   if (totalQuota !== undefined) {
     if (typeof totalQuota !== 'number' || totalQuota < 1) {
@@ -143,6 +143,13 @@ router.put('/quota', requireAdminAuth, (req, res) => {
       return res.status(400).json({ error: 'formsSold must be a non-negative number' });
     }
     setFormsSold(formsSold);
+  }
+
+  if (registrationOpen !== undefined) {
+    if (typeof registrationOpen !== 'boolean') {
+      return res.status(400).json({ error: 'registrationOpen must be a boolean' });
+    }
+    setRegistrationOpen(registrationOpen);
   }
 
   const formQuota = getTotalFormQuota();
@@ -159,6 +166,7 @@ router.put('/quota', requireAdminAuth, (req, res) => {
       remainingSeats: formQuota.remainingSeats,
       isFormsFull: formQuota.isFormsFull,
       isSeatsFull: formQuota.isSeatsFull,
+      registrationOpen: formQuota.registrationOpen,
     },
   });
 });
@@ -185,6 +193,7 @@ router.put('/sold', requireAdminAuth, (req, res) => {
       remainingSeats: formQuota.remainingSeats,
       isFormsFull: formQuota.isFormsFull,
       isSeatsFull: formQuota.isSeatsFull,
+      registrationOpen: formQuota.registrationOpen,
     },
   });
 });

@@ -158,13 +158,8 @@ const handleAuthError = (err: any) => {
 
   const handleUpdateGlobalQuota = async (totalQuota: number, formsSold?: number, registrationOpen?: boolean) => {
     try {
-      if (registrationOpen !== undefined) {
-        const res = await api.setRegistrationOpen(registrationOpen);
-        setFormQuota(res.formQuota);
-      } else {
-        const res = await api.updateGlobalQuota(totalQuota, formsSold ?? 0);
-        setFormQuota(res.formQuota);
-      }
+      const res = await api.updateGlobalQuota(totalQuota, formsSold, registrationOpen);
+      setFormQuota(res.formQuota);
       await fetchLevels();
     } catch (err: any) {
       if (handleAuthError(err)) return;

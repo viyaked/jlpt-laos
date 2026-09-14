@@ -188,14 +188,18 @@ export const api = {
     return res.json();
   },
 
-  async updateGlobalQuota(totalQuota: number, formsSold?: number): Promise<{ formQuota: FormQuotaStat }> {
+  async updateGlobalQuota(
+    totalQuota: number,
+    formsSold?: number,
+    registrationOpen?: boolean
+  ): Promise<{ formQuota: FormQuotaStat }> {
     const res = await fetch('/api/levels/quota', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         ...authHeaders(),
       },
-      body: JSON.stringify({ totalQuota, formsSold }),
+      body: JSON.stringify({ totalQuota, formsSold, registrationOpen }),
     });
     if (!res.ok) {
       const err = await res.json();
