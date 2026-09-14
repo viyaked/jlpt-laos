@@ -297,28 +297,22 @@ export function LevelAdjustmentCard({
               }`}
             >
               <div>
-                {/* Level Title & Time Badge */}
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <div className="flex items-center gap-2.5">
-                    <span
-                      className={`w-9 h-9 rounded-xl ${theme.badgeBg} font-black text-sm flex items-center justify-center shadow-xs shrink-0`}
-                    >
-                      {stat.level}
-                    </span>
-                    <div>
-                      <h4 className="font-bold text-sm text-slate-900 leading-tight">
-                        JLPT {stat.level}
-                      </h4>
-                      <span className="text-[11px] text-slate-500 font-medium">
-                        {lang === 'lo' ? 'ລະດັບ ' + stat.level : 'Level ' + stat.level}
-                      </span>
+                {/* Level Header: Badge + Level Title + Exam Time */}
+                <div className="flex items-center gap-3 mb-3">
+                  <span
+                    className={`w-11 h-11 rounded-xl ${theme.badgeBg} font-black text-base flex items-center justify-center shadow-xs shrink-0`}
+                  >
+                    {stat.level}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-bold text-base text-slate-900 leading-none">
+                      JLPT {stat.level}
+                    </h4>
+                    <div className="flex items-center gap-1.5 text-xs text-slate-500 font-mono mt-1">
+                      <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
+                      <span>{stat.testTime}</span>
                     </div>
                   </div>
-
-                  <span className="text-[11px] text-slate-600 font-mono bg-slate-100 border border-slate-200/60 px-2 py-1 rounded-lg flex items-center gap-1 shrink-0">
-                    <Clock className="w-3 h-3 text-slate-400 shrink-0" aria-hidden="true" />
-                    <span>{stat.testTime}</span>
-                  </span>
                 </div>
 
                 {/* Metrics Box */}
@@ -346,7 +340,7 @@ export function LevelAdjustmentCard({
                       </span>
                     </div>
                     <span className="text-xs font-medium text-slate-500">
-                      {t.personUnit}
+                      {t.slotsUnit}
                     </span>
                   </div>
 
@@ -360,9 +354,9 @@ export function LevelAdjustmentCard({
                     />
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] pt-0.5 text-slate-500">
-                    <span>{t.remainingCount}:</span>
-                    <span className={`font-bold ${isLevelFull ? 'text-rose-600' : 'text-slate-800'}`}>
+                  <div className="flex items-center justify-between text-xs pt-0.5 text-slate-500">
+                    <span>{lang === 'lo' ? 'ຍັງເຫຼືອ:' : 'Remaining:'}</span>
+                    <span className={`font-bold ${isLevelFull ? 'text-rose-600' : 'text-slate-900'}`}>
                       {remaining} {t.slotsUnit}
                     </span>
                   </div>
@@ -380,27 +374,27 @@ export function LevelAdjustmentCard({
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="space-y-2 pt-3 border-t border-slate-100 mt-auto">
+              {/* Action Buttons: Perfectly balanced side-by-side with equal height */}
+              <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 mt-auto">
                 <button
                   type="button"
                   onClick={() => onIncrement(stat.level)}
                   disabled={cannotAdd}
-                  className="w-full h-10 px-3 inline-flex items-center justify-center gap-2 text-xs sm:text-sm font-bold rounded-xl bg-slate-900 text-white hover:bg-slate-800 active:scale-[0.98] disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed transition-all shadow-xs"
+                  className="h-9.5 px-2 inline-flex items-center justify-center gap-1.5 text-xs font-bold rounded-xl bg-slate-900 text-white hover:bg-slate-800 active:scale-95 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed transition-all shadow-xs"
+                  title={t.addOneBtn}
                 >
                   <Plus className="w-4 h-4 shrink-0" />
-                  <span className="leading-tight">
-                    {cannotAdd ? (lang === 'lo' ? 'ບ່ອນນັ່ງເຕັມແລ້ວ (Full)' : 'Level Full') : t.addOneBtn}
-                  </span>
+                  <span>{cannotAdd ? (lang === 'lo' ? 'ເຕັມ' : 'Full') : '+1'}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => onEditClick(stat)}
-                  className="w-full h-9 px-3 inline-flex items-center justify-center gap-2 text-xs font-semibold rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-900 active:scale-[0.98] transition-all border border-slate-200 hover:border-slate-300"
+                  className="h-9.5 px-2 inline-flex items-center justify-center gap-1.5 text-xs font-semibold rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 active:scale-95 transition-all border border-slate-200/80"
+                  title={t.editDirectlyBtn}
                 >
                   <Edit2 className="w-3.5 h-3.5 shrink-0 text-slate-500" />
-                  <span className="leading-tight">{t.editDirectlyBtn}</span>
+                  <span>{lang === 'lo' ? 'ແກ້ໄຂ' : 'Edit'}</span>
                 </button>
               </div>
             </div>
