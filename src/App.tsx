@@ -175,6 +175,17 @@ const handleAuthError = (err: any) => {
     }
   };
 
+  const handleIncrementFormsSold = async (count: number = 1) => {
+    try {
+      const res = await api.incrementFormsSold(count);
+      setFormQuota(res.formQuota);
+      await fetchLevels();
+    } catch (err: any) {
+      if (handleAuthError(err)) return;
+      alert(err.message || 'Failed to increment forms sold');
+    }
+  };
+
   const handleUpdateGlobalQuota = async (totalQuota: number, formsSold?: number, registrationOpen?: boolean) => {
     try {
       const res = await api.updateGlobalQuota(totalQuota, formsSold, registrationOpen);
@@ -414,6 +425,7 @@ const handleAuthError = (err: any) => {
             onLogin={handleLogin}
             onLogout={handleLogout}
             onIncrementRegistered={handleIncrementRegistered}
+            onIncrementFormsSold={handleIncrementFormsSold}
             onUpdateGlobalQuota={handleUpdateGlobalQuota}
             onUpdateExamSchedule={handleUpdateExamSchedule}
             onUpdateLevel={handleUpdateLevel}

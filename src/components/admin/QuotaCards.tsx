@@ -66,9 +66,10 @@ interface GlobalQuotaCardProps {
   formQuota: FormQuotaStat;
   lang: Language;
   onEditClick: () => void;
+  onIncrementFormsSold?: () => void;
 }
 
-export function GlobalQuotaCard({ formQuota, lang, onEditClick }: GlobalQuotaCardProps) {
+export function GlobalQuotaCard({ formQuota, lang, onEditClick, onIncrementFormsSold }: GlobalQuotaCardProps) {
   const t = translations[lang];
 
   return (
@@ -131,13 +132,27 @@ export function GlobalQuotaCard({ formQuota, lang, onEditClick }: GlobalQuotaCar
                 {t.editFormsSoldBtn}
               </Button>
             </div>
-            <div className="flex items-baseline gap-1 mt-1">
-              <span className="text-2xl font-black text-blue-800">
-                {formQuota.formsSold}
-              </span>
-              <span className="text-xs text-blue-600 font-medium">
-                {t.formUnit}
-              </span>
+            <div className="flex items-center justify-between mt-1">
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-black text-blue-800">
+                  {formQuota.formsSold}
+                </span>
+                <span className="text-xs text-blue-600 font-medium">
+                  {t.formUnit}
+                </span>
+              </div>
+              {onIncrementFormsSold && (
+                <button
+                  type="button"
+                  onClick={onIncrementFormsSold}
+                  disabled={formQuota.isFormsFull || formQuota.formsSold >= formQuota.totalQuota}
+                  className="h-8 px-3 inline-flex items-center justify-center gap-1 text-xs font-bold rounded-lg bg-blue-700 text-white hover:bg-blue-800 active:scale-95 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed transition-all shadow-xs"
+                  title={t.addFormSoldBtn || "+1 Form Sold"}
+                >
+                  <Plus className="w-3.5 h-3.5 shrink-0" />
+                  <span>+1</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -226,6 +226,23 @@ export const api = {
     return res.json();
   },
 
+  async incrementFormsSold(count: number = 1): Promise<{ formQuota: FormQuotaStat }> {
+    const res = await fetch('/api/levels/sold/increment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify({ count }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to increment forms sold');
+    }
+
+    return res.json();
+  },
+
   async setRegistrationOpen(registrationOpen: boolean): Promise<{ formQuota: FormQuotaStat }> {
     const res = await fetch('/api/levels/registration', {
       method: 'PUT',

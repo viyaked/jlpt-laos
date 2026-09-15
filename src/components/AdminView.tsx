@@ -34,6 +34,7 @@ interface AdminViewProps {
   onLogin: (username: string) => void;
   onLogout: () => void;
   onIncrementRegistered: (level: JLPTLevel) => void;
+  onIncrementFormsSold?: () => void;
   onUpdateGlobalQuota: (totalQuota: number, formsSold?: number, registrationOpen?: boolean) => void;
   onUpdateExamSchedule: (newYear: string, newDate: string, newDeadline?: string) => void;
   onUpdateLevel?: (
@@ -66,6 +67,7 @@ export const AdminView: FC<AdminViewProps> = ({
   onLogin,
   onLogout,
   onIncrementRegistered,
+  onIncrementFormsSold,
   onUpdateGlobalQuota,
   onUpdateExamSchedule,
   onUpdateLevel,
@@ -222,6 +224,12 @@ export const AdminView: FC<AdminViewProps> = ({
           formQuota={formQuota}
           lang={lang}
           onEditClick={() => setIsGlobalQuotaModalOpen(true)}
+          onIncrementFormsSold={() => {
+            if (onIncrementFormsSold) {
+              onIncrementFormsSold();
+              triggerToast(lang === 'lo' ? '+1 ຂາຍຟອມແລ້ວ' : '+1 Application Form Sold');
+            }
+          }}
         />
 
         <LevelAdjustmentCard

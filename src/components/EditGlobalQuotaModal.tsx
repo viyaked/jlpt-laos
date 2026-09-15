@@ -136,6 +136,23 @@ export const EditGlobalQuotaModal: FC<EditGlobalQuotaModalProps> = ({
               onChange={(e) => setFormsSold(Math.max(0, parseInt(e.target.value) || 0))}
               className="w-full px-3.5 py-2.5 text-lg font-bold text-blue-950 bg-blue-50/50 border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none transition-all"
             />
+            {/* Quick Add Buttons */}
+            <div className="flex items-center gap-1.5 mt-2">
+              <span className="text-[11px] text-blue-700 font-semibold mr-1">
+                {lang === 'lo' ? 'ເພີ່ມດ່ວນ:' : 'Quick Add:'}
+              </span>
+              {[1, 5, 10, 20].map((inc) => (
+                <button
+                  key={inc}
+                  type="button"
+                  onClick={() => setFormsSold((prev) => Math.min(totalQuota, prev + inc))}
+                  disabled={formsSold >= totalQuota}
+                  className="px-2.5 py-1 text-xs font-bold rounded-lg bg-blue-100/90 text-blue-800 hover:bg-blue-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                >
+                  +{inc}
+                </button>
+              ))}
+            </div>
             <span className="text-[11px] text-slate-500 mt-1 block">
               {t.formsSoldDesc}
             </span>

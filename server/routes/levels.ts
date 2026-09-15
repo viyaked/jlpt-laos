@@ -198,7 +198,7 @@ router.put('/quota', requireAdminAuth, (req, res) => {
 });
 
 // Admin: Update Forms Sold directly
-router.put('/sold', requireAdminAuth, (req, res) => {
+router.put(['/sold', '/forms-sold'], requireAdminAuth, (req, res) => {
   const { formsSold } = req.body;
   if (typeof formsSold !== 'number' || formsSold < 0) {
     return res.status(400).json({ error: 'formsSold must be a non-negative number' });
@@ -207,6 +207,32 @@ router.put('/sold', requireAdminAuth, (req, res) => {
   setFormsSold(formsSold);
   const formQuota = getTotalFormQuota();
 
+  broadcastEvent('levels_updated', { formQuota });
+
+  res.json({
+    success: true,
+    formQuota: {
+      totalQuota: formQuota.totalQuota,
+      formsSold: formQuota.formsSold,
+      totalRegistered: formQuota.totalRegistered,
+      remainingForms: formQuota.remainingForms,
+      remainingSeats: formQuota.remainingSeats,
+      isFormsFull: formQuota.isFormsFull,
+      isSeatsFull: formQuota.isSeatsFull,
+      registrationOpen: formQuota.registrationOpen,
+    },
+  });
+});
+
+// Admin: +1 quick increment for forms sold
+router.post(['/sold/increment', '/forms-sold/increment'], requireAdminAuth, (req, res) => {
+  const count = typeof req.body?.count === 'number' && req.body.count > 0 ? req.body.count : 1;
+  const currentQuota = getTotalFormQuota();
+
+  const newFormsSold = Math.min(currentQuota.totalQuota, currentQuota.formsSold + count);
+  setFormsSold(newFormsSold);
+
+  const formQuota = getTotalFormQuota();
   broadcastEvent('levels_updated', { formQuota });
 
   res.json({
