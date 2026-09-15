@@ -29,14 +29,19 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
           </p>
         </div>
 
-        <Badge
-          variant={registrationOpen && !isFull ? 'success' : 'danger'}
-          size="md"
-          dot
-          className="self-start sm:self-auto text-xs sm:text-sm py-1 px-3 font-semibold"
-        >
-          {registrationOpen && !isFull ? t.statusOpen : t.statusFull}
-        </Badge>
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+          <Badge variant="outline" size="md" className="bg-slate-50 text-slate-800 border-slate-300 font-bold py-1 px-3">
+            {t.totalFormsLabel}: {formQuota.totalQuota} {t.formUnit}
+          </Badge>
+          <Badge
+            variant={registrationOpen && !isFull ? 'success' : 'danger'}
+            size="md"
+            dot
+            className="text-xs sm:text-sm py-1 px-3 font-semibold"
+          >
+            {registrationOpen && !isFull ? t.statusOpen : t.statusFull}
+          </Badge>
+        </div>
       </div>
 
       {/* Only Remaining Forms Card */}

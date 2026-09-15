@@ -22,7 +22,10 @@ function authHeaders(): Record<string, string> {
 export const api = {
   // Public endpoints
   async getLevels(): Promise<LevelsResponse> {
-    const res = await fetch('/api/levels');
+    const res = await fetch('/api/levels', {
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache' },
+    });
     if (!res.ok) throw new Error('Failed to fetch level stats');
     const data = await res.json();
     return {
@@ -51,7 +54,10 @@ export const api = {
   },
 
   async getRooms(): Promise<ExamRoom[]> {
-    const res = await fetch('/api/rooms');
+    const res = await fetch('/api/rooms', {
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache' },
+    });
     if (!res.ok) throw new Error('Failed to fetch rooms');
     const data = await res.json();
     return data.map((r: any) => ({

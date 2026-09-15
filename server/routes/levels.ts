@@ -158,24 +158,26 @@ router.put('/quota', requireAdminAuth, (req, res) => {
   const { totalQuota, formsSold, registrationOpen } = req.body;
 
   if (totalQuota !== undefined) {
-    if (typeof totalQuota !== 'number' || totalQuota < 1) {
+    const numQuota = typeof totalQuota === 'number' ? totalQuota : parseInt(String(totalQuota), 10);
+    if (isNaN(numQuota) || numQuota < 1) {
       return res.status(400).json({ error: 'totalQuota must be a positive number' });
     }
-    setSystemSetting('total_form_quota', String(totalQuota));
+    setSystemSetting('total_form_quota', String(numQuota));
   }
 
   if (formsSold !== undefined) {
-    if (typeof formsSold !== 'number' || formsSold < 0) {
+    const numSold = typeof formsSold === 'number' ? formsSold : parseInt(String(formsSold), 10);
+    if (isNaN(numSold) || numSold < 0) {
       return res.status(400).json({ error: 'formsSold must be a non-negative number' });
     }
-    setFormsSold(formsSold);
+    setFormsSold(numSold);
   }
 
   if (registrationOpen !== undefined) {
-    if (typeof registrationOpen !== 'boolean') {
-      return res.status(400).json({ error: 'registrationOpen must be a boolean' });
-    }
-    setRegistrationOpen(registrationOpen);
+    const boolVal = typeof registrationOpen === 'boolean'
+      ? registrationOpen
+      : String(registrationOpen) === 'true';
+    setRegistrationOpen(boolVal);
   }
 
   const formQuota = getTotalFormQuota();
@@ -325,17 +327,19 @@ router.put('/:level', requireAdminAuth, (req, res) => {
   let newQuota = current.total_quota;
 
   if (registeredCount !== undefined) {
-    if (typeof registeredCount !== 'number' || registeredCount < 0) {
+    const num = typeof registeredCount === 'number' ? registeredCount : parseInt(String(registeredCount), 10);
+    if (isNaN(num) || num < 0) {
       return res.status(400).json({ error: 'registeredCount must be a valid non-negative number' });
     }
-    newRegistered = registeredCount;
+    newRegistered = num;
   }
 
   if (fee !== undefined) {
-    if (typeof fee !== 'number' || fee < 0) {
+    const num = typeof fee === 'number' ? fee : parseInt(String(fee), 10);
+    if (isNaN(num) || num < 0) {
       return res.status(400).json({ error: 'fee must be a valid non-negative number' });
     }
-    newFee = fee;
+    newFee = num;
   }
 
   if (testTime !== undefined) {
@@ -346,10 +350,11 @@ router.put('/:level', requireAdminAuth, (req, res) => {
   }
 
   if (quota !== undefined) {
-    if (typeof quota !== 'number' || quota < 0) {
+    const num = typeof quota === 'number' ? quota : parseInt(String(quota), 10);
+    if (isNaN(num) || num < 0) {
       return res.status(400).json({ error: 'quota must be a valid non-negative number' });
     }
-    newQuota = quota;
+    newQuota = num;
   }
 
   db.prepare(`

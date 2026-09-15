@@ -112,6 +112,26 @@ export const EditGlobalQuotaModal: FC<EditGlobalQuotaModalProps> = ({
               onChange={(e) => setTotalQuota(parseInt(e.target.value) || 0)}
               className="w-full px-3.5 py-2.5 text-lg font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-red-600 focus:bg-white focus:outline-none transition-all"
             />
+            {/* Quick Presets for Total Quota */}
+            <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+              <span className="text-[11px] text-slate-500 font-semibold mr-1">
+                {lang === 'lo' ? 'ກຳນົດດ່ວນ:' : 'Presets:'}
+              </span>
+              {[300, 400, 500, 600, 800, 1000].map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => setTotalQuota(preset)}
+                  className={`px-2 py-0.5 text-xs font-semibold rounded-lg border transition-all ${
+                    totalQuota === preset
+                      ? 'bg-red-700 text-white border-red-700'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                  }`}
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
             <span className="text-[11px] text-slate-500 mt-1 block">
               {t.totalFormQuotaDesc}
             </span>

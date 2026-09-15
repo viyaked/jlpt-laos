@@ -107,8 +107,26 @@ export function App() {
 
   // Subscribe to real-time Server-Sent Events (SSE)
   useEffect(() => {
-    const unsubscribe = subscribeToSSE((event) => {
+    const unsubscribe = subscribeToSSE((event, data) => {
       if (event === 'levels_updated') {
+        if (data?.formQuota) {
+          setFormQuota(data.formQuota);
+        }
+        if (data?.level && data?.quota !== undefined) {
+          setLevelStats((prev) =>
+            prev.map((s) =>
+              s.level === data.level
+                ? {
+                    ...s,
+                    quota: data.quota,
+                    registered: data.registeredCount ?? s.registered,
+                    fee: data.fee ?? s.fee,
+                    testTime: data.testTime ?? s.testTime,
+                  }
+                : s
+            )
+          );
+        }
         fetchLevels();
       } else if (event === 'rooms_updated' || event === 'applicants_updated') {
         fetchRooms();
@@ -166,49 +184,91 @@ const handleAuthError = (err: any) => {
 
   // Level stats handlers (Admin)
   const handleIncrementRegistered = async (level: JLPTLevel) => {
+    setLevelStats((prev) =>
+      prev.map((s) => (s.level === level ? { ...s, registered: s.registered + 1 } : s))
+    );
     try {
-      await api.incrementLevel(level);
+      const res = await api.incrementLevel(level);
+      if (res?.formQuota) {
+        setFormQuota(res.formQuota);
+      }
       await fetchLevels();
     } catch (err: any) {
       if (handleAuthError(err)) return;
       alert(err.message || 'Failed to increment');
+      await fetchLevels();
     }
   };
 
   const handleIncrementFormsSold = async (count: number = 1) => {
+    setFormQuota((prev) => {
+      const sold = Math.min(prev.totalQuota, prev.formsSold + count);
+      const rem = Math.max(0, prev.totalQuota - sold);
+      return {
+        ...prev,
+        formsSold: sold,
+        remainingForms: rem,
+        isFormsFull: rem <= 0,
+      };
+    });
     try {
       const res = await api.incrementFormsSold(count);
-      setFormQuota(res.formQuota);
+      if (res?.formQuota) {
+        setFormQuota(res.formQuota);
+      }
       await fetchLevels();
     } catch (err: any) {
       if (handleAuthError(err)) return;
       alert(err.message || 'Failed to increment forms sold');
+      await fetchLevels();
     }
   };
 
   const handleUpdateGlobalQuota = async (totalQuota: number, formsSold?: number, registrationOpen?: boolean) => {
+    // Instant optimistic update
+    setFormQuota((prev) => {
+      const sold = formsSold !== undefined ? formsSold : prev.formsSold;
+      const rem = Math.max(0, totalQuota - sold);
+      return {
+        ...prev,
+        totalQuota,
+        formsSold: sold,
+        remainingForms: rem,
+        isFormsFull: rem <= 0,
+        registrationOpen: registrationOpen !== undefined ? registrationOpen : prev.registrationOpen,
+      };
+    });
+
     try {
       const res = await api.updateGlobalQuota(totalQuota, formsSold, registrationOpen);
-      setFormQuota(res.formQuota);
+      if (res?.formQuota) {
+        setFormQuota(res.formQuota);
+      }
       await fetchLevels();
     } catch (err: any) {
       if (handleAuthError(err)) return;
       alert(err.message || 'Failed to update total form quota');
+      await fetchLevels();
     }
   };
 
   const handleUpdateExamSchedule = async (newYear: string, newDate: string, newDeadline?: string) => {
+    if (newYear) setExamYear(newYear);
+    if (newDate) setExamDate(newDate);
+    if (newDeadline) setRegistrationDeadline(newDeadline);
+
     try {
       const res = await api.updateExamSchedule(newYear, newDate, newDeadline);
-      setExamYear(res.examYear);
-      setExamDate(res.examDate);
-      if (res.registrationDeadline) {
+      if (res?.examYear) setExamYear(res.examYear);
+      if (res?.examDate) setExamDate(res.examDate);
+      if (res?.registrationDeadline) {
         setRegistrationDeadline(res.registrationDeadline);
       }
       await fetchLevels();
     } catch (err: any) {
       if (handleAuthError(err)) return;
       alert(err.message || 'Failed to update exam schedule');
+      await fetchLevels();
     }
   };
 
@@ -216,17 +276,36 @@ const handleAuthError = (err: any) => {
     level: string,
     data: { registered: number; fee: number; testTime: string; quota: number }
   ) => {
+    // Instant optimistic update
+    setLevelStats((prev) =>
+      prev.map((s) =>
+        s.level === level
+          ? {
+              ...s,
+              quota: data.quota,
+              registered: data.registered,
+              fee: data.fee,
+              testTime: data.testTime,
+            }
+          : s
+      )
+    );
+
     try {
-      await api.updateLevel(level, {
+      const res = await api.updateLevel(level, {
         registeredCount: data.registered,
         fee: data.fee,
         testTime: data.testTime,
         quota: data.quota,
       });
+      if (res?.formQuota) {
+        setFormQuota(res.formQuota);
+      }
       await fetchLevels();
     } catch (err: any) {
       if (handleAuthError(err)) return;
       alert(err.message || 'Failed to update exam level details');
+      await fetchLevels();
     }
   };
 
@@ -234,12 +313,20 @@ const handleAuthError = (err: any) => {
     level: string,
     registered: number
   ) => {
+    setLevelStats((prev) =>
+      prev.map((s) => (s.level === level ? { ...s, registered } : s))
+    );
+
     try {
-      await api.updateLevel(level, registered);
+      const res = await api.updateLevel(level, registered);
+      if (res?.formQuota) {
+        setFormQuota(res.formQuota);
+      }
       await fetchLevels();
     } catch (err: any) {
       if (handleAuthError(err)) return;
       alert(err.message || 'Failed to update registered count');
+      await fetchLevels();
     }
   };
 
