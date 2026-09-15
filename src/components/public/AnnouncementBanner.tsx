@@ -31,10 +31,7 @@ export function AnnouncementBanner({ lang, examDate, registrationDeadline = '202
           </h2>
 
           <p className="text-xs sm:text-sm text-slate-300 font-lo leading-relaxed">
-            {t.publicWelcomeSubtitle}{' '}
-            <span className="text-amber-300 font-medium">
-              ({t.registrationDeadlineLabel}: <span className="text-white font-bold">{formattedDeadline.longDate}</span>)
-            </span>
+            {t.publicWelcomeSubtitle}
           </p>
         </div>
 
