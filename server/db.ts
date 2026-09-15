@@ -151,6 +151,12 @@ export function initDatabase() {
     db.prepare('INSERT INTO system_settings (key, value) VALUES (?, ?)').run('registration_open', 'true');
   }
 
+  // Initialize registration_deadline setting (default 2026-03-31)
+  const existingDeadline = db.prepare('SELECT value FROM system_settings WHERE key = ?').get('registration_deadline');
+  if (!existingDeadline) {
+    db.prepare('INSERT INTO system_settings (key, value) VALUES (?, ?)').run('registration_deadline', '2026-03-31');
+  }
+
   // Seed default admin user if not exists
   const existingAdmin = db.prepare('SELECT id FROM users WHERE username = ?').get('admin');
   if (!existingAdmin) {
@@ -229,6 +235,14 @@ export function setExamDate(date: string): void {
   setSystemSetting('exam_date', date);
 }
 
+export function getRegistrationDeadline(): string {
+  return getSystemSetting('registration_deadline', '2026-03-31');
+}
+
+export function setRegistrationDeadline(date: string): void {
+  setSystemSetting('registration_deadline', date);
+}
+
 export function getRegistrationOpen(): boolean {
   const val = getSystemSetting('registration_open', 'true');
   return val === 'true';
@@ -300,6 +314,7 @@ export function seedDefaultData() {
     setSystemSetting('forms_sold', '0');
     setSystemSetting('exam_year', '2026');
     setSystemSetting('exam_date', '2026-07-05');
+    setSystemSetting('registration_deadline', '2026-03-31');
     setSystemSetting('registration_open', 'true');
 
     // 1. Levels (Default quotas, 0 registered applicants, updated fees)

@@ -6,13 +6,15 @@ import { Card, Badge, Button } from '../ui';
 interface ExamScheduleCardProps {
   examYear: string;
   examDate: string;
+  registrationDeadline?: string;
   lang: Language;
   onEditClick: () => void;
 }
 
-export function ExamScheduleCard({ examYear, examDate, lang, onEditClick }: ExamScheduleCardProps) {
+export function ExamScheduleCard({ examYear, examDate, registrationDeadline = '2026-03-31', lang, onEditClick }: ExamScheduleCardProps) {
   const t = translations[lang];
   const formattedExamDate = formatExamDate(examDate, lang);
+  const formattedDeadline = formatExamDate(registrationDeadline, lang);
 
   return (
     <Card variant="default" padding="lg">
@@ -26,6 +28,9 @@ export function ExamScheduleCard({ examYear, examDate, lang, onEditClick }: Exam
             <Badge variant="default" size="sm" className="bg-slate-900 text-white">
               {t.examDateLabel}: {formattedExamDate.shortDate}
             </Badge>
+            <Badge variant="outline" size="sm" className="bg-amber-50 text-amber-800 border-amber-300 font-semibold">
+              {t.registrationDeadlineLabel}: {formattedDeadline.shortDate}
+            </Badge>
             <Badge variant="outline" size="sm" className="bg-red-50 text-red-700 border-red-200">
               ປີ {examYear}
             </Badge>
@@ -37,6 +42,10 @@ export function ExamScheduleCard({ examYear, examDate, lang, onEditClick }: Exam
             <div className="bg-slate-50 border border-slate-200 px-3 py-2 rounded-lg">
               <span className="text-slate-500 block text-[10px] uppercase font-semibold">{t.examDateLabel}</span>
               <span className="font-bold text-slate-900">{formattedExamDate.longDate} ({formattedExamDate.shortDate})</span>
+            </div>
+            <div className="bg-slate-50 border border-slate-200 px-3 py-2 rounded-lg">
+              <span className="text-slate-500 block text-[10px] uppercase font-semibold">{t.registrationDeadlineLabel}</span>
+              <span className="font-bold text-amber-700">{formattedDeadline.longDate} ({formattedDeadline.shortDate})</span>
             </div>
             <div className="bg-slate-50 border border-slate-200 px-3 py-2 rounded-lg">
               <span className="text-slate-500 block text-[10px] uppercase font-semibold">{t.examYearPreviewLabel}</span>

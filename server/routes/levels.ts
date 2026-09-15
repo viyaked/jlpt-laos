@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear, getExamDate, setExamDate, setFormsSold, getCampusMap, setCampusMap, setRegistrationOpen, getRegistrationOpen } from '../db';
+import { db, getTotalFormQuota, setSystemSetting, getExamYear, setExamYear, getExamDate, setExamDate, getRegistrationDeadline, setRegistrationDeadline, setFormsSold, getCampusMap, setCampusMap, setRegistrationOpen, getRegistrationOpen } from '../db';
 import { requireAdminAuth } from '../auth';
 import { broadcastEvent } from '../events';
 
@@ -10,6 +10,7 @@ router.get('/', (req, res) => {
   const formQuota = getTotalFormQuota();
   const examYear = getExamYear();
   const examDate = getExamDate();
+  const registrationDeadline = getRegistrationDeadline();
   const campusMap = getCampusMap();
 
   const levels = db.prepare(`
@@ -43,6 +44,7 @@ router.get('/', (req, res) => {
   res.json({
     examYear,
     examDate,
+    registrationDeadline,
     campusMap,
     formQuota: {
       totalQuota: formQuota.totalQuota,
@@ -67,9 +69,9 @@ router.put('/campus-map', requireAdminAuth, (req, res) => {
   res.json({ success: true, campusMap: mapValue });
 });
 
-// Admin: Update Exam Schedule (Year and/or Date)
+// Admin: Update Exam Schedule (Year, Date, and/or Registration Deadline)
 router.put('/schedule', requireAdminAuth, (req, res) => {
-  const { examYear, examDate } = req.body;
+  const { examYear, examDate, registrationDeadline } = req.body;
 
   if (examYear && typeof examYear === 'string' && examYear.trim()) {
     setExamYear(examYear.trim());
@@ -79,15 +81,39 @@ router.put('/schedule', requireAdminAuth, (req, res) => {
     setExamDate(examDate.trim());
   }
 
+  if (registrationDeadline && typeof registrationDeadline === 'string' && registrationDeadline.trim()) {
+    setRegistrationDeadline(registrationDeadline.trim());
+  }
+
   const updatedYear = getExamYear();
   const updatedDate = getExamDate();
+  const updatedDeadline = getRegistrationDeadline();
 
-  broadcastEvent('levels_updated', { examYear: updatedYear, examDate: updatedDate });
+  broadcastEvent('levels_updated', { examYear: updatedYear, examDate: updatedDate, registrationDeadline: updatedDeadline });
 
   res.json({
     success: true,
     examYear: updatedYear,
     examDate: updatedDate,
+    registrationDeadline: updatedDeadline,
+  });
+});
+
+// Admin: Update Registration Deadline Date
+router.put('/deadline', requireAdminAuth, (req, res) => {
+  const { registrationDeadline } = req.body;
+  if (!registrationDeadline || typeof registrationDeadline !== 'string' || !registrationDeadline.trim()) {
+    return res.status(400).json({ error: 'registrationDeadline is required' });
+  }
+
+  const cleanDate = registrationDeadline.trim();
+  setRegistrationDeadline(cleanDate);
+
+  broadcastEvent('levels_updated', { registrationDeadline: cleanDate });
+
+  res.json({
+    success: true,
+    registrationDeadline: cleanDate,
   });
 });
 

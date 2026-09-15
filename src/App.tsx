@@ -47,6 +47,7 @@ export function App() {
   const [examRooms, setExamRooms] = useState<ExamRoom[]>(initialExamRooms);
   const [examYear, setExamYear] = useState<string>('2026');
   const [examDate, setExamDate] = useState<string>('2026-07-05');
+  const [registrationDeadline, setRegistrationDeadline] = useState<string>('2026-03-31');
   const [campusMap, setCampusMap] = useState<string>('');
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
@@ -61,6 +62,9 @@ export function App() {
       }
       if (data.examDate) {
         setExamDate(data.examDate);
+      }
+      if (data.registrationDeadline) {
+        setRegistrationDeadline(data.registrationDeadline);
       }
       if (data.campusMap !== undefined) {
         setCampusMap(data.campusMap);
@@ -182,11 +186,14 @@ const handleAuthError = (err: any) => {
     }
   };
 
-  const handleUpdateExamSchedule = async (newYear: string, newDate: string) => {
+  const handleUpdateExamSchedule = async (newYear: string, newDate: string, newDeadline?: string) => {
     try {
-      const res = await api.updateExamSchedule(newYear, newDate);
+      const res = await api.updateExamSchedule(newYear, newDate, newDeadline);
       setExamYear(res.examYear);
       setExamDate(res.examDate);
+      if (res.registrationDeadline) {
+        setRegistrationDeadline(res.registrationDeadline);
+      }
       await fetchLevels();
     } catch (err: any) {
       if (handleAuthError(err)) return;
@@ -395,6 +402,7 @@ const handleAuthError = (err: any) => {
             lang={lang}
             examYear={examYear}
             examDate={examDate}
+            registrationDeadline={registrationDeadline}
             campusMap={campusMap}
           />
         ) : (
@@ -419,6 +427,7 @@ const handleAuthError = (err: any) => {
             lang={lang}
             examYear={examYear}
             examDate={examDate}
+            registrationDeadline={registrationDeadline}
             campusMap={campusMap}
             onUpdateCampusMap={handleUpdateCampusMap}
             announcements={announcements}

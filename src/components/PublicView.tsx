@@ -25,6 +25,7 @@ interface PublicViewProps {
   lang: Language;
   examYear?: string;
   examDate?: string;
+  registrationDeadline?: string;
   campusMap?: string;
 }
 
@@ -36,6 +37,7 @@ export const PublicView: FC<PublicViewProps> = ({
   lang,
   examYear: _examYear = '2026',
   examDate = '2026-07-05',
+  registrationDeadline = '2026-03-31',
   campusMap = '',
 }) => {
   const t = translations[lang];
@@ -116,7 +118,7 @@ export const PublicView: FC<PublicViewProps> = ({
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-8 sm:pb-12 animate-fadeIn">
-      <AnnouncementBanner lang={lang} examDate={examDate} />
+      <AnnouncementBanner lang={lang} examDate={examDate} registrationDeadline={registrationDeadline} />
 
       <InformationBoard
         announcements={announcements}

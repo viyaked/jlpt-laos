@@ -1,14 +1,15 @@
 import { useState, useEffect, type FC, type FormEvent } from 'react';
 import type { Language } from '../types';
-import { translations, getAnnualExamTitle, getAnnualExamShort, formatExamDate } from '../i18n';
-import { X, AlertCircle, Save, Calendar, Sparkles, Clock } from 'lucide-react';
+import { translations, formatExamDate, getAnnualExamTitle, getAnnualExamShort } from '../i18n';
+import { X, Calendar, Clock, CalendarClock, Save, AlertCircle, Sparkles } from 'lucide-react';
 
 interface EditExamYearModalProps {
   isOpen: boolean;
   onClose: () => void;
-  currentYear: string;
+  currentYear?: string;
   currentDate?: string;
-  onSave: (newYear: string, newDate: string) => void;
+  currentDeadline?: string;
+  onSave: (newYear: string, newDate: string, newDeadline?: string) => void;
   lang: Language;
 }
 
@@ -17,27 +18,30 @@ export const EditExamYearModal: FC<EditExamYearModalProps> = ({
   onClose,
   currentYear,
   currentDate = '2026-07-05',
+  currentDeadline = '2026-03-31',
   onSave,
   lang,
 }) => {
   const [year, setYear] = useState(currentYear || '2026');
   const [date, setDate] = useState(currentDate || '2026-07-05');
+  const [deadline, setDeadline] = useState(currentDeadline || '2026-03-31');
   const [error, setError] = useState('');
 
   useEffect(() => {
     setYear(currentYear || '2026');
     setDate(currentDate || '2026-07-05');
+    setDeadline(currentDeadline || '2026-03-31');
     setError('');
-  }, [currentYear, currentDate, isOpen]);
+  }, [currentYear, currentDate, currentDeadline, isOpen]);
 
   if (!isOpen) return null;
   const t = translations[lang];
 
   // Quick preset exam dates (1st Sunday of July & December)
   const quickPresets = [
-    { label: '05/07/2026 (JLPT ຮອບ 1)', date: '2026-07-05', year: '2026' },
-    { label: '06/12/2026 (JLPT ຮອບ 2)', date: '2026-12-06', year: '2026' },
-    { label: '04/07/2027 (JLPT ຮອບ 1)', date: '2027-07-04', year: '2027' },
+    { label: '05/07/2026 (JLPT ຮອບ 1)', date: '2026-07-05', year: '2026', deadline: '2026-03-31' },
+    { label: '06/12/2026 (JLPT ຮອບ 2)', date: '2026-12-06', year: '2026', deadline: '2026-08-31' },
+    { label: '04/07/2027 (JLPT ຮອບ 1)', date: '2027-07-04', year: '2027', deadline: '2027-03-31' },
   ];
 
   const handleDateChange = (newDate: string) => {
@@ -66,11 +70,12 @@ export const EditExamYearModal: FC<EditExamYearModalProps> = ({
       return;
     }
 
-    onSave(cleanYear, cleanDate);
+    onSave(cleanYear, cleanDate, deadline.trim());
     onClose();
   };
 
   const formattedDate = formatExamDate(date, lang);
+  const formattedDeadline = formatExamDate(deadline, lang);
   const previewTitle = getAnnualExamTitle(lang, year || '2026');
   const previewShort = getAnnualExamShort(lang, year || '2026');
 
@@ -127,6 +132,24 @@ export const EditExamYearModal: FC<EditExamYearModalProps> = ({
             </span>
           </div>
 
+          {/* Registration Deadline Date Picker Input */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+              <CalendarClock className="w-4 h-4 text-amber-600" />
+              <span>{t.registrationDeadlineInputLabel} *</span>
+            </label>
+            <input
+              type="date"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              className="w-full px-3.5 py-2.5 text-base font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer"
+              required
+            />
+            <span className="text-[11px] text-slate-500 mt-1 block">
+              {t.registrationDeadlineInputHelp}
+            </span>
+          </div>
+
           {/* Exam Year Input Field */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
@@ -167,6 +190,7 @@ export const EditExamYearModal: FC<EditExamYearModalProps> = ({
                   onClick={() => {
                     setDate(preset.date);
                     setYear(preset.year);
+                    if (preset.deadline) setDeadline(preset.deadline);
                     setError('');
                   }}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
@@ -198,14 +222,26 @@ export const EditExamYearModal: FC<EditExamYearModalProps> = ({
               </div>
 
               {/* Title & Card Preview */}
-              <div className="bg-white p-3 rounded-lg border border-slate-200/80 shadow-2xs">
-                <span className="text-[11px] font-semibold text-slate-400 block mb-0.5">
-                  {t.examDateLabel} (Display in Portal):
-                </span>
-                <div className="text-sm font-bold text-slate-900">
-                  {formattedDate.longDate} <span className="text-xs font-semibold text-red-700 ml-1">({formattedDate.shortDate})</span>
+              <div className="bg-white p-3 rounded-lg border border-slate-200/80 shadow-2xs space-y-2">
+                <div>
+                  <span className="text-[11px] font-semibold text-slate-400 block mb-0.5">
+                    {t.examDateLabel} (Display in Portal):
+                  </span>
+                  <div className="text-sm font-bold text-slate-900">
+                    {formattedDate.longDate} <span className="text-xs font-semibold text-red-700 ml-1">({formattedDate.shortDate})</span>
+                  </div>
                 </div>
-                <div className="text-xs text-slate-600 mt-1.5 font-medium border-t border-slate-100 pt-1.5">
+
+                <div className="pt-2 border-t border-slate-100">
+                  <span className="text-[11px] font-semibold text-amber-600 block mb-0.5">
+                    {t.registrationDeadlineLabel}:
+                  </span>
+                  <div className="text-sm font-bold text-amber-900">
+                    {formattedDeadline.longDate} <span className="text-xs font-semibold text-amber-700 ml-1">({formattedDeadline.shortDate})</span>
+                  </div>
+                </div>
+
+                <div className="text-xs text-slate-600 pt-1.5 font-medium border-t border-slate-100">
                   {previewTitle}
                 </div>
               </div>

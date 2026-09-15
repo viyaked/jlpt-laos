@@ -35,7 +35,7 @@ interface AdminViewProps {
   onLogout: () => void;
   onIncrementRegistered: (level: JLPTLevel) => void;
   onUpdateGlobalQuota: (totalQuota: number, formsSold?: number, registrationOpen?: boolean) => void;
-  onUpdateExamSchedule: (newYear: string, newDate: string) => void;
+  onUpdateExamSchedule: (newYear: string, newDate: string, newDeadline?: string) => void;
   onUpdateLevel?: (
     level: string,
     data: { registered: number; fee: number; testTime: string; quota: number }
@@ -50,6 +50,7 @@ interface AdminViewProps {
   lang: Language;
   examYear?: string;
   examDate?: string;
+  registrationDeadline?: string;
   campusMap?: string;
   onUpdateCampusMap?: (map: string) => Promise<void>;
   announcements?: Announcement[];
@@ -78,6 +79,7 @@ export const AdminView: FC<AdminViewProps> = ({
   lang,
   examYear = '2026',
   examDate = '2026-07-05',
+  registrationDeadline = '2026-03-31',
   campusMap = '',
   onUpdateCampusMap,
   announcements = [],
@@ -211,6 +213,7 @@ export const AdminView: FC<AdminViewProps> = ({
         <ExamScheduleCard
           examYear={examYear}
           examDate={examDate}
+          registrationDeadline={registrationDeadline}
           lang={lang}
           onEditClick={() => setIsExamYearModalOpen(true)}
         />
@@ -317,8 +320,9 @@ export const AdminView: FC<AdminViewProps> = ({
         onClose={() => setIsExamYearModalOpen(false)}
         currentYear={examYear}
         currentDate={examDate}
-        onSave={(newYear: string, newDate: string) => {
-          onUpdateExamSchedule(newYear, newDate);
+        currentDeadline={registrationDeadline}
+        onSave={(newYear: string, newDate: string, newDeadline?: string) => {
+          onUpdateExamSchedule(newYear, newDate, newDeadline);
           triggerToast(t.examScheduleSuccess);
         }}
         lang={lang}

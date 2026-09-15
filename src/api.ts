@@ -28,6 +28,7 @@ export const api = {
     return {
       examYear: data.examYear || '2026',
       examDate: data.examDate || '2026-07-05',
+      registrationDeadline: data.registrationDeadline || '2026-03-31',
       campusMap: data.campusMap || '',
       formQuota: {
         totalQuota: data.formQuota?.totalQuota ?? 500,
@@ -273,18 +274,38 @@ export const api = {
     return res.json();
   },
 
-  async updateExamSchedule(examYear: string, examDate: string): Promise<{ examYear: string; examDate: string }> {
+  async updateExamSchedule(
+    examYear: string,
+    examDate: string,
+    registrationDeadline?: string
+  ): Promise<{ examYear: string; examDate: string; registrationDeadline?: string }> {
     const res = await fetch('/api/levels/schedule', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         ...authHeaders(),
       },
-      body: JSON.stringify({ examYear, examDate }),
+      body: JSON.stringify({ examYear, examDate, registrationDeadline }),
     });
     if (!res.ok) {
       const err = await res.json();
       throw new Error(err.error || 'Failed to update exam schedule');
+    }
+    return res.json();
+  },
+
+  async updateRegistrationDeadline(registrationDeadline: string): Promise<{ registrationDeadline: string }> {
+    const res = await fetch('/api/levels/deadline', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders(),
+      },
+      body: JSON.stringify({ registrationDeadline }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update registration deadline');
     }
     return res.json();
   },

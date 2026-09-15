@@ -26,6 +26,7 @@ export interface LevelsResponse {
   formQuota: FormQuotaStat;
   examYear: string;
   examDate: string;
+  registrationDeadline?: string;
   campusMap?: string;
 }
 
