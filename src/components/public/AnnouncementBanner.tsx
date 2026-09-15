@@ -1,4 +1,4 @@
-import { Calendar, CalendarClock, Megaphone, BarChart3, Clock, MapPin } from 'lucide-react';
+import { Calendar, CalendarClock } from 'lucide-react';
 import type { Language } from '../../types';
 import { translations, formatExamDate } from '../../i18n';
 
@@ -30,40 +30,12 @@ export function AnnouncementBanner({ lang, examDate, registrationDeadline = '202
             {t.publicWelcomeTitle}
           </h2>
 
-          {/* Description Area with Registration Deadline */}
-          <div className="space-y-2.5">
-            <p className="text-xs sm:text-sm text-slate-300 font-lo leading-relaxed">
-              {t.publicWelcomeSubtitle}
-            </p>
-
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-amber-500/5 border border-amber-500/35 text-xs sm:text-sm text-amber-200 font-medium shadow-xs">
-              <CalendarClock className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" aria-hidden="true" />
-              <span className="font-lo">
-                <span className="text-amber-300 font-bold">{t.registrationDeadlineLabel}:</span>{' '}
-                <strong className="text-white font-bold ml-1 tracking-wide">{formattedDeadline.longDate}</strong>
-              </span>
-            </div>
-          </div>
-
-          {/* Key capability pills for examinees */}
-          <div className="flex flex-wrap gap-2 pt-1">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-slate-200 font-medium transition-colors border border-white/5">
-              <Megaphone className="w-3.5 h-3.5 text-red-400 shrink-0" aria-hidden="true" />
-              <span>{lang === 'lo' ? 'ປະກາດການສອບເສັງ' : 'Official Notices'}</span>
+          <p className="text-xs sm:text-sm text-slate-300 font-lo leading-relaxed">
+            {t.publicWelcomeSubtitle}{' '}
+            <span className="text-amber-300 font-medium">
+              ({t.registrationDeadlineLabel}: <span className="text-white font-bold">{formattedDeadline.longDate}</span>)
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-slate-200 font-medium transition-colors border border-white/5">
-              <BarChart3 className="w-3.5 h-3.5 text-emerald-400 shrink-0" aria-hidden="true" />
-              <span>{lang === 'lo' ? 'ໂຄຕ້າ & ບ່ອນນັ່ງວ່າງ' : 'Live Quota & Seats'}</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-slate-200 font-medium transition-colors border border-white/5">
-              <Clock className="w-3.5 h-3.5 text-sky-400 shrink-0" aria-hidden="true" />
-              <span>{lang === 'lo' ? 'ຕາຕະລາງເວລາ & ຄ່າທຳນຽມ' : 'Schedules & Fees'}</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-slate-200 font-medium transition-colors border border-white/5">
-              <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
-              <span>{lang === 'lo' ? 'ຄົ້ນຫາຫ້ອງສອບ & ແຜນຜັງ' : 'Room Search & Map'}</span>
-            </span>
-          </div>
+          </p>
         </div>
 
         {/* Exam Dates & Deadline Card */}
