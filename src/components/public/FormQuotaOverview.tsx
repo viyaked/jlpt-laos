@@ -18,14 +18,11 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
         <div>
-          <div className="flex flex-wrap items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1">
             <span className="w-2.5 h-6 bg-red-700 rounded-sm inline-block" aria-hidden="true" />
             <h3 className="text-xl font-bold text-slate-900 tracking-tight">
               {t.totalFormQuotaTitle}
             </h3>
-            <Badge variant="outline" size="sm" className="bg-red-50 text-red-700 border-red-200 font-medium">
-              {t.unifiedFormBadge}
-            </Badge>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 font-lo">
             {t.totalFormQuotaDesc}
@@ -51,29 +48,18 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
               : 'bg-emerald-50/70 border-emerald-200/80 text-emerald-900'
           }`}
         >
-          <div className="space-y-1.5 max-w-xl">
-            <div className="flex items-center gap-2">
-              {isFull ? (
-                <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
-              ) : (
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-              )}
-              <span className="text-sm sm:text-base font-bold text-slate-900">
-                {t.remainingFormsLabel}
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-600 font-lo leading-relaxed">
-              {isFull
-                ? lang === 'lo'
-                  ? 'ໂຄຕ້າຟອມສະໝັກເຕັມແລ້ວ ຫຼື ປິດຮັບສະໝັກຊົ່ວຄາວ'
-                  : 'Application form quota is full or registration is currently closed.'
-                : lang === 'lo'
-                ? 'ຈຳນວນຟອມສະໝັກທີ່ຍັງເຫຼືອ ແລະ ພ້ອມໃຫ້ບໍລິການໃນປັດຈຸບັນ (ໃຊ້ຮ່ວມກັນທຸກລະດັບ N1 - N5)'
-                : 'Current available application forms across all exam levels (N1–N5).'}
-            </p>
+          <div className="flex items-center gap-2.5">
+            {isFull ? (
+              <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
+            ) : (
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            )}
+            <span className="text-base sm:text-lg font-bold text-slate-900">
+              {t.remainingFormsLabel}
+            </span>
           </div>
 
-          <div className="flex items-baseline gap-2 shrink-0 bg-white/90 backdrop-blur-xs px-6 py-3.5 rounded-xl border border-slate-200/60 shadow-xs self-start sm:self-auto">
+          <div className="flex items-baseline gap-2 shrink-0 bg-white/90 backdrop-blur-xs px-6 py-3 rounded-xl border border-slate-200/60 shadow-xs self-start sm:self-auto">
             <span
               className={`text-4xl sm:text-5xl font-black tracking-tight leading-none ${
                 isFull ? 'text-rose-700' : 'text-emerald-700'
