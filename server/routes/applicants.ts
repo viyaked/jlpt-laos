@@ -47,55 +47,80 @@ router.get('/search', (req, res) => {
 
 // Admin: Add single applicant
 router.post('/', requireAdminAuth, (req, res) => {
-  const { fullName, firstName, lastName, roomId } = req.body;
-  const name = fullName || `${firstName || ''} ${lastName || ''}`.trim();
-  
-  if (!name || !roomId) {
-    return res.status(400).json({ error: 'fullName (or firstName/lastName) and roomId are required' });
+  try {
+    const { fullName, firstName, lastName, roomId } = req.body;
+    const name = (fullName || `${firstName || ''} ${lastName || ''}`).trim();
+    
+    if (!name || !roomId) {
+      return res.status(400).json({ error: 'fullName (or firstName/lastName) and roomId are required' });
+    }
+
+    const room = db.prepare('SELECT id FROM rooms WHERE id = ?').get(roomId);
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' });
+    }
+
+    const parts = name.split(/\s+/);
+    const fn = (firstName?.trim()) || (parts.length > 1 ? parts[0] : name);
+    const ln = (lastName?.trim()) || (parts.length > 1 ? parts.slice(1).join(' ') : '');
+    const id = `ex-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+
+    db.prepare(`
+      INSERT INTO applicants (id, full_name, first_name, last_name, room_id)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(id, name, fn || '', ln || '', roomId);
+
+    broadcastEvent('applicants_updated', { roomId, applicantId: id });
+    broadcastEvent('rooms_updated', { roomId });
+
+    res.status(201).json({ id, fullName: name, firstName: fn, lastName: ln, roomId });
+  } catch (err: any) {
+    console.error('Error adding applicant:', err);
+    res.status(500).json({ error: err.message || 'Failed to add applicant' });
   }
-
-  const id = `ex-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
-  db.prepare(`
-    INSERT INTO applicants (id, full_name, first_name, last_name, room_id)
-    VALUES (?, ?, ?, ?, ?)
-  `).run(id, name, firstName?.trim() || null, lastName?.trim() || null, roomId);
-
-  broadcastEvent('applicants_updated', { roomId, applicantId: id });
-  broadcastEvent('rooms_updated', { roomId });
-
-  res.status(201).json({ id, fullName: name, firstName, lastName, roomId });
 });
 
 // Admin: Batch Add applicants
 router.post('/batch', requireAdminAuth, (req, res) => {
-  const { roomId, applicants } = req.body;
-  if (!roomId || !Array.isArray(applicants) || applicants.length === 0) {
-    return res.status(400).json({ error: 'roomId and array of applicants are required' });
-  }
-
-  const insertStmt = db.prepare(`
-    INSERT INTO applicants (id, full_name, first_name, last_name, room_id)
-    VALUES (?, ?, ?, ?, ?)
-  `);
-
-  const inserted: any[] = [];
-  const batchTx = db.transaction(() => {
-    for (const app of applicants) {
-      const name = app.fullName || `${app.firstName || ''} ${app.lastName || ''}`.trim();
-      if (!name) continue;
-      const id = `ex-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-      const fn = app.firstName?.trim() || null;
-      const ln = app.lastName?.trim() || null;
-      insertStmt.run(id, name, fn, ln, roomId);
-      inserted.push({ id, fullName: name, firstName: fn, lastName: ln });
+  try {
+    const { roomId, applicants } = req.body;
+    if (!roomId || !Array.isArray(applicants) || applicants.length === 0) {
+      return res.status(400).json({ error: 'roomId and array of applicants are required' });
     }
-  });
 
-  batchTx();
-  broadcastEvent('applicants_updated', { roomId, count: inserted.length });
-  broadcastEvent('rooms_updated', { roomId });
+    const room = db.prepare('SELECT id FROM rooms WHERE id = ?').get(roomId);
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' });
+    }
 
-  res.json({ success: true, count: inserted.length, applicants: inserted });
+    const insertStmt = db.prepare(`
+      INSERT INTO applicants (id, full_name, first_name, last_name, room_id)
+      VALUES (?, ?, ?, ?, ?)
+    `);
+
+    const inserted: any[] = [];
+    const batchTx = db.transaction(() => {
+      for (const app of applicants) {
+        const name = (app.fullName || `${app.firstName || ''} ${app.lastName || ''}`).trim();
+        if (!name) continue;
+        const parts = name.split(/\s+/);
+        const fn = (app.firstName?.trim()) || (parts.length > 1 ? parts[0] : name);
+        const ln = (app.lastName?.trim()) || (parts.length > 1 ? parts.slice(1).join(' ') : '');
+        const id = `ex-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+        insertStmt.run(id, name, fn || '', ln || '', roomId);
+        inserted.push({ id, fullName: name, firstName: fn, lastName: ln });
+      }
+    });
+
+    batchTx();
+    broadcastEvent('applicants_updated', { roomId, count: inserted.length });
+    broadcastEvent('rooms_updated', { roomId });
+
+    res.json({ success: true, count: inserted.length, applicants: inserted });
+  } catch (err: any) {
+    console.error('Error in batch add applicants:', err);
+    res.status(500).json({ error: err.message || 'Failed to batch add applicants' });
+  }
 });
 
 // Admin: Import CSV (supports full UTF-8 Lao characters)

@@ -125,6 +125,7 @@ export const AdminView: FC<AdminViewProps> = ({
         ...room,
         examinees: (data.applicants || []).map((a: any) => ({
           id: a.id,
+          fullName: a.fullName,
           firstName: a.firstName,
           lastName: a.lastName,
           registeredDate: '',

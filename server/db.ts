@@ -93,6 +93,27 @@ export function initDatabase() {
     `);
   }
 
+  // Migration: Ensure applicants table allows nullable first_name and last_name
+  const fnCol = applicantColumns.find((col: any) => col.name === 'first_name');
+  if (fnCol && fnCol.notnull === 1) {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS applicants_migration (
+        id TEXT PRIMARY KEY,
+        full_name TEXT NOT NULL,
+        first_name TEXT,
+        last_name TEXT,
+        room_id TEXT,
+        registered_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE SET NULL
+      );
+      INSERT INTO applicants_migration (id, full_name, first_name, last_name, room_id, registered_at)
+      SELECT id, COALESCE(full_name, COALESCE(first_name, '') || ' ' || COALESCE(last_name, '')), first_name, last_name, room_id, registered_at
+      FROM applicants;
+      DROP TABLE applicants;
+      ALTER TABLE applicants_migration RENAME TO applicants;
+    `);
+  }
+
   // Initialize default system settings
   const existingQuota = db.prepare('SELECT value FROM system_settings WHERE key = ?').get('total_form_quota');
   if (!existingQuota) {

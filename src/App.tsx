@@ -282,7 +282,9 @@ const handleAuthError = (err: any) => {
       await api.addApplicant(roomId, fullName);
       await fetchRooms();
     } catch (err: any) {
+      if (handleAuthError(err)) return;
       alert(err.message || 'Failed to add examinee');
+      throw err;
     }
   };
 
@@ -294,7 +296,9 @@ const handleAuthError = (err: any) => {
       await api.batchAddApplicants(roomId, examinees);
       await fetchRooms();
     } catch (err: any) {
+      if (handleAuthError(err)) return;
       alert(err.message || 'Failed to batch add examinees');
+      throw err;
     }
   };
 
@@ -306,7 +310,9 @@ const handleAuthError = (err: any) => {
       await api.deleteApplicant(examineeId);
       await fetchRooms();
     } catch (err: any) {
+      if (handleAuthError(err)) return;
       alert(err.message || 'Failed to remove examinee');
+      throw err;
     }
   };
 

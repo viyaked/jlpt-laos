@@ -19,9 +19,9 @@ interface ManageRoomExamineesModalProps {
   room: ExamRoom | null;
   isOpen: boolean;
   onClose: () => void;
-  onAddExaminee: (roomId: string, fullName: string) => void;
-  onBatchAddExaminees: (roomId: string, examinees: { fullName: string }[]) => void;
-  onRemoveExaminee: (roomId: string, examineeId: string) => void;
+  onAddExaminee: (roomId: string, fullName: string) => Promise<void> | void;
+  onBatchAddExaminees: (roomId: string, examinees: { fullName: string }[]) => Promise<void> | void;
+  onRemoveExaminee: (roomId: string, examineeId: string) => Promise<void> | void;
   lang: Language;
 }
 
@@ -36,6 +36,7 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
 }) => {
   // Tab mode: 'single' | 'batch' | 'list'
   const [activeTab, setActiveTab] = useState<'list' | 'single' | 'batch'>('list');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Single add form
   const [fullName, setFullName] = useState('');
@@ -49,48 +50,81 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
   if (!isOpen || !room) return null;
   const t = translations[lang];
 
-  const handleSingleAdd = (e: FormEvent) => {
+  const handleSingleAdd = async (e: FormEvent) => {
     e.preventDefault();
     if (!fullName.trim()) {
       setSingleError(t.fullNameRequiredError);
       return;
     }
-    if (room) {
-      onAddExaminee(room.id, fullName.trim());
+    if (!room) return;
+
+    try {
+      setIsSubmitting(true);
+      setSingleError('');
+      await onAddExaminee(room.id, fullName.trim());
+      setFullName('');
+      setActiveTab('list');
+    } catch (err: any) {
+      setSingleError(err.message || 'Failed to add examinee');
+    } finally {
+      setIsSubmitting(false);
     }
-    setFullName('');
-    setSingleError('');
-    setActiveTab('list');
   };
 
-  const handleBatchAdd = (e: FormEvent) => {
-
+  const handleBatchAdd = async (e: FormEvent) => {
     e.preventDefault();
-    const lines = batchText.split('\n').map((l) => l.trim()).filter(Boolean);
-    if (lines.length === 0) {
+    const rawLines = batchText.split('\n').map((l) => l.trim()).filter(Boolean);
+    if (rawLines.length === 0) {
       setBatchError(t.batchAddError);
       return;
     }
 
+    const headerKeywords = [
+      'name', 'fullname', 'full_name', 'first_name', 'firstname', 'lastname', 'surname',
+      'ຊື່', 'ຊື່ເຕັມ', 'ຊື່ ແລະ ນາມສະກຸນ', 'ຊື່ແລະນາມສະກຸນ', 'ນາມສະກຸນ', 'ລ/ດ', 'no', '#'
+    ];
+
     const newExaminees: { fullName: string }[] = [];
-    for (const line of lines) {
-      // Use the full line as the full name
-      const name = line.trim();
-      if (name) {
-        newExaminees.push({ fullName: name });
+    for (const rawLine of rawLines) {
+      let line = rawLine;
+      // Strip leading numbering like "1.", "1)", "1,"
+      line = line.replace(/^\d+[\.\),\-]\s*/, '').trim();
+
+      // Check if this line looks like a CSV / table header
+      const lower = line.toLowerCase().replace(/[\s,_\-]+/g, '');
+      if (headerKeywords.some((k) => lower === k.replace(/[\s,_\-]+/g, ''))) {
+        continue; // Skip header row
+      }
+
+      // Replace commas, semicolons, or tabs with single spaces
+      const cleanName = line.replace(/[,;\t]+/g, ' ').replace(/\s+/g, ' ').trim();
+      if (cleanName && cleanName.length >= 2) {
+        newExaminees.push({ fullName: cleanName });
       }
     }
 
-    if (room) {
-      onBatchAddExaminees(room.id, newExaminees);
+    if (newExaminees.length === 0) {
+      setBatchError(t.batchAddError);
+      return;
     }
-    setBatchText('');
-    setBatchError('');
-    setBatchSuccess(t.batchAddSuccess.replace('{count}', newExaminees.length.toString()));
-    setTimeout(() => {
-      setBatchSuccess('');
-      setActiveTab('list');
-    }, 1200);
+
+    if (!room) return;
+
+    try {
+      setIsSubmitting(true);
+      setBatchError('');
+      await onBatchAddExaminees(room.id, newExaminees);
+      setBatchText('');
+      setBatchSuccess(t.batchAddSuccess.replace('{count}', newExaminees.length.toString()));
+      setTimeout(() => {
+        setBatchSuccess('');
+        setActiveTab('list');
+      }, 1200);
+    } catch (err: any) {
+      setBatchError(err.message || 'Failed to batch add examinees');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -292,10 +326,11 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 bg-red-700 hover:bg-red-800 text-white font-semibold rounded-lg text-xs shadow-sm flex items-center justify-center gap-1.5"
+                  disabled={isSubmitting}
+                  className="flex-1 py-2 bg-red-700 hover:bg-red-800 disabled:opacity-50 text-white font-semibold rounded-lg text-xs shadow-sm flex items-center justify-center gap-1.5"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>{t.saveBtn}</span>
+                  <span>{isSubmitting ? (lang === 'lo' ? 'ກຳລັງບັນທຶກ...' : 'Saving...') : t.saveBtn}</span>
                 </button>
               </div>
             </form>
@@ -365,10 +400,11 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="py-2 px-5 bg-red-700 hover:bg-red-800 text-white font-semibold rounded-lg text-xs shadow-sm flex items-center gap-1.5"
+                  disabled={isSubmitting}
+                  className="py-2 px-5 bg-red-700 hover:bg-red-800 disabled:opacity-50 text-white font-semibold rounded-lg text-xs shadow-sm flex items-center gap-1.5"
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5" />
-                  <span>{t.processBatchBtn}</span>
+                  <span>{isSubmitting ? (lang === 'lo' ? 'ກຳລັງນຳເຂົ້າ...' : 'Importing...') : t.processBatchBtn}</span>
                 </button>
               </div>
             </form>
