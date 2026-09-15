@@ -122,6 +122,13 @@ export function initDatabase() {
     UPDATE rooms SET building = 'ອາຄານຫຼັກ', floor = '1' WHERE building = 'ອາຄານຫຼັກ' AND (floor = '-' OR floor = '' OR floor IS NULL);
   `);
 
+  // Migration: Standardize default exam fees
+  // N1, N2, N3: 350,000 LAK; N4, N5: 300,000 LAK
+  db.exec(`
+    UPDATE exam_levels SET fee = 300000 WHERE level IN ('N4', 'N5');
+    UPDATE exam_levels SET fee = 350000 WHERE level IN ('N1', 'N2', 'N3');
+  `);
+
   // Initialize default system settings
   const existingQuota = db.prepare('SELECT value FROM system_settings WHERE key = ?').get('total_form_quota');
   if (!existingQuota) {
@@ -296,11 +303,12 @@ export function seedDefaultData() {
     setSystemSetting('registration_open', 'true');
 
     // 1. Levels (Default quotas, 0 registered applicants, updated fees)
-    insertLevel.run('N5', 150, 0, 350000, '09:00 - 11:30');
-    insertLevel.run('N4', 120, 0, 380000, '09:00 - 11:45');
-    insertLevel.run('N3', 100, 0, 420000, '13:30 - 16:30');
-    insertLevel.run('N2', 80,  0, 480000, '13:30 - 16:45');
-    insertLevel.run('N1', 50,  0, 550000, '13:30 - 17:00');
+    // N1, N2, N3: 350,000 LAK; N4, N5: 300,000 LAK
+    insertLevel.run('N5', 150, 0, 300000, '09:00 - 11:30');
+    insertLevel.run('N4', 120, 0, 300000, '09:00 - 11:45');
+    insertLevel.run('N3', 100, 0, 350000, '13:30 - 16:30');
+    insertLevel.run('N2', 80,  0, 350000, '13:30 - 16:45');
+    insertLevel.run('N1', 50,  0, 350000, '13:30 - 17:00');
 
     // 2. Rooms — ຕາມແຜນທີ່ LJI Campus
     const rooms = [

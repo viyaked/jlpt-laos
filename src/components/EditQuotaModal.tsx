@@ -179,7 +179,7 @@ export const EditQuotaModal: FC<EditQuotaModalProps> = ({
             </div>
             {/* Quick Fee Presets */}
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {[350000, 380000, 420000, 480000, 550000].map((presetFee) => (
+              {[300000, 350000, 400000, 450000, 500000].map((presetFee) => (
                 <button
                   key={presetFee}
                   type="button"
