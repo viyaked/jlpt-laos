@@ -1,4 +1,4 @@
-import { Clock, Banknote, Users, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Clock, Banknote, CheckCircle2, AlertTriangle } from 'lucide-react';
 import type { LevelStat, Language, JLPTLevel } from '../../types';
 import { translations } from '../../i18n';
 import { Badge } from '../ui';
@@ -86,8 +86,6 @@ export function LevelStatsGrid({ levelStats, lang }: LevelStatsGridProps) {
           const remaining = Math.max(0, stat.quota - stat.registered);
           const isFull = remaining <= 0;
           const isAlmostFull = !isFull && remaining <= 10;
-          const fillPercent =
-            stat.quota > 0 ? Math.min(100, Math.round((stat.registered / stat.quota) * 100)) : 0;
 
           return (
             <div
@@ -160,27 +158,6 @@ export function LevelStatsGrid({ levelStats, lang }: LevelStatsGridProps) {
                       {remaining}
                     </span>
                     <span className="text-xs font-bold opacity-75">{t.slotsUnit}</span>
-                  </div>
-
-                  {/* Registered vs Quota Ratio */}
-                  <div className="mt-2 pt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px] text-slate-500 font-medium">
-                    <span className="flex items-center gap-1">
-                      <Users className="w-3 h-3 text-slate-400" />
-                      <span>{lang === 'lo' ? 'ສະໝັກແລ້ວ' : 'Filled'}:</span>
-                    </span>
-                    <span className="font-semibold text-slate-700">
-                      {stat.registered} / {stat.quota}
-                    </span>
-                  </div>
-
-                  {/* Progress bar */}
-                  <div className="w-full bg-slate-200/80 h-1.5 rounded-full overflow-hidden mt-1.5">
-                    <div
-                      className={`h-full rounded-full transition-all duration-300 ${
-                        isFull ? 'bg-rose-500' : theme.barColor
-                      }`}
-                      style={{ width: `${fillPercent}%` }}
-                    />
                   </div>
                 </div>
               </div>
