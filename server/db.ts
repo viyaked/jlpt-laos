@@ -114,6 +114,14 @@ export function initDatabase() {
     `);
   }
 
+  // Migration: Standardize room building names and numeric floors
+  db.exec(`
+    UPDATE rooms SET building = 'Annex Building', floor = '2' WHERE id IN ('room-annex4', 'room-annex5', 'room-annex6') OR building LIKE '%Annex%2%';
+    UPDATE rooms SET building = 'Annex Building', floor = '1' WHERE id IN ('room-annex1', 'room-annex2', 'room-annex3') OR building LIKE '%Annex%1%';
+    UPDATE rooms SET building = 'ອາຄານ MBA', floor = '1' WHERE id = 'room-mba' OR building LIKE '%MBA%';
+    UPDATE rooms SET building = 'ອາຄານຫຼັກ', floor = '1' WHERE building = 'ອາຄານຫຼັກ' AND (floor = '-' OR floor = '' OR floor IS NULL);
+  `);
+
   // Initialize default system settings
   const existingQuota = db.prepare('SELECT value FROM system_settings WHERE key = ?').get('total_form_quota');
   if (!existingQuota) {
@@ -297,21 +305,21 @@ export function seedDefaultData() {
     // 2. Rooms — ຕາມແຜນທີ່ LJI Campus
     const rooms = [
       // ── N5 ──────────────────────────────────────────────────
-      { id: 'room-annex4',  code: 'ຫ້ອງ Annex 4',         building: 'Annex Building (ຊັ້ນທີ 2)', floor: 'ຊັ້ນທີ 2', level: 'N5', capacity: 35 },
-      { id: 'room-annex5',  code: 'ຫ້ອງ Annex 5',         building: 'Annex Building (ຊັ້ນທີ 2)', floor: 'ຊັ້ນທີ 2', level: 'N5', capacity: 35 },
-      { id: 'room-mba',     code: 'ຫ້ອງ MBA',              building: 'ອາຄານ MBA',                 floor: '-',         level: 'N5', capacity: 40 },
+      { id: 'room-annex4',  code: 'ຫ້ອງ Annex 4',         building: 'Annex Building', floor: '2', level: 'N5', capacity: 35 },
+      { id: 'room-annex5',  code: 'ຫ້ອງ Annex 5',         building: 'Annex Building', floor: '2', level: 'N5', capacity: 35 },
+      { id: 'room-mba',     code: 'ຫ້ອງ MBA',              building: 'ອາຄານ MBA',      floor: '1', level: 'N5', capacity: 40 },
       // ── N4 ──────────────────────────────────────────────────
-      { id: 'room-annex1',  code: 'ຫ້ອງ Annex 1',         building: 'Annex Building (ຊັ້ນທີ 1)', floor: 'ຊັ້ນທີ 1', level: 'N4', capacity: 35 },
-      { id: 'room-annex2',  code: 'ຫ້ອງ Annex 2',         building: 'Annex Building (ຊັ້ນທີ 1)', floor: 'ຊັ້ນທີ 1', level: 'N4', capacity: 35 },
-      { id: 'room-annex3',  code: 'ຫ້ອງ Annex 3',         building: 'Annex Building (ຊັ້ນທີ 1)', floor: 'ຊັ້ນທີ 1', level: 'N4', capacity: 35 },
+      { id: 'room-annex1',  code: 'ຫ້ອງ Annex 1',         building: 'Annex Building', floor: '1', level: 'N4', capacity: 35 },
+      { id: 'room-annex2',  code: 'ຫ້ອງ Annex 2',         building: 'Annex Building', floor: '1', level: 'N4', capacity: 35 },
+      { id: 'room-annex3',  code: 'ຫ້ອງ Annex 3',         building: 'Annex Building', floor: '1', level: 'N4', capacity: 35 },
       // ── N3 ──────────────────────────────────────────────────
-      { id: 'room-seminar1',    code: 'ຫ້ອງ Seminar 1',           building: 'ອາຄານຫຼັກ',  floor: '-', level: 'N3', capacity: 30 },
-      { id: 'room-laonea',      code: 'ຫ້ອງອະເນກປະສົງ',           building: 'ອາຄານຫຼັກ',  floor: '-', level: 'N3', capacity: 30 },
+      { id: 'room-seminar1',    code: 'ຫ້ອງ Seminar 1',           building: 'ອາຄານຫຼັກ',  floor: '1', level: 'N3', capacity: 30 },
+      { id: 'room-laonea',      code: 'ຫ້ອງອະເນກປະສົງ',           building: 'ອາຄານຫຼັກ',  floor: '1', level: 'N3', capacity: 30 },
       // ── N2 ──────────────────────────────────────────────────
-      { id: 'room-seminar2',    code: 'ຫ້ອງ Seminar 2',           building: 'ອາຄານຫຼັກ',  floor: '-', level: 'N2', capacity: 30 },
-      { id: 'room-incubation',  code: 'ຫ້ອງ Incubation Room',     building: 'ອາຄານຫຼັກ',  floor: '-', level: 'N2', capacity: 25 },
+      { id: 'room-seminar2',    code: 'ຫ້ອງ Seminar 2',           building: 'ອາຄານຫຼັກ',  floor: '1', level: 'N2', capacity: 30 },
+      { id: 'room-incubation',  code: 'ຫ້ອງ Incubation Room',     building: 'ອາຄານຫຼັກ',  floor: '1', level: 'N2', capacity: 25 },
       // ── N1 ──────────────────────────────────────────────────
-      { id: 'room-annex6',  code: 'ຫ້ອງ Annex 6',         building: 'Annex Building (ຊັ້ນທີ 2)', floor: 'ຊັ້ນທີ 2', level: 'N1', capacity: 25 },
+      { id: 'room-annex6',  code: 'ຫ້ອງ Annex 6',         building: 'Annex Building', floor: '2', level: 'N1', capacity: 25 },
     ];
 
     for (const r of rooms) {

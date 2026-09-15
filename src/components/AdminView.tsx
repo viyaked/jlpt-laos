@@ -290,7 +290,7 @@ export const AdminView: FC<AdminViewProps> = ({
               isOpen: true,
               url: room.imageUrl!,
               title: formatRoomName(room.code, lang),
-              subtitle: `${room.building} • ${room.floor} (JLPT ${room.level})`,
+              subtitle: `${room.building} • ${room.floor ? (room.floor.startsWith('Floor') || room.floor.startsWith('ຊັ້ນ') ? room.floor : `${t.floorLabel} ${room.floor}`) : ''} (JLPT ${room.level})`,
             });
           }}
           confirmDeleteMessage={t.confirmDeleteRoom}

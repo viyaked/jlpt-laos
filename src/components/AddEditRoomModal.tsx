@@ -20,8 +20,8 @@ export const AddEditRoomModal: FC<AddEditRoomModalProps> = ({
   lang,
 }) => {
   const [code, setCode] = useState(room ? room.code : '');
-  const [building, setBuilding] = useState(room ? room.building : 'Building A (ອາຄານ ອາ)');
-  const [floor, setFloor] = useState(room ? room.floor : 'Floor 1 (ຊັ້ນ 1)');
+  const [building, setBuilding] = useState(room ? room.building : 'Annex Building');
+  const [floor, setFloor] = useState(room ? room.floor : '1');
   const [level, setLevel] = useState<JLPTLevel>(room ? room.level : 'N5');
   const [capacity, setCapacity] = useState<number>(room ? room.capacity : 30);
   const [imageUrl, setImageUrl] = useState<string>(room?.imageUrl || '');
@@ -38,8 +38,8 @@ export const AddEditRoomModal: FC<AddEditRoomModalProps> = ({
       setImageUrl(room.imageUrl || '');
     } else {
       setCode('');
-      setBuilding('Building A (ອາຄານ ອາ)');
-      setFloor('Floor 1 (ຊັ້ນ 1)');
+      setBuilding('Annex Building');
+      setFloor('1');
       setLevel('N5');
       setCapacity(30);
       setImageUrl('');
@@ -129,7 +129,7 @@ export const AddEditRoomModal: FC<AddEditRoomModalProps> = ({
                 required
                 value={building}
                 onChange={(e) => setBuilding(e.target.value)}
-                placeholder="Building A"
+                placeholder="Annex Building"
                 className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
               />
             </div>
@@ -142,7 +142,7 @@ export const AddEditRoomModal: FC<AddEditRoomModalProps> = ({
                 required
                 value={floor}
                 onChange={(e) => setFloor(e.target.value)}
-                placeholder="Floor 1"
+                placeholder="1"
                 className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
               />
             </div>

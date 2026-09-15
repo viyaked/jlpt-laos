@@ -177,7 +177,7 @@ export const ManageRoomExamineesModal: FC<ManageRoomExamineesModalProps> = ({
                   {t.manageRoomsTitle} - {formatRoomName(room.code, lang)}
                 </h3>
                 <span className="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">
-                  {room.building} &bull; {room.floor}
+                  {room.building} &bull; {room.floor ? (room.floor.startsWith('Floor') || room.floor.startsWith('ຊັ້ນ') ? room.floor : `${t.floorLabel} ${room.floor}`) : ''}
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">

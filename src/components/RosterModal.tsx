@@ -19,7 +19,7 @@ export const RosterModal = ({ room, isOpen, onClose, lang, onViewPhoto }: Roster
       isOpen={isOpen}
       onClose={onClose}
       title={room ? formatRoomName(room.code, lang) : undefined}
-      description={room ? `JLPT ${room.level} • ${room.building} • ${room.floor}` : undefined}
+      description={room ? `JLPT ${room.level} • ${room.building} • ${room.floor ? (room.floor.startsWith('Floor') || room.floor.startsWith('ຊັ້ນ') ? room.floor : `${t.floorLabel} ${room.floor}`) : ''}` : undefined}
       size="full"
       className="rounded-none sm:rounded-2xl"
     >
