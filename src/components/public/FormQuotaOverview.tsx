@@ -1,7 +1,7 @@
 import type { FormQuotaStat, Language } from '../../types';
 import { translations } from '../../i18n';
 import { Card, Badge } from '../ui';
-import { FileText, CheckCircle2, AlertTriangle, Users } from 'lucide-react';
+import { CheckCircle2, AlertTriangle } from 'lucide-react';
 
 interface FormQuotaOverviewProps {
   formQuota: FormQuotaStat;
@@ -10,8 +10,7 @@ interface FormQuotaOverviewProps {
 
 export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
   const t = translations[lang];
-  const { totalQuota, formsSold, remainingForms, registrationOpen } = formQuota;
-  const soldPercent = totalQuota > 0 ? Math.min(100, Math.round((formsSold / totalQuota) * 100)) : 0;
+  const { remainingForms, registrationOpen } = formQuota;
   const isFull = remainingForms <= 0 || !registrationOpen;
 
   return (
@@ -24,7 +23,7 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
             <h3 className="text-xl font-bold text-slate-900 tracking-tight">
               {t.totalFormQuotaTitle}
             </h3>
-            <Badge variant="outline" size="sm" className="bg-red-50 text-red-700 border-red-200">
+            <Badge variant="outline" size="sm" className="bg-red-50 text-red-700 border-red-200 font-medium">
               {t.unifiedFormBadge}
             </Badge>
           </div>
@@ -37,90 +36,53 @@ export function FormQuotaOverview({ formQuota, lang }: FormQuotaOverviewProps) {
           variant={registrationOpen && !isFull ? 'success' : 'danger'}
           size="md"
           dot
-          className="self-start sm:self-auto text-xs sm:text-sm py-1 px-3"
+          className="self-start sm:self-auto text-xs sm:text-sm py-1 px-3 font-semibold"
         >
           {registrationOpen && !isFull ? t.statusOpen : t.statusFull}
         </Badge>
       </div>
 
-      {/* 3 Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-5">
-        {/* Remaining Forms (Hero Metric) */}
+      {/* Only Remaining Forms Card */}
+      <div className="pt-5">
         <div
-          className={`p-4 rounded-xl border flex flex-col justify-between transition-all ${
+          className={`p-5 sm:p-6 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${
             isFull
               ? 'bg-rose-50/80 border-rose-200 text-rose-900'
               : 'bg-emerald-50/70 border-emerald-200/80 text-emerald-900'
           }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold block opacity-80">
-              {t.remainingFormsLabel}
-            </span>
-            {isFull ? (
-              <AlertTriangle className="w-4 h-4 text-rose-600" />
-            ) : (
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            )}
+          <div className="space-y-1.5 max-w-xl">
+            <div className="flex items-center gap-2">
+              {isFull ? (
+                <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
+              ) : (
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+              )}
+              <span className="text-sm sm:text-base font-bold text-slate-900">
+                {t.remainingFormsLabel}
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-600 font-lo leading-relaxed">
+              {isFull
+                ? lang === 'lo'
+                  ? 'ໂຄຕ້າຟອມສະໝັກເຕັມແລ້ວ ຫຼື ປິດຮັບສະໝັກຊົ່ວຄາວ'
+                  : 'Application form quota is full or registration is currently closed.'
+                : lang === 'lo'
+                ? 'ຈຳນວນຟອມສະໝັກທີ່ຍັງເຫຼືອ ແລະ ພ້ອມໃຫ້ບໍລິການໃນປັດຈຸບັນ (ໃຊ້ຮ່ວມກັນທຸກລະດັບ N1 - N5)'
+                : 'Current available application forms across all exam levels (N1–N5).'}
+            </p>
           </div>
-          <div className="flex items-baseline gap-1.5 mt-2">
+
+          <div className="flex items-baseline gap-2 shrink-0 bg-white/90 backdrop-blur-xs px-6 py-3.5 rounded-xl border border-slate-200/60 shadow-xs self-start sm:self-auto">
             <span
-              className={`text-3xl sm:text-4xl font-black tracking-tight ${
+              className={`text-4xl sm:text-5xl font-black tracking-tight leading-none ${
                 isFull ? 'text-rose-700' : 'text-emerald-700'
               }`}
             >
               {remainingForms}
             </span>
-            <span className="text-xs font-bold opacity-80">{t.formUnit}</span>
+            <span className="text-sm sm:text-base font-bold text-slate-500">{t.formUnit}</span>
           </div>
-        </div>
-
-        {/* Forms Sold */}
-        <div className="bg-slate-50 border border-slate-200/80 p-4 rounded-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-600 block">
-              {t.formsSoldLabel}
-            </span>
-            <FileText className="w-4 h-4 text-slate-400" />
-          </div>
-          <div className="flex items-baseline gap-1.5 mt-2">
-            <span className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-              {formsSold}
-            </span>
-            <span className="text-xs font-bold text-slate-500">{t.formUnit}</span>
-          </div>
-        </div>
-
-        {/* Total Quota */}
-        <div className="bg-slate-50 border border-slate-200/80 p-4 rounded-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-600 block">
-              {t.totalFormsLabel}
-            </span>
-            <Users className="w-4 h-4 text-slate-400" />
-          </div>
-          <div className="flex items-baseline gap-1.5 mt-2">
-            <span className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-              {totalQuota}
-            </span>
-            <span className="text-xs font-bold text-slate-500">{t.formUnit}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Progress Track */}
-      <div className="pt-4 mt-2">
-        <div className="flex items-center justify-between text-xs text-slate-500 mb-1.5 font-medium">
-          <span>{lang === 'lo' ? 'ອັດຕາການຂາຍຟອມຕົວຈິງ' : 'Form Sales Progress'}</span>
-          <span className="font-bold font-mono text-slate-700">{soldPercent}%</span>
-        </div>
-        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200/50">
-          <div
-            className={`h-full transition-all duration-500 rounded-full ${
-              isFull ? 'bg-rose-500' : 'bg-emerald-500'
-            }`}
-            style={{ width: `${soldPercent}%` }}
-          />
         </div>
       </div>
     </Card>
